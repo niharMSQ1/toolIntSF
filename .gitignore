@@ -19,5 +19,8 @@ env/
 *.swp
 *.swo
 
+# Project specific
+THIS_FOLDER_IS_MEANT_TO_BE_GIT_IGNORED/
+
 # Optional: large generated file (uncomment if you don't want to track it)
 # schema_output.json
