@@ -310,7 +310,7 @@ class Employee(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
     organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=False)
-    sync_user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    sync_user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     department = Column(String(length=255), nullable=True)
     designation = Column(String(length=255), nullable=True)
     name = Column(String(length=255), nullable=True)
@@ -326,6 +326,8 @@ class Employee(Base):
     remember_token = Column(String(length=100), nullable=True)
     created_at = Column(DateTime, nullable=True)
     updated_at = Column(DateTime, nullable=True)
+    has_changed = Column(Boolean, nullable=True)
+    changed_values = Column(String(length=255), nullable=True)
 
 class Evidence(Base):
     __tablename__ = "evidence"
@@ -679,6 +681,8 @@ class Organization(Base):
     status = Column(String(length=255), nullable=False)
     created_at = Column(DateTime, nullable=True)
     updated_at = Column(DateTime, nullable=True)
+    primary_sector = Column(String(length=255), nullable=True)
+    secondary_sector = Column(String(length=255), nullable=True)
 
 class PasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"

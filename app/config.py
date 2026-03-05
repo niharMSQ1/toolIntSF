@@ -1,5 +1,6 @@
 """Load config from environment (e.g. .env)."""
 import os
+from urllib.parse import quote_plus
 
 def _load_env():
     env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
@@ -16,7 +17,10 @@ def _load_env():
 _env = _load_env()
 
 def get_database_url():
-    return (
-        f"postgresql://{_env.get('DB_USER', '')}:{_env.get('DB_PASSWORD', '')}"
-        f"@{_env.get('DB_HOST', 'localhost')}:{_env.get('DB_PORT', '5432')}/{_env.get('DB_NAME', '')}"
-    )
+    # URL-encode user and password so special chars (e.g. @ in password) don't break the URL
+    user = quote_plus(_env.get("DB_USER", ""))
+    password = quote_plus(_env.get("DB_PASSWORD", ""))
+    host = _env.get("DB_HOST", "localhost")
+    port = _env.get("DB_PORT", "5432")
+    name = _env.get("DB_NAME", "")
+    return f"postgresql://{user}:{password}@{host}:{port}/{name}"

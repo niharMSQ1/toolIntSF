@@ -1,0 +1,246 @@
+{
+	"info": {
+		"_postman_id": "stakflo-api-collection",
+		"name": "Stakflo API",
+		"description": "Complete API for Stakflo tool integrations, evidence, Zoho People OAuth, and organization records.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8005"
+		},
+		{
+			"key": "organization_id",
+			"value": "019c89fe-d268-7298-ac14-6c221fd8d830"
+		},
+		{
+			"key": "integration_id",
+			"value": ""
+		},
+		{
+			"key": "control_id",
+			"value": "019c89fe-165a-73c0-b6ea-2c0fcff98697"
+		},
+		{
+			"key": "auth_code",
+			"value": ""
+		},
+		{
+			"key": "tool_id",
+			"value": "019c89fe-30a0-726d-b35c-764ec63f84fa"
+		}
+	],
+	"item": [
+		{
+			"name": "General",
+			"item": [
+				{
+					"name": "Root",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/",
+						"description": "API info and docs link."
+					}
+				},
+				{
+					"name": "Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/health",
+						"description": "Check DB connectivity."
+					}
+				}
+			]
+		},
+		{
+			"name": "Evidence types",
+			"item": [
+				{
+					"name": "List all evidence types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/evidence-types",
+						"description": "List canonical evidence type codes and names."
+					}
+				},
+				{
+					"name": "List HR evidence types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/evidence-types/hr",
+						"description": "List HR evidence type codes (for Zoho and other HRMS)."
+					}
+				}
+			]
+		},
+		{
+			"name": "Controls",
+			"item": [
+				{
+					"name": "Control required evidence types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/controls/{{control_id}}/required-evidence-types",
+						"description": "Return evidence type codes required for this control (from config file)."
+					}
+				}
+			]
+		},
+		{
+			"name": "Zoho People integration",
+			"item": [
+				{
+					"name": "Get callback URL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/integrations/zoho-people/callback-url",
+						"description": "Returns the callback URL to use as redirect_uri when calling Init. Use callback_url from response as redirect_uri in Init so Zoho redirects to your backend after consent."
+					}
+				},
+				{
+					"name": "Init (client_id + client_secret → authorize_url)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"client_id\": \"1000.XXXXXXXXXXXX\",\n  \"client_secret\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\n  \"redirect_uri\": \"https://your-app.com/zoho/callback\",\n  \"region\": \"com\"\n}"
+						},
+						"url": "{{base_url}}/integrations/zoho-people/init",
+						"description": "Store client_id/client_secret in tool_integrations and get the Zoho OAuth authorize URL. Open that URL in browser; after user consents, Zoho redirects to redirect_uri with ?code=..."
+					}
+				},
+				{
+					"name": "Callback GET (Zoho redirect)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/integrations/zoho-people/callback?code={{auth_code}}&state={{integration_id}}&location=in",
+						"description": "Zoho redirects here after user authorizes. Query: code, state=integration_id, location=in|com|eu|au. Exchanges code for tokens, runs sync, redirects to evidence UI."
+					}
+				},
+				{
+					"name": "Callback POST (auth_code → store tokens)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"integration_id\": \"{{integration_id}}\",\n  \"auth_code\": \"{{auth_code}}\"\n}"
+						},
+						"url": "{{base_url}}/integrations/zoho-people/callback",
+						"description": "After Zoho redirects with ?code=..., send integration_id (from Init) and auth_code. Exchanges code for access_token + refresh_token and saves in tool_integrations."
+					}
+				},
+				{
+					"name": "Sync evidence from Zoho (by integration_id)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"integration_id\": \"{{integration_id}}\",\n  \"record\": true\n}"
+						},
+						"url": "{{base_url}}/evidence/zoho/sync",
+						"description": "Fetch employees/departments from Zoho using stored credentials (by integration_id), normalize to 5 HR evidence types. Set record: true to persist to evidence + evidence_collections + employees table."
+					}
+				},
+				{
+					"name": "Sync Zoho by organization (by org_id)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{base_url}}/organizations/{{organization_id}}/integrations/zoho/sync",
+						"description": "Look up tool_integrations by organization_id and Zoho tool_id. If found, use configuration_data to hit Zoho APIs and update evidence + Employee table. No body required."
+					}
+				}
+			]
+		},
+		{
+			"name": "Evidence",
+			"item": [
+				{
+					"name": "Normalize Zoho payloads",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"employees\": [\n    {\n      \"id\": \"1\",\n      \"EmployeeID\": \"EMP001\",\n      \"EmailID\": \"john@example.com\",\n      \"FirstName\": \"John\",\n      \"LastName\": \"Doe\",\n      \"Employeestatus\": \"Active\",\n      \"Date_of_Join\": \"2024-01-15\",\n      \"Department\": \"Engineering\",\n      \"Designation\": \"Developer\"\n    }\n  ],\n  \"departments\": [\n    { \"id\": \"1\", \"name\": \"Engineering\" }\n  ],\n  \"onboarding_records\": null,\n  \"termination_records\": null,\n  \"training_completions\": null\n}"
+						},
+						"url": "{{base_url}}/evidence/normalize-zoho",
+						"description": "Normalize Zoho-style payloads into the 5 HR evidence shapes. No DB write."
+					}
+				},
+				{
+					"name": "Record evidence",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"organization_id\": \"{{organization_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_type_code\": \"hr_employee_directory\",\n  \"payload\": {\n    \"collected_at\": \"2025-03-04T12:00:00Z\",\n    \"employees\": [],\n    \"meta\": { \"source\": \"zoho_people\", \"total\": 0 }\n  },\n  \"source\": \"zoho_people\",\n  \"collection_name\": null\n}"
+						},
+						"url": "{{base_url}}/evidence/record",
+						"description": "Create/update Evidence and add one EvidenceCollection with normalized payload. Use tool_id from tools table (e.g. Zoho People)."
+					}
+				}
+			]
+		},
+		{
+			"name": "Organizations",
+			"item": [
+				{
+					"name": "Update organization records (employees)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"updates\": [\n    {\n      \"email\": \"john.doe@company.com\",\n      \"name\": \"John Doe\",\n      \"department\": \"Engineering\",\n      \"designation\": \"Senior Developer\",\n      \"employee_status\": \"active\",\n      \"status\": \"active\",\n      \"has_changed\": false\n    },\n    {\n      \"id\": \"019c89fe-d390-729d-aea5-6c540886cf3c\",\n      \"department\": \"Product\",\n      \"has_changed\": false\n    }\n  ]\n}"
+						},
+						"url": "{{base_url}}/organizations/{{organization_id}}/records",
+						"description": "Update employee records for the given organization. Each item in updates must identify by id or email; only provided fields are updated. Fields: name, department, designation, employee_status, status, has_changed."
+					}
+				}
+			]
+		}
+	]
+}
