@@ -1079,6 +1079,7 @@ class Employees(Base):
     employee_status: Mapped[Optional[str]] = mapped_column(String(255))
     remember_token: Mapped[Optional[str]] = mapped_column(String(100))
     changed_values: Mapped[Optional[str]] = mapped_column(String(255))
+    date_of_exit: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
