@@ -60,6 +60,7 @@ async def create_zoho_integration(
             "client_secret": payload.configuration_data.client_secret,
             "redirect_uri": payload.configuration_data.redirect_uri,
             "region": payload.configuration_data.region,
+            "provider": "zoho_people",
         }
     )
     integration.configuration_data = config_dict
@@ -148,6 +149,7 @@ async def zoho_callback(
                 datetime.datetime.utcnow() + datetime.timedelta(seconds=int(expires_in))
             ).isoformat()
 
+        config["provider"] = "zoho_people"
         integration.configuration_data = config
         integration.is_active = True
         integration.updated_at = datetime.datetime.utcnow()

@@ -5,6 +5,8 @@ from sqlalchemy.exc import SAWarning
 
 from HRMS_Integrations import zoho_people_router
 from ITSM_Integrations import jira_servicedesk_router
+from integration_collection import router as integration_collection_router
+from control_evaluation import router as control_evaluation_router
 
 
 # Suppress known SQLAlchemy SAWarning coming from generated models.py
@@ -23,6 +25,8 @@ app = FastAPI(title="Tool Integrations Backend - GRC Platform")
 
 app.include_router(zoho_people_router)
 app.include_router(jira_servicedesk_router)
+app.include_router(integration_collection_router)
+app.include_router(control_evaluation_router)
 
 
 @app.get("/health")

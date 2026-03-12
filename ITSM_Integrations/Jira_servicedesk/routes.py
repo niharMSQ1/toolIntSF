@@ -56,6 +56,7 @@ async def create_jira_integration(
             "client_id": payload.configuration_data.client_id,
             "client_secret": payload.configuration_data.client_secret,
             "redirect_uri": payload.configuration_data.redirect_uri,
+            "provider": "jira_servicedesk",
         }
     )
     integration.configuration_data = config_dict
@@ -137,6 +138,7 @@ async def jira_callback(
             raise HTTPException(status_code=500, detail="Could not determine cloud_id from accessible resources")
         config["cloud_id"] = str(cloud_id)
 
+        config["provider"] = "jira_servicedesk"
         integration.configuration_data = config
         integration.is_active = True
         integration.updated_at = datetime.datetime.utcnow()
