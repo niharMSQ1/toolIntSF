@@ -162,6 +162,7 @@ class Controls(Base):
     control_evidence_master: Mapped[list['ControlEvidenceMaster']] = relationship('ControlEvidenceMaster', back_populates='control')
     organization_certificate_controls: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', back_populates='control')
     risk_controls: Mapped[list['RiskControls']] = relationship('RiskControls', back_populates='control')
+    control_results: Mapped[list['ControlResults']] = relationship('ControlResults', back_populates='control')
 
 
 class Countries(Base):
@@ -389,6 +390,7 @@ class Organizations(Base):
     tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='organization')
     user_role_organizations: Mapped[list['UserRoleOrganizations']] = relationship('UserRoleOrganizations', back_populates='organization')
     user_web_tokens: Mapped[list['UserWebTokens']] = relationship('UserWebTokens', back_populates='organization')
+    control_results: Mapped[list['ControlResults']] = relationship('ControlResults', back_populates='organization')
     vendor_assessment_question_banks: Mapped[list['VendorAssessmentQuestionBanks']] = relationship('VendorAssessmentQuestionBanks', back_populates='organization')
     vulnerabilities: Mapped[list['Vulnerabilities']] = relationship('Vulnerabilities', back_populates='organization')
     organization_certificate_clauses: Mapped[list['OrganizationCertificateClauses']] = relationship('OrganizationCertificateClauses', back_populates='organization')
@@ -2028,6 +2030,32 @@ class EvidenceMappeds(Base):
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
     evidence: Mapped['Evidence'] = relationship('Evidence', back_populates='evidence_mappeds')
+
+
+class ControlResults(Base):
+    """
+    Stores the result of a control evaluation run (PASS/FAIL/NOT_APPLICABLE).
+    Run a migration to create table control_results if it does not exist.
+    """
+    __tablename__ = 'control_results'
+    __table_args__ = (
+        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='control_results_control_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='control_results_organization_id_foreign'),
+        PrimaryKeyConstraint('id', name='control_results_pkey'),
+        Index('control_results_organization_control_run_index', 'organization_id', 'control_id', 'run_at'),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    control_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    run_at: Mapped[datetime.datetime] = mapped_column(TIMESTAMP(precision=0), nullable=False)
+    result: Mapped[str] = mapped_column(String(50), nullable=False)
+    details: Mapped[Optional[dict]] = mapped_column(JSON)
+    evidence_ids: Mapped[Optional[list]] = mapped_column(JSON)
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+
+    control: Mapped['Controls'] = relationship('Controls', back_populates='control_results')
+    organization: Mapped['Organizations'] = relationship('Organizations', back_populates='control_results')
 
 
 class OrganizationCertificateClauses(Base):

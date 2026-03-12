@@ -1,6 +1,7 @@
 import datetime
+import logging
 import uuid
-from typing import Any, Dict, Iterable
+from typing import Any, Dict, Iterable, Optional
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -14,6 +15,90 @@ from models import (
     ToolIntegrations,
 )
 from .client import ZohoPeopleClient
+from .config import ATTENDANCE_ENDPOINT, TRAINING_FORM_LINK_NAME
+
+# Evidence names we consider for Zoho collection. Unsupported names are skipped.
+DESIRED_EVIDENCE_NAMES = [
+    "Employee Directory",
+    "Department Structure",
+    "Employee Termination Records",
+    "Employee Onboarding Records",
+    "Employee Profile Verification",
+    "Attendance Records",
+    "Training Completion Records",
+    "Access Revocation Logs",
+    "User Access Permissions",
+    "System Audit Logs",
+    "User Activity Logs",
+    "Role-Based Access Control",
+]
+EVIDENCE_NAMES_NOT_IN_ZOHO = {
+    "Access Revocation Logs",
+    "User Access Permissions",
+    "System Audit Logs",
+    "User Activity Logs",
+    "Role-Based Access Control",
+}
+
+
+def _has_exit_date(record: Dict[str, Any]) -> bool:
+    """True if the employee record has a non-empty exit/termination date."""
+    exit_keys = (
+        "LastWorkingDate", "Last Working Date", "Date_of_Exit", "Date of Exit",
+        "TerminationDate", "Termination Date", "Relieving Date", "RelievingDate",
+        "Dateofexit",
+    )
+    for key in exit_keys:
+        if record.get(key) and str(record.get(key)).strip():
+            return True
+    for k, v in record.items():
+        if v and isinstance(k, str) and isinstance(v, (str, int, float)) and (
+            "exit" in k.lower() or "last work" in k.lower()
+            or "terminat" in k.lower() or "reliev" in k.lower()
+        ):
+            if str(v).strip():
+                return True
+    return False
+
+
+def _has_join_date(record: Dict[str, Any]) -> bool:
+    """True if the employee record has a join/onboarding date."""
+    for key in ("Dateofjoining", "Date of Joining", "DateOfJoining", "AddedTime"):
+        if record.get(key) and str(record.get(key)).strip():
+            return True
+    return False
+
+
+def _filter_employee_response(
+    employee_payload: Dict[str, Any],
+    predicate: Any,
+) -> Dict[str, Any]:
+    """
+    Filter employee response.result by predicate(record). Returns same shape:
+    { "response": { "result": [ ... ], "status": ..., "message": ... } }.
+    """
+    response = (employee_payload or {}).get("response") or {}
+    result: list = list(response.get("result") or [])
+    filtered_result: list = []
+    for entry in result:
+        if not isinstance(entry, dict):
+            continue
+        for zoho_key, records in entry.items():
+            if not isinstance(records, list):
+                continue
+            for record in records:
+                if isinstance(record, dict) and predicate(record):
+                    filtered_result.append({zoho_key: [record]})
+                    break
+            else:
+                continue
+            break
+    return {
+        "response": {
+            **response,
+            "result": filtered_result,
+        },
+    }
 
 
 async def collect_and_persist_evidence(
@@ -42,7 +127,10 @@ async def collect_and_persist_evidence(
 
     # 1) Call Zoho APIs
     employee_data = await zoho_client.fetch_employee_directory(access_token)
-    print("[Zoho Employee Directory] response:", employee_data)
+
+
+
+
     _sync_employees_from_zoho(
         db=db,
         integration=integration,
@@ -50,20 +138,78 @@ async def collect_and_persist_evidence(
     )
     department_data = await zoho_client.fetch_department_structure(access_token)
 
+    # Derived payloads from employee directory (no extra API calls)
+    termination_data = _filter_employee_response(employee_data, _has_exit_date)
+    onboarding_data = _filter_employee_response(employee_data, _has_join_date)
+
+    # Build evidence_items only for names we can provide; skip names not in Zoho
+    evidence_items: Dict[str, Dict[str, Any]] = {}
+    # Always add these (we have data)
+    evidence_items["Employee Directory"] = {
+        "tool_payload": employee_data,
+        "title": "Zoho Employee Directory",
+    }
+    evidence_items["Department Structure"] = {
+        "tool_payload": department_data,
+        "title": "Zoho Department Structure",
+    }
+    evidence_items["Employee Termination Records"] = {
+        "tool_payload": termination_data,
+        "title": "Zoho Employee Termination Records",
+    }
+    evidence_items["Employee Onboarding Records"] = {
+        "tool_payload": onboarding_data,
+        "title": "Zoho Employee Onboarding Records",
+    }
+    evidence_items["Employee Profile Verification"] = {
+        "tool_payload": employee_data,
+        "title": "Zoho Employee Profile Verification",
+    }
+
+    # Optional: Attendance Records (best-effort; skip on failure)
+    if "Attendance Records" not in EVIDENCE_NAMES_NOT_IN_ZOHO:
+        try:
+            attendance_payload = await zoho_client.fetch_attendance(
+                access_token,
+                params={"fromDate": (datetime.date.today() - datetime.timedelta(days=30)).isoformat(), "toDate": datetime.date.today().isoformat()},
+            )
+            evidence_items["Attendance Records"] = {
+                "tool_payload": attendance_payload,
+                "title": "Zoho Attendance Records",
+            }
+        except Exception as e:  # noqa: BLE001
+            logging.getLogger(__name__).info(
+                "Skipping Attendance Records: not available or API error - %s", e
+            )
+
+    # Optional: Training Completion Records (only if form name configured)
+    if (
+        "Training Completion Records" not in EVIDENCE_NAMES_NOT_IN_ZOHO
+        and TRAINING_FORM_LINK_NAME
+    ):
+        try:
+            training_payload = await zoho_client.fetch_form_records(
+                access_token, TRAINING_FORM_LINK_NAME
+            )
+            evidence_items["Training Completion Records"] = {
+                "tool_payload": training_payload,
+                "title": "Zoho Training Completion Records",
+            }
+        except Exception as e:  # noqa: BLE001
+            logging.getLogger(__name__).info(
+                "Skipping Training Completion Records: not configured or API error - %s", e
+            )
+
+    # Log which desired evidence names are skipped (not provided by Zoho)
+    skipped = EVIDENCE_NAMES_NOT_IN_ZOHO
+    if skipped:
+        logging.getLogger(__name__).debug(
+            "Skipping evidence names not provided by Zoho: %s", sorted(skipped)
+        )
+
     # 2) Create evidence rows
     today = datetime.date.today()
     due_date = today + datetime.timedelta(days=10)
-
-    evidence_items: Dict[str, Dict[str, Any]] = {
-        "Employee Directory": {
-            "tool_payload": employee_data,
-            "title": "Zoho Employee Directory",
-        },
-        "Department Structure": {
-            "tool_payload": department_data,
-            "title": "Zoho Department Structure",
-        },
-    }
 
     for evidence_name, info in evidence_items.items():
         evidence = Evidence(
@@ -101,6 +247,40 @@ async def collect_and_persist_evidence(
         )
 
     # No commit here — caller commits once after entire flow succeeds.
+
+
+def _parse_zoho_date(value: Any) -> Optional[datetime.datetime]:
+    """
+    Parse date from Zoho People API (may be ISO string, MM/DD/YYYY, or timestamp ms).
+    Returns datetime in UTC or None if unparseable.
+    """
+    if value is None:
+        return None
+    if isinstance(value, datetime.datetime):
+        return value.replace(tzinfo=None) if value.tzinfo else value
+    if isinstance(value, (int, float)):
+        try:
+            return datetime.datetime.utcfromtimestamp(value / 1000.0 if value > 1e12 else value)
+        except (OSError, ValueError):
+            return None
+    s = str(value).strip()
+    if not s:
+        return None
+    # Try ISO with timezone first
+    if "T" in s and ("+" in s or "Z" in s or "-" in s[10:11]):
+        for fmt in ("%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S"):
+            try:
+                part = s.replace("Z", "+00:00")[:25]
+                dt = datetime.datetime.strptime(part[:19], "%Y-%m-%dT%H:%M:%S")
+                return dt
+            except ValueError:
+                continue
+    for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%d-%m-%Y"):
+        try:
+            return datetime.datetime.strptime(s[:10], fmt)
+        except ValueError:
+            continue
+    return None
 
 
 def _sync_employees_from_zoho(
@@ -165,6 +345,31 @@ def _sync_employees_from_zoho(
                 provider = "zoho_people"
                 provider_id = str(record.get("Zoho_ID") or record.get("EmployeeID") or "").strip() or None
 
+                # Parse date_of_exit from common Zoho field names (API may use display name or internal ID)
+                date_of_exit = None
+                for key in (
+                    "LastWorkingDate",
+                    "Last Working Date",
+                    "Date_of_Exit",
+                    "Date of Exit",
+                    "TerminationDate",
+                    "Termination Date",
+                    "Relieving Date",
+                    "RelievingDate",
+                ):
+                    if key in record and record[key]:
+                        date_of_exit = _parse_zoho_date(record[key])
+                        if date_of_exit is not None:
+                            break
+                if date_of_exit is None:
+                    for k, v in record.items():
+                        if v and isinstance(k, str) and (
+                            "exit" in k.lower() or "last work" in k.lower() or "terminat" in k.lower() or "reliev" in k.lower()
+                        ):
+                            date_of_exit = _parse_zoho_date(v)
+                            if date_of_exit is not None:
+                                break
+
                 existing = db.scalars(
                     select(Employees).where(
                         Employees.organization_id == org_id,
@@ -181,14 +386,15 @@ def _sync_employees_from_zoho(
                     existing.provider = provider
                     existing.provider_id = provider_id or existing.provider_id
                     existing.sync_user_id = sync_user_id
-                    existing.status = "active"
                     existing.updated_at = now
+                    existing.date_of_exit = date_of_exit
+                    existing.status = "inactive" if date_of_exit else (existing.status or "active")
                 else:
                     employee_row = Employees(
                         id=uuid.uuid4(),
                         organization_id=org_id,
                         email=email,
-                        status="active",
+                        status="inactive" if date_of_exit else "active",
                         mode=False,
                         has_changed=False,
                         sync_user_id=sync_user_id,
@@ -199,13 +405,14 @@ def _sync_employees_from_zoho(
                         provider=provider,
                         provider_id=provider_id,
                         employee_status=employee_status,
+                        date_of_exit=date_of_exit,
                         created_at=now,
                         updated_at=now,
                     )
                     db.add(employee_row)
 
 
-EVIDENCEABLE_TYPE_CONTROL = "App/Models/Control"
+EVIDENCEABLE_TYPE_CONTROL = "App\Models\Control"
 
 
 def _map_evidence_to_controls(

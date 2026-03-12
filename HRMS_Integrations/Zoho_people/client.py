@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional
 import httpx
 
 from .config import (
+    ATTENDANCE_ENDPOINT,
     DEPARTMENT_STRUCTURE_ENDPOINT,
     EMPLOYEE_DIRECTORY_ENDPOINT,
 )
@@ -113,4 +114,29 @@ class ZohoPeopleClient:
         """
         params = {"sIndex": 1, "limit": 200}
         return await self._get(access_token, DEPARTMENT_STRUCTURE_ENDPOINT, params=params)
+
+    async def fetch_attendance(
+        self,
+        access_token: str,
+        params: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Fetch attendance data (e.g. User Report). Optional; only called when ATTENDANCE_ENDPOINT is used.
+        Params may include date range (e.g. fromDate, toDate) per Zoho People API.
+        """
+        return await self._get(access_token, ATTENDANCE_ENDPOINT, params=params or {})
+
+    async def fetch_form_records(
+        self,
+        access_token: str,
+        form_link_name: str,
+        sIndex: int = 1,
+        limit: int = 200,
+    ) -> Dict[str, Any]:
+        """
+        Fetch records from any Zoho People form (e.g. training). Path: /people/api/forms/{form_link_name}/getRecords.
+        """
+        path = f"/people/api/forms/{form_link_name}/getRecords"
+        params = {"sIndex": sIndex, "limit": limit}
+        return await self._get(access_token, path, params=params)
 
