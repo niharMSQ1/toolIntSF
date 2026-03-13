@@ -1,6 +1,6 @@
 """
-Control evaluation engine: evaluates compliance rules against collected evidence
-and persists results to ControlResults.
+Control evaluation engine: evaluates compliance rules against collected evidence.
+Results are computed on-demand and returned in the API response (no persistence).
 """
 import datetime
 import uuid
@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from HRMS_Integrations.db import get_db
-from models import  Controls, Employees, Evidence, EvidenceCollections
+from models import Controls, Employees, Evidence, EvidenceCollections
 
 
 router = APIRouter(prefix="/evaluate", tags=["Control evaluation"])
@@ -128,31 +128,6 @@ def evaluate_offboarding_ticket_per_leaver(
     }
 
 
-def run_and_persist_offboarding_ticket_control(
-    db: Session,
-    organization_id: uuid.UUID,
-    control_id: uuid.UUID,
-) -> ControlResults:
-    """
-    Run "Offboarding ticket for every leaver" evaluator and persist to ControlResults.
-    """
-    run_at = datetime.datetime.utcnow()
-    evaluation = evaluate_offboarding_ticket_per_leaver(db, organization_id, control_id)
-
-    row = ControlResults(
-        id=uuid.uuid4(),
-        organization_id=organization_id,
-        control_id=control_id,
-        run_at=run_at,
-        result=evaluation["result"],
-        details=evaluation["details"],
-        evidence_ids=evaluation.get("evidence_ids") or [],
-        created_at=run_at,
-    )
-    db.add(row)
-    return row
-
-
 @router.post("/offboarding-ticket-per-leaver", response_model=dict)
 def run_offboarding_ticket_per_leaver(
     body: OffboardingTicketEvaluationRequest,
@@ -160,30 +135,26 @@ def run_offboarding_ticket_per_leaver(
 ) -> dict:
     """
     Run control: Offboarding ticket exists for every leaver.
-    Persists result to ControlResults. Requires control_id (e.g. the control
-    that represents this requirement) and organization_id.
+    Computes result on demand and returns it (no persistence).
+    Requires control_id (e.g. the control that represents this requirement)
+    and organization_id.
     """
     control = db.get(Controls, body.control_id)
     if not control:
         raise HTTPException(status_code=404, detail="Control not found")
-    try:
-        row = run_and_persist_offboarding_ticket_control(
-            db=db,
-            organization_id=body.organization_id,
-            control_id=body.control_id,
-        )
-        db.commit()
-        db.refresh(row)
-    except Exception:
-        db.rollback()
-        raise
+    evaluation = evaluate_offboarding_ticket_per_leaver(
+        db=db,
+        organization_id=body.organization_id,
+        control_id=body.control_id,
+    )
+    run_at = datetime.datetime.utcnow()
     return {
-        "control_result_id": str(row.id),
-        "organization_id": str(row.organization_id),
-        "control_id": str(row.control_id),
-        "result": row.result,
-        "run_at": row.run_at.isoformat() if row.run_at else None,
-        "details": row.details,
+        "organization_id": str(body.organization_id),
+        "control_id": str(body.control_id),
+        "result": evaluation["result"],
+        "run_at": run_at.isoformat(),
+        "details": evaluation["details"],
+        "evidence_ids": evaluation.get("evidence_ids") or [],
     }
 
 
@@ -206,28 +177,6 @@ def evaluate_access_removed_within_24h(
     }
 
 
-def run_and_persist_access_removed_24h(
-    db: Session,
-    organization_id: uuid.UUID,
-    control_id: uuid.UUID,
-) -> ControlResults:
-    """Persist PENDING_IDP (or future PASS/FAIL) for Access removed within 24h control."""
-    run_at = datetime.datetime.utcnow()
-    evaluation = evaluate_access_removed_within_24h(db, organization_id, control_id)
-    row = ControlResults(
-        id=uuid.uuid4(),
-        organization_id=organization_id,
-        control_id=control_id,
-        run_at=run_at,
-        result=evaluation["result"],
-        details=evaluation["details"],
-        evidence_ids=evaluation.get("evidence_ids") or [],
-        created_at=run_at,
-    )
-    db.add(row)
-    return row
-
-
 @router.post("/access-removed-within-24h", response_model=dict)
 def run_access_removed_within_24h(
     body: AccessRemoved24hEvaluationRequest,
@@ -235,28 +184,23 @@ def run_access_removed_within_24h(
 ) -> dict:
     """
     Run control: Access removed within 24 hours of termination.
-    Returns PENDING_IDP until an Identity Provider (Okta, Entra ID, etc.) is integrated.
-    Persists result to ControlResults.
+    Returns PENDING_IDP until an Identity Provider (Okta, Entra ID, etc.) is
+    integrated. Computes result on demand and returns it (no persistence).
     """
     control = db.get(Controls, body.control_id)
     if not control:
         raise HTTPException(status_code=404, detail="Control not found")
-    try:
-        row = run_and_persist_access_removed_24h(
-            db=db,
-            organization_id=body.organization_id,
-            control_id=body.control_id,
-        )
-        db.commit()
-        db.refresh(row)
-    except Exception:
-        db.rollback()
-        raise
+    evaluation = evaluate_access_removed_within_24h(
+        db=db,
+        organization_id=body.organization_id,
+        control_id=body.control_id,
+    )
+    run_at = datetime.datetime.utcnow()
     return {
-        "control_result_id": str(row.id),
-        "organization_id": str(row.organization_id),
-        "control_id": str(row.control_id),
-        "result": row.result,
-        "run_at": row.run_at.isoformat() if row.run_at else None,
-        "details": row.details,
+        "organization_id": str(body.organization_id),
+        "control_id": str(body.control_id),
+        "result": evaluation["result"],
+        "run_at": run_at.isoformat(),
+        "details": evaluation["details"],
+        "evidence_ids": evaluation.get("evidence_ids") or [],
     }
