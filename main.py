@@ -1,6 +1,7 @@
 import warnings
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SAWarning
 
 from HRMS_Integrations import zoho_people_router
@@ -23,6 +24,15 @@ warnings.filterwarnings(
 )
 
 app = FastAPI(title="Tool Integrations Backend - GRC Platform")
+
+# CORS: allow all origins/methods/headers for now
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(zoho_people_router)
 app.include_router(jira_servicedesk_router)
