@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from HRMS_Integrations.db import get_db
-from models import ControlResults, Controls, Employees, Evidence, EvidenceCollections
+from models import  Controls, Employees, Evidence, EvidenceCollections
 
 
 router = APIRouter(prefix="/evaluate", tags=["Control evaluation"])

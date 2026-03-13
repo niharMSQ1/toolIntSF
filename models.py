@@ -14,6 +14,7 @@ class Cache(Base):
     __tablename__ = 'cache'
     __table_args__ = (
         PrimaryKeyConstraint('key', name='cache_pkey'),
+        {'schema': 'public'}
     )
 
     key: Mapped[str] = mapped_column(String(255), primary_key=True)
@@ -25,6 +26,7 @@ class CacheLocks(Base):
     __tablename__ = 'cache_locks'
     __table_args__ = (
         PrimaryKeyConstraint('key', name='cache_locks_pkey'),
+        {'schema': 'public'}
     )
 
     key: Mapped[str] = mapped_column(String(255), primary_key=True)
@@ -36,7 +38,8 @@ class Categories(Base):
     __tablename__ = 'categories'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='categories_pkey'),
-        UniqueConstraint('name', name='categories_name_unique')
+        UniqueConstraint('name', name='categories_name_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -60,7 +63,8 @@ class CertificateDrafts(Base):
         Index('certificate_drafts_is_published_index', 'is_published'),
         Index('certificate_drafts_name_index', 'name'),
         Index('certificate_drafts_organization_id_index', 'organization_id'),
-        Index('certificate_drafts_slug_index', 'slug')
+        Index('certificate_drafts_slug_index', 'slug'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -87,6 +91,7 @@ class CertificateProviders(Base):
     __tablename__ = 'certificate_providers'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='certificate_providers_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -104,7 +109,8 @@ class Certificates(Base):
         UniqueConstraint('slug', name='certificates_slug_unique'),
         Index('certificates_category_index', 'category'),
         Index('certificates_name_index', 'name'),
-        Index('certificates_slug_index', 'slug')
+        Index('certificates_slug_index', 'slug'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -137,7 +143,8 @@ class Controls(Base):
         UniqueConstraint('short_name', name='controls_short_name_unique'),
         Index('controls_category_index', 'category'),
         Index('controls_name_index', 'name'),
-        Index('controls_short_name_index', 'short_name')
+        Index('controls_short_name_index', 'short_name'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -162,13 +169,13 @@ class Controls(Base):
     control_evidence_master: Mapped[list['ControlEvidenceMaster']] = relationship('ControlEvidenceMaster', back_populates='control')
     organization_certificate_controls: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', back_populates='control')
     risk_controls: Mapped[list['RiskControls']] = relationship('RiskControls', back_populates='control')
-    control_results: Mapped[list['ControlResults']] = relationship('ControlResults', back_populates='control')
 
 
 class Countries(Base):
     __tablename__ = 'countries'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='countries_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -201,7 +208,8 @@ class FailedJobs(Base):
     __tablename__ = 'failed_jobs'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='failed_jobs_pkey'),
-        UniqueConstraint('uuid', name='failed_jobs_uuid_unique')
+        UniqueConstraint('uuid', name='failed_jobs_uuid_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -217,6 +225,7 @@ class Frameworks(Base):
     __tablename__ = 'frameworks'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='frameworks_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -230,6 +239,7 @@ class JobBatches(Base):
     __tablename__ = 'job_batches'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='job_batches_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[str] = mapped_column(String(255), primary_key=True)
@@ -248,7 +258,8 @@ class Jobs(Base):
     __tablename__ = 'jobs'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='jobs_pkey'),
-        Index('jobs_queue_index', 'queue')
+        Index('jobs_queue_index', 'queue'),
+        {'schema': 'public'}
     )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -264,6 +275,7 @@ class Migrations(Base):
     __tablename__ = 'migrations'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='migrations_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -275,7 +287,8 @@ class OauthAccessTokens(Base):
     __tablename__ = 'oauth_access_tokens'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='oauth_access_tokens_pkey'),
-        Index('oauth_access_tokens_user_id_index', 'user_id')
+        Index('oauth_access_tokens_user_id_index', 'user_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[str] = mapped_column(CHAR(80), primary_key=True)
@@ -293,7 +306,8 @@ class OauthClients(Base):
     __tablename__ = 'oauth_clients'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='oauth_clients_pkey'),
-        Index('oauth_clients_owner_type_owner_id_index', 'owner_type', 'owner_id')
+        Index('oauth_clients_owner_type_owner_id_index', 'owner_type', 'owner_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -318,7 +332,8 @@ class OauthDeviceCodes(Base):
         PrimaryKeyConstraint('id', name='oauth_device_codes_pkey'),
         UniqueConstraint('user_code', name='oauth_device_codes_user_code_unique'),
         Index('oauth_device_codes_client_id_index', 'client_id'),
-        Index('oauth_device_codes_user_id_index', 'user_id')
+        Index('oauth_device_codes_user_id_index', 'user_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[str] = mapped_column(CHAR(80), primary_key=True)
@@ -336,7 +351,8 @@ class OauthRefreshTokens(Base):
     __tablename__ = 'oauth_refresh_tokens'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='oauth_refresh_tokens_pkey'),
-        Index('oauth_refresh_tokens_access_token_id_index', 'access_token_id')
+        Index('oauth_refresh_tokens_access_token_id_index', 'access_token_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[str] = mapped_column(CHAR(80), primary_key=True)
@@ -353,7 +369,8 @@ class Organizations(Base):
         CheckConstraint("status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name='organizations_status_check'),
         PrimaryKeyConstraint('id', name='organizations_pkey'),
         UniqueConstraint('domain_name', name='organizations_domain_name_unique'),
-        UniqueConstraint('name', name='organizations_name_unique')
+        UniqueConstraint('name', name='organizations_name_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -369,6 +386,7 @@ class Organizations(Base):
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
     assets: Mapped[list['Assets']] = relationship('Assets', back_populates='organization')
+    auditors: Mapped[list['Auditors']] = relationship('Auditors', back_populates='organization')
     audits: Mapped[list['Audits']] = relationship('Audits', back_populates='organization')
     basic_settings: Mapped[Optional['BasicSettings']] = relationship('BasicSettings', uselist=False, back_populates='organization')
     data_subject_requests: Mapped[list['DataSubjectRequests']] = relationship('DataSubjectRequests', back_populates='organization')
@@ -390,7 +408,6 @@ class Organizations(Base):
     tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='organization')
     user_role_organizations: Mapped[list['UserRoleOrganizations']] = relationship('UserRoleOrganizations', back_populates='organization')
     user_web_tokens: Mapped[list['UserWebTokens']] = relationship('UserWebTokens', back_populates='organization')
-    control_results: Mapped[list['ControlResults']] = relationship('ControlResults', back_populates='organization')
     vendor_assessment_question_banks: Mapped[list['VendorAssessmentQuestionBanks']] = relationship('VendorAssessmentQuestionBanks', back_populates='organization')
     vulnerabilities: Mapped[list['Vulnerabilities']] = relationship('Vulnerabilities', back_populates='organization')
     organization_certificate_clauses: Mapped[list['OrganizationCertificateClauses']] = relationship('OrganizationCertificateClauses', back_populates='organization')
@@ -405,6 +422,7 @@ class PasswordResetTokens(Base):
     __tablename__ = 'password_reset_tokens'
     __table_args__ = (
         PrimaryKeyConstraint('email', name='password_reset_tokens_pkey'),
+        {'schema': 'public'}
     )
 
     email: Mapped[str] = mapped_column(String(255), primary_key=True)
@@ -415,10 +433,11 @@ class PasswordResetTokens(Base):
 class Permissions(Base):
     __tablename__ = 'permissions'
     __table_args__ = (
-        ForeignKeyConstraint(['parent_id'], ['permissions.id'], ondelete='CASCADE', name='permissions_parent_id_foreign'),
+        ForeignKeyConstraint(['parent_id'], ['public.permissions.id'], ondelete='CASCADE', name='permissions_parent_id_foreign'),
         PrimaryKeyConstraint('id', name='permissions_pkey'),
         UniqueConstraint('name', name='permissions_name_unique'),
-        Index('permissions_name_index', 'name')
+        Index('permissions_name_index', 'name'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -441,7 +460,8 @@ class PersonalAccessTokens(Base):
         PrimaryKeyConstraint('id', name='personal_access_tokens_pkey'),
         UniqueConstraint('token', name='personal_access_tokens_token_unique'),
         Index('personal_access_tokens_expires_at_index', 'expires_at'),
-        Index('personal_access_tokens_tokenable_type_tokenable_id_index', 'tokenable_type', 'tokenable_id')
+        Index('personal_access_tokens_tokenable_type_tokenable_id_index', 'tokenable_type', 'tokenable_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -462,7 +482,8 @@ class PolicyTemplates(Base):
         PrimaryKeyConstraint('id', name='policy_templates_pkey'),
         UniqueConstraint('short_name', name='policy_templates_short_name_unique'),
         Index('policy_templates_security_group_index', 'security_group'),
-        Index('policy_templates_title_index', 'title')
+        Index('policy_templates_title_index', 'title'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -492,7 +513,8 @@ class Roles(Base):
         CheckConstraint("status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name='roles_status_check'),
         PrimaryKeyConstraint('id', name='roles_pkey'),
         UniqueConstraint('name', name='roles_name_unique'),
-        Index('roles_name_index', 'name')
+        Index('roles_name_index', 'name'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -513,7 +535,8 @@ class Sessions(Base):
     __table_args__ = (
         PrimaryKeyConstraint('id', name='sessions_pkey'),
         Index('sessions_last_activity_index', 'last_activity'),
-        Index('sessions_user_id_index', 'user_id')
+        Index('sessions_user_id_index', 'user_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[str] = mapped_column(String(255), primary_key=True)
@@ -531,7 +554,8 @@ class SsoProviders(Base):
         PrimaryKeyConstraint('id', name='sso_providers_pkey'),
         UniqueConstraint('name', name='sso_providers_name_unique'),
         UniqueConstraint('slug', name='sso_providers_slug_unique'),
-        Index('sso_providers_slug_index', 'slug')
+        Index('sso_providers_slug_index', 'slug'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -550,6 +574,7 @@ class SuggestEvidence(Base):
     __tablename__ = 'suggest_evidence'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='suggest_evidence_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -569,7 +594,8 @@ class Tools(Base):
         UniqueConstraint('name', name='tools_name_unique'),
         Index('tools_category_index', 'category'),
         Index('tools_name_index', 'name'),
-        Index('tools_status_index', 'status')
+        Index('tools_status_index', 'status'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -593,6 +619,7 @@ class TrustCenterConfigs(Base):
     __tablename__ = 'trust_center_configs'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='trust_center_configs_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -606,6 +633,7 @@ class TrustCenters(Base):
     __tablename__ = 'trust_centers'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='trust_centers_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -623,7 +651,8 @@ class TrustcenterCompanies(Base):
         CheckConstraint("domain_type::text = ANY (ARRAY['CNAME'::character varying, 'A'::character varying]::text[])", name='trustcenter_companies_domain_type_check'),
         PrimaryKeyConstraint('id', name='trustcenter_companies_pkey'),
         UniqueConstraint('name', name='trustcenter_companies_name_unique'),
-        UniqueConstraint('slug', name='trustcenter_companies_slug_unique')
+        UniqueConstraint('slug', name='trustcenter_companies_slug_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -661,7 +690,8 @@ class TrustcenterContactRequests(Base):
     __tablename__ = 'trustcenter_contact_requests'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['pending'::character varying, 'read'::character varying, 'replied'::character varying, 'archived'::character varying]::text[])", name='trustcenter_contact_requests_status_check'),
-        PrimaryKeyConstraint('id', name='trustcenter_contact_requests_pkey')
+        PrimaryKeyConstraint('id', name='trustcenter_contact_requests_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -681,7 +711,8 @@ class TrustcenterControls(Base):
     __tablename__ = 'trustcenter_controls'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='trustcenter_controls_pkey'),
-        UniqueConstraint('short_name', name='trustcenter_controls_short_name_unique')
+        UniqueConstraint('short_name', name='trustcenter_controls_short_name_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -701,7 +732,8 @@ class TrustcenterPlans(Base):
     __tablename__ = 'trustcenter_plans'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='trustcenter_plans_pkey'),
-        UniqueConstraint('key', name='trustcenter_plans_key_unique')
+        UniqueConstraint('key', name='trustcenter_plans_key_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -720,7 +752,8 @@ class Users(Base):
         PrimaryKeyConstraint('id', name='users_pkey'),
         UniqueConstraint('email', name='users_email_unique'),
         Index('users_company_id_index', 'company_id'),
-        Index('users_product_index', 'product')
+        Index('users_product_index', 'product'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -762,9 +795,7 @@ class Users(Base):
     temp_policy_uploads: Mapped[list['TempPolicyUploads']] = relationship('TempPolicyUploads', back_populates='users')
     temp_tasks: Mapped[list['TempTasks']] = relationship('TempTasks', back_populates='owner')
     tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='user')
-    user_role_organizations: Mapped[list['UserRoleOrganizations']] = relationship('UserRoleOrganizations', back_populates='user')
     audit_clause_statuses: Mapped[list['AuditClauseStatuses']] = relationship('AuditClauseStatuses', back_populates='auditor')
-    auditors: Mapped[list['Auditors']] = relationship('Auditors', back_populates='user')
     organization_certificate_controls_assigned_by: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', foreign_keys='[OrganizationCertificateControls.assigned_by]', back_populates='users')
     organization_certificate_controls_assignee: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', foreign_keys='[OrganizationCertificateControls.assignee_id]', back_populates='assignee')
     policy_versions: Mapped[list['PolicyVersions']] = relationship('PolicyVersions', back_populates='users')
@@ -778,7 +809,8 @@ class VendorAssessmentQuestionBankTemps(Base):
     __tablename__ = 'vendor_assessment_question_bank_temps'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='vendor_assessment_question_bank_temps_pkey'),
-        Index('vendor_assessment_question_bank_temps_organization_id_index', 'organization_id')
+        Index('vendor_assessment_question_bank_temps_organization_id_index', 'organization_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -800,6 +832,7 @@ class VendorCertificateDocuments(Base):
     __tablename__ = 'vendor_certificate_documents'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='vendor_certificate_documents_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -812,9 +845,10 @@ class VendorCertificateDocuments(Base):
 class Assets(Base):
     __tablename__ = 'assets'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='assets_organization_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='assets_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='assets_pkey'),
-        Index('assets_organization_id_index', 'organization_id')
+        Index('assets_organization_id_index', 'organization_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -837,19 +871,43 @@ class Assets(Base):
     organization: Mapped['Organizations'] = relationship('Organizations', back_populates='assets')
 
 
+class Auditors(Base):
+    __tablename__ = 'auditors'
+    __table_args__ = (
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='auditors_organization_id_foreign'),
+        PrimaryKeyConstraint('id', name='auditors_pkey'),
+        UniqueConstraint('organization_id', 'email', name='auditors_organization_id_email_unique'),
+        Index('auditors_organization_id_index', 'organization_id'),
+        {'schema': 'public'}
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    name: Mapped[Optional[str]] = mapped_column(String(255))
+    password: Mapped[Optional[str]] = mapped_column(String(255))
+    status: Mapped[Optional[str]] = mapped_column(String(255))
+    remember_token: Mapped[Optional[str]] = mapped_column(String(100))
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+
+    organization: Mapped['Organizations'] = relationship('Organizations', back_populates='auditors')
+
+
 class Audits(Base):
     __tablename__ = 'audits'
     __table_args__ = (
-        ForeignKeyConstraint(['framework_id'], ['certificates.id'], ondelete='RESTRICT', onupdate='CASCADE', name='audits_framework_id_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='audits_organization_id_foreign'),
-        ForeignKeyConstraint(['poc_id'], ['users.id'], ondelete='RESTRICT', onupdate='CASCADE', name='audits_poc_id_foreign'),
+        ForeignKeyConstraint(['framework_id'], ['public.certificates.id'], ondelete='RESTRICT', onupdate='CASCADE', name='audits_framework_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='audits_organization_id_foreign'),
+        ForeignKeyConstraint(['poc_id'], ['public.users.id'], ondelete='RESTRICT', onupdate='CASCADE', name='audits_poc_id_foreign'),
         PrimaryKeyConstraint('id', name='audits_pkey'),
         Index('audits_end_date_index', 'end_date'),
         Index('audits_framework_id_index', 'framework_id'),
         Index('audits_organization_id_index', 'organization_id'),
         Index('audits_poc_id_index', 'poc_id'),
         Index('audits_start_date_index', 'start_date'),
-        Index('audits_status_index', 'status')
+        Index('audits_status_index', 'status'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -872,15 +930,16 @@ class Audits(Base):
     organization: Mapped['Organizations'] = relationship('Organizations', back_populates='audits')
     poc: Mapped['Users'] = relationship('Users', back_populates='audits')
     audit_clause_statuses: Mapped[list['AuditClauseStatuses']] = relationship('AuditClauseStatuses', back_populates='audit')
-    auditors: Mapped[list['Auditors']] = relationship('Auditors', back_populates='audit')
+    audit_mappings: Mapped[list['AuditMappings']] = relationship('AuditMappings', back_populates='audit')
 
 
 class BasicSettings(Base):
     __tablename__ = 'basic_settings'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='basic_settings_organization_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='basic_settings_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='basic_settings_pkey'),
-        UniqueConstraint('organization_id', name='basic_settings_organization_id_unique')
+        UniqueConstraint('organization_id', name='basic_settings_organization_id_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -905,11 +964,12 @@ class BasicSettings(Base):
 class Clauses(Base):
     __tablename__ = 'clauses'
     __table_args__ = (
-        ForeignKeyConstraint(['certificate_id'], ['certificates.id'], ondelete='CASCADE', onupdate='CASCADE', name='clauses_certificate_id_foreign'),
-        ForeignKeyConstraint(['parent_id'], ['clauses.id'], ondelete='CASCADE', onupdate='CASCADE', name='clauses_parent_id_foreign'),
+        ForeignKeyConstraint(['certificate_id'], ['public.certificates.id'], ondelete='CASCADE', onupdate='CASCADE', name='clauses_certificate_id_foreign'),
+        ForeignKeyConstraint(['parent_id'], ['public.clauses.id'], ondelete='CASCADE', onupdate='CASCADE', name='clauses_parent_id_foreign'),
         PrimaryKeyConstraint('id', name='clauses_pkey'),
         Index('clauses_certificate_id_index', 'certificate_id'),
-        Index('clauses_parent_id_index', 'parent_id')
+        Index('clauses_parent_id_index', 'parent_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -936,10 +996,11 @@ class Clauses(Base):
 class Comments(Base):
     __tablename__ = 'comments'
     __table_args__ = (
-        ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE', onupdate='CASCADE', name='comments_user_id_foreign'),
+        ForeignKeyConstraint(['user_id'], ['public.users.id'], ondelete='CASCADE', onupdate='CASCADE', name='comments_user_id_foreign'),
         PrimaryKeyConstraint('id', name='comments_pkey'),
         Index('comments_commentable_type_commentable_id_index', 'commentable_type', 'commentable_id'),
-        Index('comments_user_id_index', 'user_id')
+        Index('comments_user_id_index', 'user_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -956,11 +1017,12 @@ class Comments(Base):
 class ControlScenarios(Base):
     __tablename__ = 'control_scenarios'
     __table_args__ = (
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='control_scenarios_control_id_foreign'),
-        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', name='control_scenarios_tool_id_foreign'),
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='CASCADE', name='control_scenarios_control_id_foreign'),
+        ForeignKeyConstraint(['tool_id'], ['public.tools.id'], ondelete='CASCADE', name='control_scenarios_tool_id_foreign'),
         PrimaryKeyConstraint('id', name='control_scenarios_pkey'),
         Index('control_scenarios_control_id_tool_id_index', 'control_id', 'tool_id'),
-        Index('control_scenarios_evidence_name_index', 'evidence_name')
+        Index('control_scenarios_evidence_name_index', 'evidence_name'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -984,11 +1046,12 @@ class DataSubjectRequests(Base):
     __table_args__ = (
         CheckConstraint("request_type::text = ANY (ARRAY['access_my_personal_data'::character varying, 'correct_my_personal_data'::character varying, 'delete_my_personal_data'::character varying, 'restrict_how_my_personal_data_is_used'::character varying, 'receive_a_copy_of_my_personal_data'::character varying, 'object_to_the_use_of_my_personal_data'::character varying, 'opt_out_of_the_sale_or_sharing_of_my_personal_data'::character varying, 'other_my_data_request'::character varying]::text[])", name='data_subject_requests_request_type_check'),
         CheckConstraint("status::text = ANY (ARRAY['requested'::character varying, 'identity_pending'::character varying, 'in_progress'::character varying, 'on_hold'::character varying, 'completed'::character varying, 'rejected'::character varying]::text[])", name='data_subject_requests_status_check'),
-        ForeignKeyConstraint(['assigned_to'], ['users.id'], ondelete='SET NULL', name='data_subject_requests_assigned_to_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='SET NULL', name='data_subject_requests_organization_id_foreign'),
+        ForeignKeyConstraint(['assigned_to'], ['public.users.id'], ondelete='SET NULL', name='data_subject_requests_assigned_to_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='SET NULL', name='data_subject_requests_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='data_subject_requests_pkey'),
         Index('data_subject_requests_email_index', 'email'),
-        Index('data_subject_requests_organization_id_index', 'organization_id')
+        Index('data_subject_requests_organization_id_index', 'organization_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -997,7 +1060,7 @@ class DataSubjectRequests(Base):
     request_type: Mapped[str] = mapped_column(String(255), nullable=False)
     identity_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
     status: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'requested'::character varying"))
-    requested_date: Mapped[datetime.date] = mapped_column(Date, nullable=False, server_default=text("'2026-03-09'::date"))
+    requested_date: Mapped[datetime.date] = mapped_column(Date, nullable=False, server_default=text("'2026-03-12'::date"))
     organization_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
     organization_name: Mapped[Optional[str]] = mapped_column(String(255))
     phone: Mapped[Optional[str]] = mapped_column(String(255))
@@ -1025,10 +1088,11 @@ class EmailLogs(Base):
     __tablename__ = 'email_logs'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['queued'::character varying, 'sent'::character varying, 'failed'::character varying]::text[])", name='email_logs_status_check'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='SET NULL', name='email_logs_organization_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='SET NULL', name='email_logs_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='email_logs_pkey'),
         Index('email_logs_emailable_type_emailable_id_index', 'emailable_type', 'emailable_id'),
-        Index('email_logs_organization_id_index', 'organization_id')
+        Index('email_logs_organization_id_index', 'organization_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1053,14 +1117,15 @@ class Employees(Base):
     __tablename__ = 'employees'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['invited'::character varying, 'active'::character varying, 'inactive'::character varying]::text[])", name='employees_status_check'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='employees_organization_id_foreign'),
-        ForeignKeyConstraint(['sync_user_id'], ['users.id'], ondelete='CASCADE', onupdate='CASCADE', name='employees_sync_user_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='employees_organization_id_foreign'),
+        ForeignKeyConstraint(['sync_user_id'], ['public.users.id'], ondelete='CASCADE', onupdate='CASCADE', name='employees_sync_user_id_foreign'),
         PrimaryKeyConstraint('id', name='employees_pkey'),
         UniqueConstraint('organization_id', 'email', name='employees_organization_id_email_unique'),
         Index('employees_department_index', 'department'),
         Index('employees_designation_index', 'designation'),
         Index('employees_name_index', 'name'),
-        Index('employees_status_index', 'status')
+        Index('employees_status_index', 'status'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1093,10 +1158,11 @@ class Employees(Base):
 class Evidence(Base):
     __tablename__ = 'evidence'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='evidence_organization_id_foreign'),
-        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', name='evidence_tool_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='evidence_organization_id_foreign'),
+        ForeignKeyConstraint(['tool_id'], ['public.tools.id'], ondelete='CASCADE', name='evidence_tool_id_foreign'),
         PrimaryKeyConstraint('id', name='evidence_pkey'),
-        Index('evidence_title_index', 'title')
+        Index('evidence_title_index', 'title'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1119,11 +1185,12 @@ class Evidence(Base):
 class EvidenceMasters(Base):
     __tablename__ = 'evidence_masters'
     __table_args__ = (
-        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', name='evidence_masters_tool_id_foreign'),
+        ForeignKeyConstraint(['tool_id'], ['public.tools.id'], ondelete='CASCADE', name='evidence_masters_tool_id_foreign'),
         PrimaryKeyConstraint('id', name='evidence_masters_pkey'),
         UniqueConstraint('code', name='evidence_masters_code_unique'),
         Index('evidence_masters_category_index', 'category'),
-        Index('evidence_masters_tool_id_index', 'tool_id')
+        Index('evidence_masters_tool_id_index', 'tool_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1147,12 +1214,13 @@ class EvidenceMasters(Base):
 class FrameworkImportDrafts(Base):
     __tablename__ = 'framework_import_drafts'
     __table_args__ = (
-        ForeignKeyConstraint(['certificate_draft_id'], ['certificate_drafts.id'], ondelete='CASCADE', name='framework_import_drafts_certificate_draft_id_foreign'),
-        ForeignKeyConstraint(['certificate_id'], ['certificates.id'], ondelete='CASCADE', name='framework_import_drafts_certificate_id_foreign'),
-        ForeignKeyConstraint(['created_by'], ['users.id'], ondelete='SET NULL', name='framework_import_drafts_created_by_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='framework_import_drafts_organization_id_foreign'),
+        ForeignKeyConstraint(['certificate_draft_id'], ['public.certificate_drafts.id'], ondelete='CASCADE', name='framework_import_drafts_certificate_draft_id_foreign'),
+        ForeignKeyConstraint(['certificate_id'], ['public.certificates.id'], ondelete='CASCADE', name='framework_import_drafts_certificate_id_foreign'),
+        ForeignKeyConstraint(['created_by'], ['public.users.id'], ondelete='SET NULL', name='framework_import_drafts_created_by_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='framework_import_drafts_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='framework_import_drafts_pkey'),
-        Index('framework_import_drafts_organization_id_certificate_id_index', 'organization_id', 'certificate_id')
+        Index('framework_import_drafts_organization_id_certificate_id_index', 'organization_id', 'certificate_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1174,9 +1242,10 @@ class FrameworkImportDrafts(Base):
 class IntegrationData(Base):
     __tablename__ = 'integration_data'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='integration_data_organization_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='integration_data_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='integration_data_pkey'),
-        UniqueConstraint('platform', 'external_id', 'organization_id', name='unique_platform_external_org')
+        UniqueConstraint('platform', 'external_id', 'organization_id', name='unique_platform_external_org'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1195,11 +1264,12 @@ class IntegrationData(Base):
 class InternalControls(Base):
     __tablename__ = 'internal_controls'
     __table_args__ = (
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='internal_controls_control_id_foreign'),
-        ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='CASCADE', name='internal_controls_owner_id_foreign'),
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='CASCADE', name='internal_controls_control_id_foreign'),
+        ForeignKeyConstraint(['owner_id'], ['public.users.id'], ondelete='CASCADE', name='internal_controls_owner_id_foreign'),
         PrimaryKeyConstraint('id', name='internal_controls_pkey'),
         Index('internal_controls_control_id_index', 'control_id'),
-        Index('internal_controls_owner_id_index', 'owner_id')
+        Index('internal_controls_owner_id_index', 'owner_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1222,10 +1292,11 @@ class InternalControls(Base):
 class Notifications(Base):
     __tablename__ = 'notifications'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='notifications_organization_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='notifications_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='notifications_pkey'),
         Index('notifications_notifiable_type_notifiable_id_read_at_index', 'notifiable_type', 'notifiable_id', 'read_at'),
-        Index('notifications_organization_id_read_at_index', 'organization_id', 'read_at')
+        Index('notifications_organization_id_read_at_index', 'organization_id', 'read_at'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1245,9 +1316,10 @@ class Notifications(Base):
 class OrgExePolicies(Base):
     __tablename__ = 'org_exe_policies'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='org_exe_policies_organization_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='org_exe_policies_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='org_exe_policies_pkey'),
-        Index('org_exe_policies_organization_id_index', 'organization_id')
+        Index('org_exe_policies_organization_id_index', 'organization_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1265,12 +1337,13 @@ class OrgPolicies(Base):
     __table_args__ = (
         CheckConstraint("policy_type::text = ANY (ARRAY['orgpolicy'::character varying, 'existingpolicy'::character varying]::text[])", name='org_policies_policy_type_check'),
         CheckConstraint("status::text = ANY (ARRAY['initialising'::character varying, 'initiated'::character varying, 'generated'::character varying]::text[])", name='org_policies_status_check'),
-        ForeignKeyConstraint(['created_by'], ['users.id'], ondelete='CASCADE', name='org_policies_created_by_foreign'),
-        ForeignKeyConstraint(['created_by_id'], ['users.id'], ondelete='CASCADE', name='org_policies_created_by_id_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='org_policies_organization_id_foreign'),
+        ForeignKeyConstraint(['created_by'], ['public.users.id'], ondelete='CASCADE', name='org_policies_created_by_foreign'),
+        ForeignKeyConstraint(['created_by_id'], ['public.users.id'], ondelete='CASCADE', name='org_policies_created_by_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='org_policies_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='org_policies_pkey'),
         Index('org_policies_organization_id_index', 'organization_id'),
-        Index('org_policies_title_index', 'title')
+        Index('org_policies_title_index', 'title'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1297,10 +1370,11 @@ class OrgPolicies(Base):
 class OrganizationCertificates(Base):
     __tablename__ = 'organization_certificates'
     __table_args__ = (
-        ForeignKeyConstraint(['certificate_id'], ['certificates.id'], ondelete='CASCADE', name='organization_certificates_certificate_id_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='organization_certificates_organization_id_foreign'),
+        ForeignKeyConstraint(['certificate_id'], ['public.certificates.id'], ondelete='CASCADE', name='organization_certificates_certificate_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='organization_certificates_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='organization_certificates_pkey'),
-        UniqueConstraint('organization_id', 'certificate_id', name='org_cert_unique')
+        UniqueConstraint('organization_id', 'certificate_id', name='org_cert_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1319,9 +1393,10 @@ class OrganizationCertificates(Base):
 class OrganizationPolicies(Base):
     __tablename__ = 'organization_policies'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policies_organization_id_foreign'),
-        ForeignKeyConstraint(['policy_template_id'], ['policy_templates.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policies_policy_template_id_foreign'),
-        PrimaryKeyConstraint('id', name='organization_policies_pkey')
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policies_organization_id_foreign'),
+        ForeignKeyConstraint(['policy_template_id'], ['public.policy_templates.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policies_policy_template_id_foreign'),
+        PrimaryKeyConstraint('id', name='organization_policies_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1341,13 +1416,14 @@ class OrganizationPolicies(Base):
 class OrganizationPolicyControlMappings(Base):
     __tablename__ = 'organization_policy_control_mappings'
     __table_args__ = (
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_control_mappings_control_id_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_control_mappings_organization_id_foreign'),
-        ForeignKeyConstraint(['policy_template_id'], ['policy_templates.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_control_mappings_policy_template_id_foreign'),
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_control_mappings_control_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_control_mappings_organization_id_foreign'),
+        ForeignKeyConstraint(['policy_template_id'], ['public.policy_templates.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_control_mappings_policy_template_id_foreign'),
         PrimaryKeyConstraint('id', name='organization_policy_control_mappings_pkey'),
         UniqueConstraint('organization_id', 'policy_template_id', 'control_id', name='organization_policy_control_mappings_organization_id_policy_tem'),
         Index('organization_policy_control_mappings_control_id_index', 'control_id'),
-        Index('organization_policy_control_mappings_policy_template_id_index', 'policy_template_id')
+        Index('organization_policy_control_mappings_policy_template_id_index', 'policy_template_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1365,10 +1441,11 @@ class OrganizationPolicyControlMappings(Base):
 class PolicyControlMappings(Base):
     __tablename__ = 'policy_control_mappings'
     __table_args__ = (
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', onupdate='CASCADE', name='policy_control_mappings_control_id_foreign'),
-        ForeignKeyConstraint(['policy_template_id'], ['policy_templates.id'], ondelete='CASCADE', onupdate='CASCADE', name='policy_control_mappings_policy_template_id_foreign'),
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='CASCADE', onupdate='CASCADE', name='policy_control_mappings_control_id_foreign'),
+        ForeignKeyConstraint(['policy_template_id'], ['public.policy_templates.id'], ondelete='CASCADE', onupdate='CASCADE', name='policy_control_mappings_policy_template_id_foreign'),
         PrimaryKeyConstraint('id', name='policy_control_mappings_pkey'),
-        UniqueConstraint('policy_template_id', 'control_id', name='policy_control_mappings_policy_template_id_control_id_unique')
+        UniqueConstraint('policy_template_id', 'control_id', name='policy_control_mappings_policy_template_id_control_id_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1387,12 +1464,13 @@ class Reports(Base):
         CheckConstraint("export_format::text = ANY (ARRAY['PDF'::character varying, 'CSV'::character varying, 'JSON'::character varying]::text[])", name='reports_export_format_check'),
         CheckConstraint("report_type::text = ANY (ARRAY['Risk'::character varying, 'Vendor'::character varying, 'Policy'::character varying, 'Audit'::character varying]::text[])", name='reports_report_type_check'),
         CheckConstraint("status::text = ANY (ARRAY['Ready'::character varying, 'Processing'::character varying, 'Failed'::character varying]::text[])", name='reports_status_check'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='reports_organization_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='reports_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='reports_pkey'),
         Index('reports_created_at_index', 'created_at'),
         Index('reports_generated_by_index', 'generated_by'),
         Index('reports_organization_id_index', 'organization_id'),
-        Index('reports_type_index', 'report_type')
+        Index('reports_type_index', 'report_type'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1415,9 +1493,10 @@ class Reports(Base):
 class RiskLibraries(Base):
     __tablename__ = 'risk_libraries'
     __table_args__ = (
-        ForeignKeyConstraint(['org_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='risk_libraries_org_id_foreign'),
+        ForeignKeyConstraint(['org_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='risk_libraries_org_id_foreign'),
         PrimaryKeyConstraint('id', name='risk_libraries_pkey'),
-        Index('risk_libraries_org_id_index', 'org_id')
+        Index('risk_libraries_org_id_index', 'org_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1442,10 +1521,11 @@ class RiskLibraries(Base):
 class RolePermission(Base):
     __tablename__ = 'role_permission'
     __table_args__ = (
-        ForeignKeyConstraint(['permission_id'], ['permissions.id'], ondelete='CASCADE', name='role_permission_permission_id_foreign'),
-        ForeignKeyConstraint(['role_id'], ['roles.id'], ondelete='CASCADE', name='role_permission_role_id_foreign'),
+        ForeignKeyConstraint(['permission_id'], ['public.permissions.id'], ondelete='CASCADE', name='role_permission_permission_id_foreign'),
+        ForeignKeyConstraint(['role_id'], ['public.roles.id'], ondelete='CASCADE', name='role_permission_role_id_foreign'),
         PrimaryKeyConstraint('id', name='role_permission_pkey'),
-        UniqueConstraint('role_id', 'permission_id', name='role_permission_role_id_permission_id_unique')
+        UniqueConstraint('role_id', 'permission_id', name='role_permission_role_id_permission_id_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1461,12 +1541,13 @@ class RolePermission(Base):
 class SsoSetups(Base):
     __tablename__ = 'sso_setups'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='sso_setups_organization_id_foreign'),
-        ForeignKeyConstraint(['sso_provider_id'], ['sso_providers.id'], ondelete='CASCADE', onupdate='CASCADE', name='sso_setups_sso_provider_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='sso_setups_organization_id_foreign'),
+        ForeignKeyConstraint(['sso_provider_id'], ['public.sso_providers.id'], ondelete='CASCADE', onupdate='CASCADE', name='sso_setups_sso_provider_id_foreign'),
         PrimaryKeyConstraint('id', name='sso_setups_pkey'),
         Index('sso_setups_organization_id_index', 'organization_id'),
         Index('sso_setups_sso_provider_id_index', 'sso_provider_id'),
-        Index('sso_setups_status_index', 'status')
+        Index('sso_setups_status_index', 'status'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1485,9 +1566,10 @@ class SsoSetups(Base):
 class States(Base):
     __tablename__ = 'states'
     __table_args__ = (
-        ForeignKeyConstraint(['country_id'], ['countries.id'], ondelete='CASCADE', name='states_country_id_foreign'),
+        ForeignKeyConstraint(['country_id'], ['public.countries.id'], ondelete='CASCADE', name='states_country_id_foreign'),
         PrimaryKeyConstraint('id', name='states_pkey'),
-        Index('states_country_id_index', 'country_id')
+        Index('states_country_id_index', 'country_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -1509,8 +1591,9 @@ class States(Base):
 class SubCategories(Base):
     __tablename__ = 'sub_categories'
     __table_args__ = (
-        ForeignKeyConstraint(['category_id'], ['categories.id'], ondelete='CASCADE', name='sub_categories_category_id_foreign'),
-        PrimaryKeyConstraint('id', name='sub_categories_pkey')
+        ForeignKeyConstraint(['category_id'], ['public.categories.id'], ondelete='CASCADE', name='sub_categories_category_id_foreign'),
+        PrimaryKeyConstraint('id', name='sub_categories_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1529,9 +1612,10 @@ class SubCategories(Base):
 class SuggestEvidenceControlMappings(Base):
     __tablename__ = 'suggest_evidence_control_mappings'
     __table_args__ = (
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='suggest_evidence_control_mappings_control_id_foreign'),
-        ForeignKeyConstraint(['suggest_evidence_id'], ['suggest_evidence.id'], ondelete='CASCADE', name='suggest_evidence_control_mappings_suggest_evidence_id_foreign'),
-        PrimaryKeyConstraint('id', name='suggest_evidence_control_mappings_pkey')
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='CASCADE', name='suggest_evidence_control_mappings_control_id_foreign'),
+        ForeignKeyConstraint(['suggest_evidence_id'], ['public.suggest_evidence.id'], ondelete='CASCADE', name='suggest_evidence_control_mappings_suggest_evidence_id_foreign'),
+        PrimaryKeyConstraint('id', name='suggest_evidence_control_mappings_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1548,11 +1632,12 @@ class TempPolicyUploads(Base):
     __tablename__ = 'temp_policy_uploads'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['pending'::character varying, 'processing'::character varying, 'completed'::character varying, 'failed'::character varying]::text[])", name='temp_policy_uploads_status_check'),
-        ForeignKeyConstraint(['created_by'], ['users.id'], ondelete='SET NULL', name='temp_policy_uploads_created_by_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='temp_policy_uploads_organization_id_foreign'),
+        ForeignKeyConstraint(['created_by'], ['public.users.id'], ondelete='SET NULL', name='temp_policy_uploads_created_by_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='temp_policy_uploads_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='temp_policy_uploads_pkey'),
         Index('temp_policy_uploads_file_hash_index', 'file_hash'),
-        Index('temp_policy_uploads_org_name_version_index', 'organization_id', 'policy_name', 'policy_version')
+        Index('temp_policy_uploads_org_name_version_index', 'organization_id', 'policy_name', 'policy_version'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1575,13 +1660,14 @@ class TempPolicyUploads(Base):
 class TempTasks(Base):
     __tablename__ = 'temp_tasks'
     __table_args__ = (
-        ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='SET NULL', onupdate='CASCADE', name='temp_tasks_owner_id_foreign'),
+        ForeignKeyConstraint(['owner_id'], ['public.users.id'], ondelete='SET NULL', onupdate='CASCADE', name='temp_tasks_owner_id_foreign'),
         PrimaryKeyConstraint('id', name='temp_tasks_pkey'),
         Index('temp_tasks_due_date_index', 'due_date'),
         Index('temp_tasks_owner_id_index', 'owner_id'),
         Index('temp_tasks_priority_index', 'priority'),
         Index('temp_tasks_status_index', 'status'),
-        Index('temp_tasks_taskable_type_taskable_id_index', 'taskable_type', 'taskable_id')
+        Index('temp_tasks_taskable_type_taskable_id_index', 'taskable_type', 'taskable_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1604,13 +1690,14 @@ class TempTasks(Base):
 class ToolIntegrations(Base):
     __tablename__ = 'tool_integrations'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_organization_id_foreign'),
-        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_tool_id_foreign'),
-        ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_user_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_organization_id_foreign'),
+        ForeignKeyConstraint(['tool_id'], ['public.tools.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_tool_id_foreign'),
+        ForeignKeyConstraint(['user_id'], ['public.users.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_user_id_foreign'),
         PrimaryKeyConstraint('id', name='tool_integrations_pkey'),
         Index('tool_integrations_organization_id_index', 'organization_id'),
         Index('tool_integrations_tool_id_index', 'tool_id'),
-        Index('tool_integrations_user_id_index', 'user_id')
+        Index('tool_integrations_user_id_index', 'user_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1631,9 +1718,10 @@ class TrustcenterAccessRequests(Base):
     __tablename__ = 'trustcenter_access_requests'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['pending'::character varying, 'approved'::character varying, 'denied'::character varying]::text[])", name='trustcenter_access_requests_status_check'),
-        ForeignKeyConstraint(['company_id'], ['trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_access_requests_company_id_foreign'),
+        ForeignKeyConstraint(['company_id'], ['public.trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_access_requests_company_id_foreign'),
         PrimaryKeyConstraint('id', name='trustcenter_access_requests_pkey'),
-        Index('trustcenter_access_requests_access_token_index', 'access_token')
+        Index('trustcenter_access_requests_access_token_index', 'access_token'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1656,8 +1744,9 @@ class TrustcenterCertifications(Base):
     __tablename__ = 'trustcenter_certifications'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['compliant'::character varying, 'in_progress'::character varying, 'not_applicable'::character varying]::text[])", name='trustcenter_certifications_status_check'),
-        ForeignKeyConstraint(['company_id'], ['trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_certifications_company_id_foreign'),
-        PrimaryKeyConstraint('id', name='trustcenter_certifications_pkey')
+        ForeignKeyConstraint(['company_id'], ['public.trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_certifications_company_id_foreign'),
+        PrimaryKeyConstraint('id', name='trustcenter_certifications_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1676,10 +1765,11 @@ class TrustcenterCertifications(Base):
 class TrustcenterCompanyControls(Base):
     __tablename__ = 'trustcenter_company_controls'
     __table_args__ = (
-        ForeignKeyConstraint(['company_id'], ['trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_company_controls_company_id_foreign'),
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='trustcenter_company_controls_control_id_foreign'),
+        ForeignKeyConstraint(['company_id'], ['public.trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_company_controls_company_id_foreign'),
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='CASCADE', name='trustcenter_company_controls_control_id_foreign'),
         PrimaryKeyConstraint('id', name='trustcenter_company_controls_pkey'),
-        UniqueConstraint('company_id', 'control_id', name='trustcenter_company_controls_company_id_control_id_unique')
+        UniqueConstraint('company_id', 'control_id', name='trustcenter_company_controls_company_id_control_id_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1696,8 +1786,9 @@ class TrustcenterCompanyControls(Base):
 class TrustcenterFaqs(Base):
     __tablename__ = 'trustcenter_faqs'
     __table_args__ = (
-        ForeignKeyConstraint(['company_id'], ['trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_faqs_company_id_foreign'),
-        PrimaryKeyConstraint('id', name='trustcenter_faqs_pkey')
+        ForeignKeyConstraint(['company_id'], ['public.trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_faqs_company_id_foreign'),
+        PrimaryKeyConstraint('id', name='trustcenter_faqs_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1714,8 +1805,9 @@ class TrustcenterFaqs(Base):
 class TrustcenterLeadership(Base):
     __tablename__ = 'trustcenter_leadership'
     __table_args__ = (
-        ForeignKeyConstraint(['company_id'], ['trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_leadership_company_id_foreign'),
-        PrimaryKeyConstraint('id', name='trustcenter_leadership_pkey')
+        ForeignKeyConstraint(['company_id'], ['public.trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_leadership_company_id_foreign'),
+        PrimaryKeyConstraint('id', name='trustcenter_leadership_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1735,8 +1827,9 @@ class TrustcenterLeadership(Base):
 class TrustcenterSubprocessors(Base):
     __tablename__ = 'trustcenter_subprocessors'
     __table_args__ = (
-        ForeignKeyConstraint(['company_id'], ['trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_subprocessors_company_id_foreign'),
-        PrimaryKeyConstraint('id', name='trustcenter_subprocessors_pkey')
+        ForeignKeyConstraint(['company_id'], ['public.trustcenter_companies.id'], ondelete='CASCADE', name='trustcenter_subprocessors_company_id_foreign'),
+        PrimaryKeyConstraint('id', name='trustcenter_subprocessors_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1755,13 +1848,14 @@ class TrustcenterSubprocessors(Base):
 class TrustcenterUsers(Base):
     __tablename__ = 'trustcenter_users'
     __table_args__ = (
-        ForeignKeyConstraint(['company_id'], ['trustcenter_companies.id'], ondelete='CASCADE', onupdate='CASCADE', name='trustcenter_users_company_id_fkey'),
+        ForeignKeyConstraint(['company_id'], ['public.trustcenter_companies.id'], ondelete='CASCADE', onupdate='CASCADE', name='trustcenter_users_company_id_fkey'),
         PrimaryKeyConstraint('id', name='trustcenter_users_pkey'),
         UniqueConstraint('email', name='trustcenter_users_email_unique'),
         Index('idx_users_company', 'company'),
         Index('idx_users_company_id', 'company_id'),
         Index('idx_users_deleted_at', 'deleted_at'),
-        Index('idx_users_is_published', 'is_published')
+        Index('idx_users_is_published', 'is_published'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1794,35 +1888,37 @@ class UserRoleOrganizations(Base):
     __tablename__ = 'user_role_organizations'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'invited'::character varying, 'resent-invited'::character varying]::text[])", name='user_role_organizations_status_check'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='user_role_organizations_organization_id_foreign'),
-        ForeignKeyConstraint(['role_id'], ['roles.id'], ondelete='CASCADE', name='user_role_organizations_role_id_foreign'),
-        ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE', name='user_role_organizations_user_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='user_role_organizations_organization_id_foreign'),
+        ForeignKeyConstraint(['role_id'], ['public.roles.id'], ondelete='CASCADE', name='user_role_organizations_role_id_foreign'),
         PrimaryKeyConstraint('id', name='user_role_organizations_pkey'),
-        UniqueConstraint('user_id', 'role_id', 'organization_id', name='user_role_organizations_user_id_role_id_organization_id_unique')
+        UniqueConstraint('assignable_type', 'assignable_id', 'role_id', 'organization_id', name='uro_assignable_role_org_unique'),
+        Index('user_role_organizations_assignable_type_assignable_id_index', 'assignable_type', 'assignable_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    user_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     role_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     status: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'inactive'::character varying"))
     is_primary: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
+    assignable_type: Mapped[Optional[str]] = mapped_column(String(255))
+    assignable_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
     organization: Mapped['Organizations'] = relationship('Organizations', back_populates='user_role_organizations')
     role: Mapped['Roles'] = relationship('Roles', back_populates='user_role_organizations')
-    user: Mapped['Users'] = relationship('Users', back_populates='user_role_organizations')
 
 
 class UserWebTokens(Base):
     __tablename__ = 'user_web_tokens'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='user_web_tokens_organization_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='user_web_tokens_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='user_web_tokens_pkey'),
         UniqueConstraint('token', name='user_web_tokens_token_unique'),
         Index('user_web_tokens_organization_id_index', 'organization_id'),
-        Index('user_web_tokens_tokenable_type_tokenable_id_index', 'tokenable_type', 'tokenable_id')
+        Index('user_web_tokens_tokenable_type_tokenable_id_index', 'tokenable_type', 'tokenable_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1843,13 +1939,14 @@ class UserWebTokens(Base):
 class VendorAssessmentQuestionBanks(Base):
     __tablename__ = 'vendor_assessment_question_banks'
     __table_args__ = (
-        ForeignKeyConstraint(['certificate_id'], ['certificates.id'], ondelete='CASCADE', name='vendor_assessment_question_banks_certificate_id_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='vendor_assessment_question_banks_organization_id_foreign'),
+        ForeignKeyConstraint(['certificate_id'], ['public.certificates.id'], ondelete='CASCADE', name='vendor_assessment_question_banks_certificate_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='vendor_assessment_question_banks_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='vendor_assessment_question_banks_pkey'),
         Index('vendor_assessment_question_banks_certificate_id_index', 'certificate_id'),
         Index('vendor_assessment_question_banks_department_index', 'department'),
         Index('vendor_assessment_question_banks_organization_id_index', 'organization_id'),
-        Index('vendor_assessment_question_banks_vendor_type_index', 'vendor_type')
+        Index('vendor_assessment_question_banks_vendor_type_index', 'vendor_type'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1874,9 +1971,10 @@ class VendorAssessmentQuestionBanks(Base):
 class Vulnerabilities(Base):
     __tablename__ = 'vulnerabilities'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='vulnerabilities_organization_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='vulnerabilities_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='vulnerabilities_pkey'),
-        Index('assests_organization_id_index', 'organization_id')
+        Index('assests_organization_id_index', 'organization_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1902,15 +2000,16 @@ class Vulnerabilities(Base):
 class AuditClauseStatuses(Base):
     __tablename__ = 'audit_clause_statuses'
     __table_args__ = (
-        ForeignKeyConstraint(['audit_id'], ['audits.id'], ondelete='CASCADE', onupdate='CASCADE', name='audit_clause_statuses_audit_id_foreign'),
-        ForeignKeyConstraint(['auditor_id'], ['users.id'], ondelete='SET NULL', onupdate='CASCADE', name='audit_clause_statuses_auditor_id_foreign'),
-        ForeignKeyConstraint(['clause_id'], ['clauses.id'], ondelete='CASCADE', onupdate='CASCADE', name='audit_clause_statuses_clause_id_foreign'),
+        ForeignKeyConstraint(['audit_id'], ['public.audits.id'], ondelete='CASCADE', onupdate='CASCADE', name='audit_clause_statuses_audit_id_foreign'),
+        ForeignKeyConstraint(['auditor_id'], ['public.users.id'], ondelete='SET NULL', onupdate='CASCADE', name='audit_clause_statuses_auditor_id_foreign'),
+        ForeignKeyConstraint(['clause_id'], ['public.clauses.id'], ondelete='CASCADE', onupdate='CASCADE', name='audit_clause_statuses_clause_id_foreign'),
         PrimaryKeyConstraint('id', name='audit_clause_statuses_pkey'),
         UniqueConstraint('audit_id', 'clause_id', name='audit_clause_unique'),
         Index('audit_clause_statuses_audit_id_index', 'audit_id'),
         Index('audit_clause_statuses_auditor_id_index', 'auditor_id'),
         Index('audit_clause_statuses_clause_id_index', 'clause_id'),
-        Index('audit_clause_statuses_status_index', 'status')
+        Index('audit_clause_statuses_status_index', 'status'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1927,39 +2026,36 @@ class AuditClauseStatuses(Base):
     clause: Mapped['Clauses'] = relationship('Clauses', back_populates='audit_clause_statuses')
 
 
-class Auditors(Base):
-    __tablename__ = 'auditors'
+class AuditMappings(Base):
+    __tablename__ = 'audit_mappings'
     __table_args__ = (
-        ForeignKeyConstraint(['audit_id'], ['audits.id'], ondelete='CASCADE', onupdate='CASCADE', name='auditors_audit_id_foreign'),
-        ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='SET NULL', onupdate='CASCADE', name='auditors_user_id_foreign'),
-        PrimaryKeyConstraint('id', name='auditors_pkey'),
-        Index('auditors_audit_id_index', 'audit_id'),
-        Index('auditors_user_id_index', 'user_id')
+        ForeignKeyConstraint(['audit_id'], ['public.audits.id'], ondelete='CASCADE', onupdate='CASCADE', name='audit_mappings_audit_id_foreign'),
+        PrimaryKeyConstraint('id', name='audit_mappings_pkey'),
+        Index('audit_mappings_audit_id_index', 'audit_id'),
+        Index('audit_mappings_auditable_id_index', 'auditable_id'),
+        Index('audit_mappings_auditable_type_auditable_id_index', 'auditable_type', 'auditable_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
     audit_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    email: Mapped[str] = mapped_column(String(255), nullable=False)
-    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
-    name: Mapped[Optional[str]] = mapped_column(String(255))
-    password: Mapped[Optional[str]] = mapped_column(String(255))
-    status: Mapped[Optional[str]] = mapped_column(String(255))
-    remember_token: Mapped[Optional[str]] = mapped_column(String(100))
+    auditable_type: Mapped[str] = mapped_column(String(255), nullable=False)
+    auditable_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
-    audit: Mapped['Audits'] = relationship('Audits', back_populates='auditors')
-    user: Mapped[Optional['Users']] = relationship('Users', back_populates='auditors')
+    audit: Mapped['Audits'] = relationship('Audits', back_populates='audit_mappings')
 
 
 class ControlClauses(Base):
     __tablename__ = 'control_clauses'
     __table_args__ = (
-        ForeignKeyConstraint(['clause_id'], ['clauses.id'], ondelete='RESTRICT', onupdate='RESTRICT', name='control_clauses_clause_id_foreign'),
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='RESTRICT', onupdate='RESTRICT', name='control_clauses_control_id_foreign'),
+        ForeignKeyConstraint(['clause_id'], ['public.clauses.id'], ondelete='RESTRICT', onupdate='RESTRICT', name='control_clauses_clause_id_foreign'),
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='RESTRICT', onupdate='RESTRICT', name='control_clauses_control_id_foreign'),
         PrimaryKeyConstraint('id', name='control_clauses_pkey'),
         UniqueConstraint('control_id', 'clause_id', name='control_clauses_control_id_clause_id_unique'),
-        Index('control_clauses_clause_id_index', 'clause_id')
+        Index('control_clauses_clause_id_index', 'clause_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1975,9 +2071,10 @@ class ControlClauses(Base):
 class ControlEvidenceMaster(Base):
     __tablename__ = 'control_evidence_master'
     __table_args__ = (
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='control_evidence_master_control_id_foreign'),
-        ForeignKeyConstraint(['evidence_master_id'], ['evidence_masters.id'], ondelete='CASCADE', name='control_evidence_master_evidence_master_id_foreign'),
-        PrimaryKeyConstraint('control_id', 'evidence_master_id', name='control_evidence_master_pkey')
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='CASCADE', name='control_evidence_master_control_id_foreign'),
+        ForeignKeyConstraint(['evidence_master_id'], ['public.evidence_masters.id'], ondelete='CASCADE', name='control_evidence_master_evidence_master_id_foreign'),
+        PrimaryKeyConstraint('control_id', 'evidence_master_id', name='control_evidence_master_pkey'),
+        {'schema': 'public'}
     )
 
     control_id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -1993,9 +2090,10 @@ class EvidenceCollections(Base):
     __tablename__ = 'evidence_collections'
     __table_args__ = (
         CheckConstraint("evidence_from::text = ANY (ARRAY['document'::character varying, 'link'::character varying, 'integration'::character varying, 'tool'::character varying]::text[])", name='evidence_collections_evidence_from_check'),
-        ForeignKeyConstraint(['evidence_id'], ['evidence.id'], ondelete='CASCADE', name='evidence_collections_evidence_id_foreign'),
+        ForeignKeyConstraint(['evidence_id'], ['public.evidence.id'], ondelete='CASCADE', name='evidence_collections_evidence_id_foreign'),
         PrimaryKeyConstraint('id', name='evidence_collections_pkey'),
-        Index('evidence_collection_evidence_id_index', 'evidence_id')
+        Index('evidence_collection_evidence_id_index', 'evidence_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2015,10 +2113,11 @@ class EvidenceCollections(Base):
 class EvidenceMappeds(Base):
     __tablename__ = 'evidence_mappeds'
     __table_args__ = (
-        ForeignKeyConstraint(['evidence_id'], ['evidence.id'], ondelete='CASCADE', name='evidence_mappeds_evidence_id_foreign'),
+        ForeignKeyConstraint(['evidence_id'], ['public.evidence.id'], ondelete='CASCADE', name='evidence_mappeds_evidence_id_foreign'),
         PrimaryKeyConstraint('id', name='evidence_mappeds_pkey'),
         Index('evidence_mappeds_evidenceable_id_index', 'evidenceable_id'),
-        Index('evidence_mappeds_evidenceable_type_evidenceable_id_index', 'evidenceable_type', 'evidenceable_id')
+        Index('evidence_mappeds_evidenceable_type_evidenceable_id_index', 'evidenceable_type', 'evidenceable_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2032,40 +2131,15 @@ class EvidenceMappeds(Base):
     evidence: Mapped['Evidence'] = relationship('Evidence', back_populates='evidence_mappeds')
 
 
-class ControlResults(Base):
-    """
-    Stores the result of a control evaluation run (PASS/FAIL/NOT_APPLICABLE).
-    Run a migration to create table control_results if it does not exist.
-    """
-    __tablename__ = 'control_results'
-    __table_args__ = (
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='control_results_control_id_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='control_results_organization_id_foreign'),
-        PrimaryKeyConstraint('id', name='control_results_pkey'),
-        Index('control_results_organization_control_run_index', 'organization_id', 'control_id', 'run_at'),
-    )
-
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    control_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    run_at: Mapped[datetime.datetime] = mapped_column(TIMESTAMP(precision=0), nullable=False)
-    result: Mapped[str] = mapped_column(String(50), nullable=False)
-    details: Mapped[Optional[dict]] = mapped_column(JSON)
-    evidence_ids: Mapped[Optional[list]] = mapped_column(JSON)
-    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-
-    control: Mapped['Controls'] = relationship('Controls', back_populates='control_results')
-    organization: Mapped['Organizations'] = relationship('Organizations', back_populates='control_results')
-
-
 class OrganizationCertificateClauses(Base):
     __tablename__ = 'organization_certificate_clauses'
     __table_args__ = (
-        ForeignKeyConstraint(['certificate_id'], ['certificates.id'], ondelete='CASCADE', name='organization_certificate_clauses_certificate_id_foreign'),
-        ForeignKeyConstraint(['clause_id'], ['clauses.id'], ondelete='CASCADE', name='organization_certificate_clauses_clause_id_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='organization_certificate_clauses_organization_id_foreign'),
+        ForeignKeyConstraint(['certificate_id'], ['public.certificates.id'], ondelete='CASCADE', name='organization_certificate_clauses_certificate_id_foreign'),
+        ForeignKeyConstraint(['clause_id'], ['public.clauses.id'], ondelete='CASCADE', name='organization_certificate_clauses_clause_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='organization_certificate_clauses_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='organization_certificate_clauses_pkey'),
-        UniqueConstraint('organization_id', 'certificate_id', 'clause_id', name='org_cert_clause_unique')
+        UniqueConstraint('organization_id', 'certificate_id', 'clause_id', name='org_cert_clause_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2085,17 +2159,18 @@ class OrganizationCertificateClauses(Base):
 class OrganizationCertificateControls(Base):
     __tablename__ = 'organization_certificate_controls'
     __table_args__ = (
-        ForeignKeyConstraint(['assigned_by'], ['users.id'], ondelete='CASCADE', name='organization_certificate_controls_assigned_by_foreign'),
-        ForeignKeyConstraint(['assignee_id'], ['users.id'], ondelete='CASCADE', name='organization_certificate_controls_assignee_id_foreign'),
-        ForeignKeyConstraint(['certificate_id'], ['certificates.id'], ondelete='CASCADE', name='organization_certificate_controls_certificate_id_foreign'),
-        ForeignKeyConstraint(['clause_id'], ['clauses.id'], ondelete='CASCADE', name='organization_certificate_controls_clause_id_foreign'),
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='organization_certificate_controls_control_id_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='organization_certificate_controls_organization_id_foreign'),
+        ForeignKeyConstraint(['assigned_by'], ['public.users.id'], ondelete='CASCADE', name='organization_certificate_controls_assigned_by_foreign'),
+        ForeignKeyConstraint(['assignee_id'], ['public.users.id'], ondelete='CASCADE', name='organization_certificate_controls_assignee_id_foreign'),
+        ForeignKeyConstraint(['certificate_id'], ['public.certificates.id'], ondelete='CASCADE', name='organization_certificate_controls_certificate_id_foreign'),
+        ForeignKeyConstraint(['clause_id'], ['public.clauses.id'], ondelete='CASCADE', name='organization_certificate_controls_clause_id_foreign'),
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='CASCADE', name='organization_certificate_controls_control_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='organization_certificate_controls_organization_id_foreign'),
         PrimaryKeyConstraint('id', name='organization_certificate_controls_pkey'),
         Index('organization_certificate_controls_assigned_by_index', 'assigned_by'),
         Index('organization_certificate_controls_assignee_id_index', 'assignee_id'),
         Index('organization_certificate_controls_control_id_index', 'control_id'),
-        Index('organization_certificate_controls_organization_id_control_id_in', 'organization_id', 'control_id')
+        Index('organization_certificate_controls_organization_id_control_id_in', 'organization_id', 'control_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2122,11 +2197,12 @@ class OrganizationCertificateControls(Base):
 class OrganizationPolicyClauses(Base):
     __tablename__ = 'organization_policy_clauses'
     __table_args__ = (
-        ForeignKeyConstraint(['clause_id'], ['clauses.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_clauses_clause_id_foreign'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_clauses_organization_id_foreign'),
-        ForeignKeyConstraint(['policy_template_id'], ['policy_templates.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_clauses_policy_template_id_foreign'),
+        ForeignKeyConstraint(['clause_id'], ['public.clauses.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_clauses_clause_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_clauses_organization_id_foreign'),
+        ForeignKeyConstraint(['policy_template_id'], ['public.policy_templates.id'], ondelete='CASCADE', onupdate='CASCADE', name='organization_policy_clauses_policy_template_id_foreign'),
         PrimaryKeyConstraint('id', name='organization_policy_clauses_pkey'),
-        UniqueConstraint('organization_id', 'policy_template_id', 'clause_id', name='unique_organization_policy_clause')
+        UniqueConstraint('organization_id', 'policy_template_id', 'clause_id', name='unique_organization_policy_clause'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2144,11 +2220,12 @@ class OrganizationPolicyClauses(Base):
 class PolicyClauses(Base):
     __tablename__ = 'policy_clauses'
     __table_args__ = (
-        ForeignKeyConstraint(['clause_id'], ['clauses.id'], ondelete='RESTRICT', onupdate='RESTRICT', name='policy_clauses_clause_id_foreign'),
-        ForeignKeyConstraint(['policy_template_id'], ['policy_templates.id'], ondelete='RESTRICT', onupdate='RESTRICT', name='policy_clauses_policy_template_id_foreign'),
+        ForeignKeyConstraint(['clause_id'], ['public.clauses.id'], ondelete='RESTRICT', onupdate='RESTRICT', name='policy_clauses_clause_id_foreign'),
+        ForeignKeyConstraint(['policy_template_id'], ['public.policy_templates.id'], ondelete='RESTRICT', onupdate='RESTRICT', name='policy_clauses_policy_template_id_foreign'),
         PrimaryKeyConstraint('id', name='policy_clauses_pkey'),
         UniqueConstraint('policy_template_id', 'clause_id', name='policy_clauses_policy_template_id_clause_id_unique'),
-        Index('policy_clauses_clause_id_index', 'clause_id')
+        Index('policy_clauses_clause_id_index', 'clause_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2165,10 +2242,11 @@ class PolicyVersions(Base):
     __tablename__ = 'policy_versions'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['draft'::character varying, 'in_review'::character varying, 'published'::character varying, 'archived'::character varying]::text[])", name='policy_versions_status_check'),
-        ForeignKeyConstraint(['approved_by'], ['users.id'], ondelete='CASCADE', name='policy_versions_approved_by_foreign'),
-        ForeignKeyConstraint(['org_policy_id'], ['org_policies.id'], ondelete='CASCADE', name='policy_versions_org_policy_id_foreign'),
+        ForeignKeyConstraint(['approved_by'], ['public.users.id'], ondelete='CASCADE', name='policy_versions_approved_by_foreign'),
+        ForeignKeyConstraint(['org_policy_id'], ['public.org_policies.id'], ondelete='CASCADE', name='policy_versions_org_policy_id_foreign'),
         PrimaryKeyConstraint('id', name='policy_versions_pkey'),
-        Index('policy_versions_org_policy_id_index', 'org_policy_id')
+        Index('policy_versions_org_policy_id_index', 'org_policy_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2196,9 +2274,10 @@ class PolicyVersions(Base):
 class RiskControls(Base):
     __tablename__ = 'risk_controls'
     __table_args__ = (
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='risk_controls_control_id_foreign'),
-        ForeignKeyConstraint(['risk_library_id'], ['risk_libraries.id'], ondelete='CASCADE', name='risk_controls_risk_library_id_foreign'),
-        PrimaryKeyConstraint('id', name='risk_controls_pkey')
+        ForeignKeyConstraint(['control_id'], ['public.controls.id'], ondelete='CASCADE', name='risk_controls_control_id_foreign'),
+        ForeignKeyConstraint(['risk_library_id'], ['public.risk_libraries.id'], ondelete='CASCADE', name='risk_controls_risk_library_id_foreign'),
+        PrimaryKeyConstraint('id', name='risk_controls_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2215,14 +2294,15 @@ class RiskRegisters(Base):
     __tablename__ = 'risk_registers'
     __table_args__ = (
         CheckConstraint("ai_status::text = ANY (ARRAY['pending'::character varying, 'in_progress'::character varying, 'complete'::character varying, 'failed'::character varying]::text[])", name='risk_registers_ai_status_check'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='risk_registers_organization_id_foreign'),
-        ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='SET NULL', onupdate='CASCADE', name='risk_registers_owner_id_foreign'),
-        ForeignKeyConstraint(['risk_library_id'], ['risk_libraries.id'], ondelete='SET NULL', onupdate='CASCADE', name='risk_registers_risk_library_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='risk_registers_organization_id_foreign'),
+        ForeignKeyConstraint(['owner_id'], ['public.users.id'], ondelete='SET NULL', onupdate='CASCADE', name='risk_registers_owner_id_foreign'),
+        ForeignKeyConstraint(['risk_library_id'], ['public.risk_libraries.id'], ondelete='SET NULL', onupdate='CASCADE', name='risk_registers_risk_library_id_foreign'),
         PrimaryKeyConstraint('id', name='risk_registers_pkey'),
         UniqueConstraint('organization_id', 'risk_id', name='risk_register_org_risk_id_unique'),
         Index('risk_registers_organization_id_index', 'organization_id'),
         Index('risk_registers_risk_library_id_index', 'risk_library_id'),
-        Index('risk_registers_status_index', 'status')
+        Index('risk_registers_status_index', 'status'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2248,9 +2328,10 @@ class RiskRegisters(Base):
 class TempVendors(Base):
     __tablename__ = 'temp_vendors'
     __table_args__ = (
-        ForeignKeyConstraint(['category_id'], ['categories.id'], ondelete='CASCADE', onupdate='CASCADE', name='temp_vendors_category_id_foreign'),
-        ForeignKeyConstraint(['sub_category_id'], ['sub_categories.id'], ondelete='CASCADE', onupdate='CASCADE', name='temp_vendors_sub_category_id_foreign'),
-        PrimaryKeyConstraint('id', name='temp_vendors_pkey')
+        ForeignKeyConstraint(['category_id'], ['public.categories.id'], ondelete='CASCADE', onupdate='CASCADE', name='temp_vendors_category_id_foreign'),
+        ForeignKeyConstraint(['sub_category_id'], ['public.sub_categories.id'], ondelete='CASCADE', onupdate='CASCADE', name='temp_vendors_sub_category_id_foreign'),
+        PrimaryKeyConstraint('id', name='temp_vendors_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2273,9 +2354,10 @@ class TempVendors(Base):
 class TrustcenterAccessRules(Base):
     __tablename__ = 'trustcenter_access_rules'
     __table_args__ = (
-        ForeignKeyConstraint(['user_id'], ['trustcenter_users.id'], ondelete='CASCADE', name='trustcenter_access_rules_user_id_foreign'),
+        ForeignKeyConstraint(['user_id'], ['public.trustcenter_users.id'], ondelete='CASCADE', name='trustcenter_access_rules_user_id_foreign'),
         PrimaryKeyConstraint('id', name='trustcenter_access_rules_pkey'),
-        UniqueConstraint('user_id', name='trustcenter_access_rules_user_id_unique')
+        UniqueConstraint('user_id', name='trustcenter_access_rules_user_id_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2291,8 +2373,9 @@ class TrustcenterAccessRules(Base):
 class TrustcenterActivityLogs(Base):
     __tablename__ = 'trustcenter_activity_logs'
     __table_args__ = (
-        ForeignKeyConstraint(['user_id'], ['trustcenter_users.id'], ondelete='SET NULL', name='trustcenter_activity_logs_user_id_foreign'),
-        PrimaryKeyConstraint('id', name='trustcenter_activity_logs_pkey')
+        ForeignKeyConstraint(['user_id'], ['public.trustcenter_users.id'], ondelete='SET NULL', name='trustcenter_activity_logs_user_id_foreign'),
+        PrimaryKeyConstraint('id', name='trustcenter_activity_logs_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2310,8 +2393,9 @@ class TrustcenterActivityLogs(Base):
 class TrustcenterBranding(TrustcenterUsers):
     __tablename__ = 'trustcenter_branding'
     __table_args__ = (
-        ForeignKeyConstraint(['user_id'], ['trustcenter_users.id'], ondelete='CASCADE', name='trustcenter_branding_user_id_foreign'),
-        PrimaryKeyConstraint('user_id', name='trustcenter_branding_pkey')
+        ForeignKeyConstraint(['user_id'], ['public.trustcenter_users.id'], ondelete='CASCADE', name='trustcenter_branding_user_id_foreign'),
+        PrimaryKeyConstraint('user_id', name='trustcenter_branding_pkey'),
+        {'schema': 'public'}
     )
 
     user_id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2326,8 +2410,9 @@ class TrustcenterBranding(TrustcenterUsers):
 class TrustcenterDocuments(Base):
     __tablename__ = 'trustcenter_documents'
     __table_args__ = (
-        ForeignKeyConstraint(['user_id'], ['trustcenter_users.id'], ondelete='CASCADE', name='trustcenter_documents_user_id_foreign'),
-        PrimaryKeyConstraint('id', name='trustcenter_documents_pkey')
+        ForeignKeyConstraint(['user_id'], ['public.trustcenter_users.id'], ondelete='CASCADE', name='trustcenter_documents_user_id_foreign'),
+        PrimaryKeyConstraint('id', name='trustcenter_documents_pkey'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2349,11 +2434,12 @@ class TrustcenterDocuments(Base):
 class Vendors(Base):
     __tablename__ = 'vendors'
     __table_args__ = (
-        ForeignKeyConstraint(['category_id'], ['categories.id'], ondelete='CASCADE', onupdate='CASCADE', name='vendors_category_id_foreign'),
-        ForeignKeyConstraint(['sub_category_id'], ['sub_categories.id'], ondelete='CASCADE', onupdate='CASCADE', name='vendors_sub_category_id_foreign'),
+        ForeignKeyConstraint(['category_id'], ['public.categories.id'], ondelete='CASCADE', onupdate='CASCADE', name='vendors_category_id_foreign'),
+        ForeignKeyConstraint(['sub_category_id'], ['public.sub_categories.id'], ondelete='CASCADE', onupdate='CASCADE', name='vendors_sub_category_id_foreign'),
         PrimaryKeyConstraint('id', name='vendors_pkey'),
         Index('vendors_business_name_index', 'business_name'),
-        Index('vendors_vendor_type_index', 'vendor_type')
+        Index('vendors_vendor_type_index', 'vendor_type'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2382,12 +2468,13 @@ class Vendors(Base):
 class OrganizationInternalControls(Base):
     __tablename__ = 'organization_internal_controls'
     __table_args__ = (
-        ForeignKeyConstraint(['internal_control_id'], ['internal_controls.id'], ondelete='CASCADE', name='organization_internal_controls_internal_control_id_foreign'),
-        ForeignKeyConstraint(['organization_control_id'], ['organization_certificate_controls.id'], ondelete='CASCADE', name='organization_internal_controls_organization_control_id_foreign'),
-        ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='CASCADE', name='organization_internal_controls_owner_id_foreign'),
+        ForeignKeyConstraint(['internal_control_id'], ['public.internal_controls.id'], ondelete='CASCADE', name='organization_internal_controls_internal_control_id_foreign'),
+        ForeignKeyConstraint(['organization_control_id'], ['public.organization_certificate_controls.id'], ondelete='CASCADE', name='organization_internal_controls_organization_control_id_foreign'),
+        ForeignKeyConstraint(['owner_id'], ['public.users.id'], ondelete='CASCADE', name='organization_internal_controls_owner_id_foreign'),
         PrimaryKeyConstraint('id', name='organization_internal_controls_pkey'),
         UniqueConstraint('organization_control_id', 'internal_control_id', name='organization_internal_controls_organization_control_id_internal'),
-        Index('organization_internal_controls_owner_id_index', 'owner_id')
+        Index('organization_internal_controls_owner_id_index', 'owner_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2408,13 +2495,14 @@ class OrganizationVendors(Base):
     __tablename__ = 'organization_vendors'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['invited'::character varying, 'resent-invited'::character varying, 'active'::character varying]::text[])", name='organization_vendors_status_check'),
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='organization_vendors_organization_id_foreign'),
-        ForeignKeyConstraint(['vendor_id'], ['vendors.id'], ondelete='CASCADE', name='organization_vendors_vendor_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='organization_vendors_organization_id_foreign'),
+        ForeignKeyConstraint(['vendor_id'], ['public.vendors.id'], ondelete='CASCADE', name='organization_vendors_vendor_id_foreign'),
         PrimaryKeyConstraint('id', name='organization_vendors_pkey'),
         UniqueConstraint('organization_id', 'business_name', name='organization_vendors_organization_id_business_name_unique'),
         UniqueConstraint('organization_id', 'email', name='organization_vendors_organization_id_email_unique'),
         UniqueConstraint('organization_id', 'vendor_id', name='organization_vendors_organization_id_vendor_id_unique'),
-        Index('organization_vendors_organization_id_status_index', 'organization_id', 'status')
+        Index('organization_vendors_organization_id_status_index', 'organization_id', 'status'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2434,11 +2522,12 @@ class PolicyApprovers(Base):
     __tablename__ = 'policy_approvers'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['pending'::character varying, 'in_review'::character varying, 'approved'::character varying, 'rejected'::character varying]::text[])", name='policy_approvers_status_check'),
-        ForeignKeyConstraint(['approver_id'], ['users.id'], ondelete='CASCADE', name='policy_approvers_approver_id_foreign'),
-        ForeignKeyConstraint(['policy_version_id'], ['policy_versions.id'], ondelete='CASCADE', name='policy_approvers_policy_version_id_foreign'),
+        ForeignKeyConstraint(['approver_id'], ['public.users.id'], ondelete='CASCADE', name='policy_approvers_approver_id_foreign'),
+        ForeignKeyConstraint(['policy_version_id'], ['public.policy_versions.id'], ondelete='CASCADE', name='policy_approvers_policy_version_id_foreign'),
         PrimaryKeyConstraint('id', name='policy_approvers_pkey'),
         Index('policy_approvers_approver_id_index', 'approver_id'),
-        Index('policy_approvers_policy_version_id_index', 'policy_version_id')
+        Index('policy_approvers_policy_version_id_index', 'policy_version_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2459,11 +2548,12 @@ class PolicyAssignees(Base):
     __tablename__ = 'policy_assignees'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['pending'::character varying, 'acknowledged'::character varying, 'in_review'::character varying, 'rejected'::character varying]::text[])", name='policy_assignees_status_check'),
-        ForeignKeyConstraint(['assignee_id'], ['employees.id'], ondelete='CASCADE', name='policy_assignees_assignee_id_foreign'),
-        ForeignKeyConstraint(['policy_version_id'], ['policy_versions.id'], ondelete='CASCADE', name='policy_assignees_policy_version_id_foreign'),
+        ForeignKeyConstraint(['assignee_id'], ['public.employees.id'], ondelete='CASCADE', name='policy_assignees_assignee_id_foreign'),
+        ForeignKeyConstraint(['policy_version_id'], ['public.policy_versions.id'], ondelete='CASCADE', name='policy_assignees_policy_version_id_foreign'),
         PrimaryKeyConstraint('id', name='policy_assignees_pkey'),
         Index('policy_assignees_assignee_id_index', 'assignee_id'),
-        Index('policy_assignees_policy_version_id_index', 'policy_version_id')
+        Index('policy_assignees_policy_version_id_index', 'policy_version_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2481,15 +2571,16 @@ class PolicyAssignees(Base):
 class Tasks(Base):
     __tablename__ = 'tasks'
     __table_args__ = (
-        ForeignKeyConstraint(['evidence_collection_id'], ['evidence_collections.id'], ondelete='SET NULL', onupdate='CASCADE', name='tasks_evidence_collection_id_foreign'),
-        ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='SET NULL', onupdate='CASCADE', name='tasks_owner_id_foreign'),
+        ForeignKeyConstraint(['evidence_collection_id'], ['public.evidence_collections.id'], ondelete='SET NULL', onupdate='CASCADE', name='tasks_evidence_collection_id_foreign'),
+        ForeignKeyConstraint(['owner_id'], ['public.users.id'], ondelete='SET NULL', onupdate='CASCADE', name='tasks_owner_id_foreign'),
         PrimaryKeyConstraint('id', name='tasks_pkey'),
         Index('tasks_due_date_index', 'due_date'),
         Index('tasks_evidence_collection_id_index', 'evidence_collection_id'),
         Index('tasks_owner_id_index', 'owner_id'),
         Index('tasks_priority_index', 'priority'),
         Index('tasks_status_index', 'status'),
-        Index('tasks_taskable_type_taskable_id_index', 'taskable_type', 'taskable_id')
+        Index('tasks_taskable_type_taskable_id_index', 'taskable_type', 'taskable_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2516,11 +2607,12 @@ class Tasks(Base):
 class VendorAssessments(Base):
     __tablename__ = 'vendor_assessments'
     __table_args__ = (
-        ForeignKeyConstraint(['vendor_id'], ['vendors.id'], ondelete='CASCADE', name='vendor_assessments_vendor_id_foreign'),
+        ForeignKeyConstraint(['vendor_id'], ['public.vendors.id'], ondelete='CASCADE', name='vendor_assessments_vendor_id_foreign'),
         PrimaryKeyConstraint('id', name='vendor_assessments_pkey'),
         Index('vendor_assessments_severity_index', 'severity'),
         Index('vendor_assessments_status_index', 'status'),
-        Index('vendor_assessments_vendor_id_index', 'vendor_id')
+        Index('vendor_assessments_vendor_id_index', 'vendor_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2552,10 +2644,11 @@ class VendorAssessments(Base):
 class VendorDetails(Base):
     __tablename__ = 'vendor_details'
     __table_args__ = (
-        ForeignKeyConstraint(['vendor_id'], ['vendors.id'], ondelete='CASCADE', name='vendor_details_vendor_id_foreign'),
+        ForeignKeyConstraint(['vendor_id'], ['public.vendors.id'], ondelete='CASCADE', name='vendor_details_vendor_id_foreign'),
         PrimaryKeyConstraint('id', name='vendor_details_pkey'),
         Index('vendor_details_email_index', 'email'),
-        Index('vendor_details_status_index', 'status')
+        Index('vendor_details_status_index', 'status'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2585,9 +2678,10 @@ class VendorDetails(Base):
 class TaskAttachments(Base):
     __tablename__ = 'task_attachments'
     __table_args__ = (
-        ForeignKeyConstraint(['task_id'], ['tasks.id'], ondelete='CASCADE', onupdate='CASCADE', name='task_attachments_task_id_foreign'),
+        ForeignKeyConstraint(['task_id'], ['public.tasks.id'], ondelete='CASCADE', onupdate='CASCADE', name='task_attachments_task_id_foreign'),
         PrimaryKeyConstraint('id', name='task_attachments_pkey'),
-        Index('task_attachments_task_id_index', 'task_id')
+        Index('task_attachments_task_id_index', 'task_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2605,12 +2699,13 @@ class TaskAttachments(Base):
 class VendorAssessmentQuestions(Base):
     __tablename__ = 'vendor_assessment_questions'
     __table_args__ = (
-        ForeignKeyConstraint(['vendor_assessment_id'], ['vendor_assessments.id'], ondelete='CASCADE', name='vendor_assessment_questions_vendor_assessment_id_foreign'),
-        ForeignKeyConstraint(['vendor_assessment_question_bank_id'], ['vendor_assessment_question_banks.id'], ondelete='CASCADE', name='vendor_assessment_questions_vendor_assessment_question_bank_id_'),
+        ForeignKeyConstraint(['vendor_assessment_id'], ['public.vendor_assessments.id'], ondelete='CASCADE', name='vendor_assessment_questions_vendor_assessment_id_foreign'),
+        ForeignKeyConstraint(['vendor_assessment_question_bank_id'], ['public.vendor_assessment_question_banks.id'], ondelete='CASCADE', name='vendor_assessment_questions_vendor_assessment_question_bank_id_'),
         PrimaryKeyConstraint('id', name='vendor_assessment_questions_pkey'),
         Index('vendor_assessment_questions_status_index', 'status'),
         Index('vendor_assessment_questions_vendor_assessment_id_index', 'vendor_assessment_id'),
-        Index('vendor_assessment_questions_vendor_assessment_question_bank_id_', 'vendor_assessment_question_bank_id')
+        Index('vendor_assessment_questions_vendor_assessment_question_bank_id_', 'vendor_assessment_question_bank_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2634,10 +2729,11 @@ class VendorAssessmentQuestions(Base):
 class VendorCertificateDetails(Base):
     __tablename__ = 'vendor_certificate_details'
     __table_args__ = (
-        ForeignKeyConstraint(['vendor_assessment_id'], ['vendor_assessments.id'], ondelete='CASCADE', name='vendor_certificate_details_vendor_assessment_id_foreign'),
-        ForeignKeyConstraint(['vendor_id'], ['vendors.id'], ondelete='CASCADE', name='vendor_certificate_details_vendor_id_foreign'),
+        ForeignKeyConstraint(['vendor_assessment_id'], ['public.vendor_assessments.id'], ondelete='CASCADE', name='vendor_certificate_details_vendor_assessment_id_foreign'),
+        ForeignKeyConstraint(['vendor_id'], ['public.vendors.id'], ondelete='CASCADE', name='vendor_certificate_details_vendor_id_foreign'),
         PrimaryKeyConstraint('id', name='vendor_certificate_details_pkey'),
-        UniqueConstraint('vendor_id', 'vendor_assessment_id', name='vendor_cert_unique')
+        UniqueConstraint('vendor_id', 'vendor_assessment_id', name='vendor_cert_unique'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2656,14 +2752,15 @@ class VendorCertificateDetails(Base):
 class VendorLlmProcesses(Base):
     __tablename__ = 'vendor_llm_processes'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='vendor_llm_processes_organization_id_foreign'),
-        ForeignKeyConstraint(['vendor_assessment_id'], ['vendor_assessments.id'], ondelete='CASCADE', name='vendor_llm_processes_vendor_assessment_id_foreign'),
-        ForeignKeyConstraint(['vendor_id'], ['vendors.id'], ondelete='CASCADE', name='vendor_llm_processes_vendor_id_foreign'),
+        ForeignKeyConstraint(['organization_id'], ['public.organizations.id'], ondelete='CASCADE', name='vendor_llm_processes_organization_id_foreign'),
+        ForeignKeyConstraint(['vendor_assessment_id'], ['public.vendor_assessments.id'], ondelete='CASCADE', name='vendor_llm_processes_vendor_assessment_id_foreign'),
+        ForeignKeyConstraint(['vendor_id'], ['public.vendors.id'], ondelete='CASCADE', name='vendor_llm_processes_vendor_id_foreign'),
         PrimaryKeyConstraint('id', name='vendor_llm_processes_pkey'),
         Index('vendor_llm_processes_llm_status_index', 'llm_status'),
         Index('vendor_llm_processes_organization_id_index', 'organization_id'),
         Index('vendor_llm_processes_vendor_assessment_id_index', 'vendor_assessment_id'),
-        Index('vendor_llm_processes_vendor_id_index', 'vendor_id')
+        Index('vendor_llm_processes_vendor_id_index', 'vendor_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2689,13 +2786,14 @@ class VendorPageData(Base):
     __tablename__ = 'vendor_page_data'
     __table_args__ = (
         CheckConstraint("page_type::text = ANY (ARRAY['trustcenter'::character varying, 'compliance'::character varying, 'policy'::character varying]::text[])", name='vendor_page_data_page_type_check'),
-        ForeignKeyConstraint(['vendor_assessment_id'], ['vendor_assessments.id'], ondelete='CASCADE', name='vendor_page_data_vendor_assessment_id_foreign'),
-        ForeignKeyConstraint(['vendor_id'], ['vendors.id'], ondelete='CASCADE', name='vendor_page_data_vendor_id_foreign'),
+        ForeignKeyConstraint(['vendor_assessment_id'], ['public.vendor_assessments.id'], ondelete='CASCADE', name='vendor_page_data_vendor_assessment_id_foreign'),
+        ForeignKeyConstraint(['vendor_id'], ['public.vendors.id'], ondelete='CASCADE', name='vendor_page_data_vendor_id_foreign'),
         PrimaryKeyConstraint('id', name='vendor_page_data_pkey'),
         Index('vendor_page_data_page_type_index', 'page_type'),
         Index('vendor_page_data_vendor_assessment_id_index', 'vendor_assessment_id'),
         Index('vendor_page_data_vendor_id_index', 'vendor_id'),
-        Index('vendor_page_data_vendor_id_vendor_assessment_id_page_type_index', 'vendor_id', 'vendor_assessment_id', 'page_type')
+        Index('vendor_page_data_vendor_id_vendor_assessment_id_page_type_index', 'vendor_id', 'vendor_assessment_id', 'page_type'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2714,11 +2812,12 @@ class VendorPageData(Base):
 class VendorTrustCenters(Base):
     __tablename__ = 'vendor_trust_centers'
     __table_args__ = (
-        ForeignKeyConstraint(['vendor_assessment_id'], ['vendor_assessments.id'], ondelete='CASCADE', name='vendor_trust_centers_vendor_assessment_id_foreign'),
-        ForeignKeyConstraint(['vendor_id'], ['vendors.id'], ondelete='CASCADE', name='vendor_trust_centers_vendor_id_foreign'),
+        ForeignKeyConstraint(['vendor_assessment_id'], ['public.vendor_assessments.id'], ondelete='CASCADE', name='vendor_trust_centers_vendor_assessment_id_foreign'),
+        ForeignKeyConstraint(['vendor_id'], ['public.vendors.id'], ondelete='CASCADE', name='vendor_trust_centers_vendor_id_foreign'),
         PrimaryKeyConstraint('id', name='vendor_trust_centers_pkey'),
         Index('vendor_trust_centers_vendor_assessment_id_index', 'vendor_assessment_id'),
-        Index('vendor_trust_centers_vendor_id_index', 'vendor_id')
+        Index('vendor_trust_centers_vendor_id_index', 'vendor_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2736,11 +2835,12 @@ class VendorTrustCenters(Base):
 class VendorEvidence(Base):
     __tablename__ = 'vendor_evidence'
     __table_args__ = (
-        ForeignKeyConstraint(['vendor_assessment_id'], ['vendor_assessments.id'], ondelete='CASCADE', name='vendor_evidence_vendor_assessment_id_foreign'),
-        ForeignKeyConstraint(['vendor_assessment_question_id'], ['vendor_assessment_questions.id'], ondelete='CASCADE', name='vendor_evidence_vendor_assessment_question_id_foreign'),
-        ForeignKeyConstraint(['vendor_id'], ['vendors.id'], ondelete='CASCADE', name='vendor_evidence_vendor_id_foreign'),
+        ForeignKeyConstraint(['vendor_assessment_id'], ['public.vendor_assessments.id'], ondelete='CASCADE', name='vendor_evidence_vendor_assessment_id_foreign'),
+        ForeignKeyConstraint(['vendor_assessment_question_id'], ['public.vendor_assessment_questions.id'], ondelete='CASCADE', name='vendor_evidence_vendor_assessment_question_id_foreign'),
+        ForeignKeyConstraint(['vendor_id'], ['public.vendors.id'], ondelete='CASCADE', name='vendor_evidence_vendor_id_foreign'),
         PrimaryKeyConstraint('id', name='vendor_evidence_pkey'),
-        Index('vendor_evidence_name_index', 'name')
+        Index('vendor_evidence_name_index', 'name'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
@@ -2762,9 +2862,10 @@ class VendorEvidence(Base):
 class VendorPageDocuments(Base):
     __tablename__ = 'vendor_page_documents'
     __table_args__ = (
-        ForeignKeyConstraint(['vendor_page_data_id'], ['vendor_page_data.id'], ondelete='CASCADE', name='vendor_page_documents_vendor_page_data_id_foreign'),
+        ForeignKeyConstraint(['vendor_page_data_id'], ['public.vendor_page_data.id'], ondelete='CASCADE', name='vendor_page_documents_vendor_page_data_id_foreign'),
         PrimaryKeyConstraint('id', name='vendor_page_documents_pkey'),
-        Index('vendor_page_documents_vendor_page_data_id_index', 'vendor_page_data_id')
+        Index('vendor_page_documents_vendor_page_data_id_index', 'vendor_page_data_id'),
+        {'schema': 'public'}
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)

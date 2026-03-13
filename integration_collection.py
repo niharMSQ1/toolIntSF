@@ -15,7 +15,8 @@ from HRMS_Integrations.Zoho_people.client import ZohoPeopleClient
 from HRMS_Integrations.Zoho_people.service import collect_and_persist_evidence as zoho_collect
 from ITSM_Integrations.Jira_servicedesk.client import JiraServicedeskClient
 from ITSM_Integrations.Jira_servicedesk.service import collect_and_persist_evidence as jira_collect
-from models import ToolIntegrations
+from IdP_Integrations.Okta.service import collect_and_persist_evidence as okta_collect
+from models import ToolIntegrations, Tools
 
 
 router = APIRouter(prefix="/integrations", tags=["Evidence collection"])
@@ -59,57 +60,81 @@ async def refresh_and_collect(
 
     config = integration.configuration_data or {}
     provider = config.get("provider")
+
+    # Okta: detect by tool name so we use API-token flow even when config was not saved correctly
+    tool = db.get(Tools, integration.tool_id) if integration.tool_id else None
+    if tool and tool.name and str(tool.name).strip().lower() == "okta":
+        provider = "okta"
+        if config.get("provider") != "okta":
+            config["provider"] = "okta"
+            integration.configuration_data = config
+    # Else treat as Okta if api_token + org_domain present
+    elif config.get("api_token") and config.get("org_domain"):
+        provider = "okta"
+        if config.get("provider") != "okta":
+            config["provider"] = "okta"
+            integration.configuration_data = config
+
     if not provider:
         raise HTTPException(
             status_code=400,
             detail="Integration has no provider set; reconnect via OAuth callback",
         )
 
-    access_token = config.get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=400, detail="No access token; reconnect via OAuth callback")
-
-    # Refresh token if needed
-    expires_at = config.get("access_token_expires_at")
-    if _is_token_expired_soon(expires_at):
-        refresh_token = config.get("refresh_token")
-        if not refresh_token:
+    # Okta uses API token only (no OAuth refresh)
+    if provider == "okta":
+        access_token = config.get("api_token")
+        if not access_token:
             raise HTTPException(
                 status_code=400,
-                detail="Token expired and no refresh token; reconnect via OAuth callback",
+                detail="Okta api_token missing. Reconnect: POST /idp/okta/integrations with body containing configuration_data.api_token and configuration_data.org_domain",
             )
-        if provider == "zoho_people":
-            client = ZohoPeopleClient(
-                region=config["region"],
-                client_id=config["client_id"],
-                client_secret=config["client_secret"],
-                redirect_uri=config["redirect_uri"],
-            )
-            token_payload = await client.refresh_access_token(refresh_token)
-        elif provider == "jira_servicedesk":
-            client = JiraServicedeskClient(
-                client_id=config["client_id"],
-                client_secret=config["client_secret"],
-                redirect_uri=config["redirect_uri"],
-            )
-            token_payload = await client.refresh_access_token(refresh_token)
-        else:
-            raise HTTPException(status_code=400, detail=f"Unknown provider: {provider}")
+    else:
+        access_token = config.get("access_token")
+        if not access_token:
+            raise HTTPException(status_code=400, detail="No access token; reconnect via OAuth callback")
 
-        new_access = token_payload.get("access_token")
-        if not new_access:
-            raise HTTPException(status_code=500, detail="Failed to refresh access token")
-        config["access_token"] = new_access
-        if token_payload.get("refresh_token"):
-            config["refresh_token"] = token_payload["refresh_token"]
-        expires_in = token_payload.get("expires_in")
-        if expires_in is not None:
-            config["access_token_expires_at"] = (
-                datetime.datetime.utcnow() + datetime.timedelta(seconds=int(expires_in))
-            ).isoformat()
-        integration.configuration_data = config
-        integration.updated_at = datetime.datetime.utcnow()
-        access_token = new_access
+        # Refresh token if needed (Zoho, Jira)
+        expires_at = config.get("access_token_expires_at")
+        if _is_token_expired_soon(expires_at):
+            refresh_token = config.get("refresh_token")
+            if not refresh_token:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Token expired and no refresh token; reconnect via OAuth callback",
+                )
+            if provider == "zoho_people":
+                client = ZohoPeopleClient(
+                    region=config["region"],
+                    client_id=config["client_id"],
+                    client_secret=config["client_secret"],
+                    redirect_uri=config["redirect_uri"],
+                )
+                token_payload = await client.refresh_access_token(refresh_token)
+            elif provider == "jira_servicedesk":
+                client = JiraServicedeskClient(
+                    client_id=config["client_id"],
+                    client_secret=config["client_secret"],
+                    redirect_uri=config["redirect_uri"],
+                )
+                token_payload = await client.refresh_access_token(refresh_token)
+            else:
+                raise HTTPException(status_code=400, detail=f"Unknown provider: {provider}")
+
+            new_access = token_payload.get("access_token")
+            if not new_access:
+                raise HTTPException(status_code=500, detail="Failed to refresh access token")
+            config["access_token"] = new_access
+            if token_payload.get("refresh_token"):
+                config["refresh_token"] = token_payload["refresh_token"]
+            expires_in = token_payload.get("expires_in")
+            if expires_in is not None:
+                config["access_token_expires_at"] = (
+                    datetime.datetime.utcnow() + datetime.timedelta(seconds=int(expires_in))
+                ).isoformat()
+            integration.configuration_data = config
+            integration.updated_at = datetime.datetime.utcnow()
+            access_token = new_access
 
     # Run evidence collection
     try:
@@ -117,6 +142,8 @@ async def refresh_and_collect(
             await zoho_collect(db=db, integration=integration, access_token=access_token)
         elif provider == "jira_servicedesk":
             await jira_collect(db=db, integration=integration, access_token=access_token)
+        elif provider == "okta":
+            await okta_collect(db=db, integration=integration, access_token=access_token)
         else:
             raise HTTPException(status_code=400, detail=f"Unknown provider: {provider}")
         db.commit()
