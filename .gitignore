@@ -1,26 +1,2 @@
-# Environment and secrets
 .env
-.env.local
-*.env
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-.venv/
-venv/
-env/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Project specific
-THIS_FOLDER_IS_MEANT_TO_BE_GIT_IGNORED/
-
-# Optional: large generated file (uncomment if you don't want to track it)
-# schema_output.json
+*.pyc
