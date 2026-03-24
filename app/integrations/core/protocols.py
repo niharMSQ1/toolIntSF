@@ -17,6 +17,7 @@ class EvidenceCollector(Protocol):
         *,
         date_from: str | None,
         date_to: str | None,
+        employee_cache: dict[str, Any] | None = None,
     ) -> dict[str, Any]: ...
 
 

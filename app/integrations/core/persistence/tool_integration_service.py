@@ -252,7 +252,7 @@ def insert_evidence_collection(
     evidence_id: uuid.UUID,
     evidence_name: str,
     user_id: str,
-    tool_evidence: dict[str, Any] | None,
+    tool_evidence: Any | None,
     evidence_from: str = EVIDENCE_FROM_TOOL,
     source: str = "Zoho People API",
     status: str,
@@ -260,15 +260,25 @@ def insert_evidence_collection(
     error_message: str | None,
     started_at: datetime,
     completed_at: datetime,
+    embed_run_snapshot: bool = False,
 ) -> None:
-    te: dict[str, Any] = dict(tool_evidence or {})
-    te["_run"] = {
-        "status": status,
-        "detail": detail,
-        "error_message": error_message,
-        "started_at": started_at.isoformat(),
-        "completed_at": completed_at.isoformat(),
-    }
+    te: Any
+    if tool_evidence is None:
+        te = {}
+    else:
+        te = tool_evidence
+    if embed_run_snapshot:
+        if not isinstance(te, dict):
+            te = {"_value": te}
+        else:
+            te = dict(te)
+        te["_run"] = {
+            "status": status,
+            "detail": detail,
+            "error_message": error_message,
+            "started_at": started_at.isoformat(),
+            "completed_at": completed_at.isoformat(),
+        }
     now = datetime.now(timezone.utc)
     session.add(
         EvidenceCollection(
@@ -336,6 +346,7 @@ def insert_evidence_collection_after_failed_collect(
         error_message=error_message,
         started_at=started_at,
         completed_at=completed_at,
+        embed_run_snapshot=True,
     )
 
 

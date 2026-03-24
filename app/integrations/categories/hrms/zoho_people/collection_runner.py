@@ -4,11 +4,18 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
+from typing import Any
 
 from sqlalchemy.orm import Session
 
-from app.integrations.categories.hrms.zoho_people.collector import collect_for_master
-from app.integrations.categories.hrms.zoho_people.credentials import has_access_token
+from app.integrations.categories.hrms.zoho_people.collector import (
+    collect_for_master,
+    fetch_form_records_paginated,
+    needs_employee_prefetch,
+    zoho_evidence_for_tool_storage,
+)
+from app.integrations.categories.hrms.zoho_people.credentials import has_access_token, resolve_access_token, resolve_region
+from app.integrations.categories.hrms.zoho_people.regions import people_base_url
 from app.integrations.categories.hrms.zoho_people.seed import EVIDENCE_MASTER_NAME_ORDER
 from app.integrations.categories.hrms.zoho_people.token_refresh import ensure_fresh_access_token
 from app.integrations.core.persistence import (
@@ -48,12 +55,24 @@ def run_evidence_collection(
     if not masters:
         raise ValueError("No evidence_masters for this tool_id; run /configure to seed.")
 
+    token = resolve_access_token(cfg)
+    base = cfg.get("people_base_url") or people_base_url(resolve_region(cfg))
+    employee_cache: dict[str, Any] | None = None
+    if needs_employee_prefetch(masters) and token:
+        employee_cache = fetch_form_records_paginated(base, token, "employee")
+
     results: list[CollectionItemResult] = []
 
     for master in masters:
         started = datetime.now(timezone.utc)
         try:
-            content = collect_for_master(master, cfg, date_from=date_from, date_to=date_to)
+            content = collect_for_master(
+                master,
+                cfg,
+                date_from=date_from,
+                date_to=date_to,
+                employee_cache=employee_cache,
+            )
             ev = persistence.upsert_evidence_full_replace(
                 session,
                 organization_id=org_id,
@@ -72,7 +91,7 @@ def run_evidence_collection(
                 evidence_id=ev["id"],
                 evidence_name=master["name"],
                 user_id=user_id,
-                tool_evidence={"payload": content},
+                tool_evidence=zoho_evidence_for_tool_storage(content),
                 status="success",
                 detail={"mapped_controls": mapped},
                 error_message=None,
@@ -95,7 +114,7 @@ def run_evidence_collection(
                 tool_id=tool_id,
                 master=master,
                 user_id=user_id,
-                tool_evidence={"evidence_master_code": master["code"]},
+                tool_evidence={},
                 status="failed",
                 detail={"evidence_master_code": master["code"], "name": master["name"]},
                 error_message=str(e)[:8000],

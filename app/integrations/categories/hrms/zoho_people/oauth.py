@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 import urllib.parse
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -10,6 +11,14 @@ import httpx
 
 from app.integrations.categories.hrms.zoho_people.credentials import OAUTH_CLIENTS_KEY
 from app.integrations.categories.hrms.zoho_people.regions import accounts_base_url, normalize_region, people_base_url
+
+
+def _log_oauth_http(r: httpx.Response) -> None:
+    if os.environ.get("ZOHO_DEBUG_HTTP"):
+        print(r.status_code, r.text)
+    else:
+        print(r.status_code, str(r.request.url), f"len={len(r.content)}")
+
 
 DEFAULT_ZOHO_PEOPLE_SCOPES = (
     "ZOHOPEOPLE.forms.READ,"
@@ -75,6 +84,7 @@ def exchange_code_for_tokens(
     }
     with httpx.Client(timeout=60.0) as client:
         r = client.post(token_url, data=data)
+        _log_oauth_http(r)
         r.raise_for_status()
         return r.json()
 
@@ -95,6 +105,7 @@ def refresh_access_token(
     }
     with httpx.Client(timeout=60.0) as client:
         r = client.post(token_url, data=data)
+        _log_oauth_http(r)
         r.raise_for_status()
         return r.json()
 
