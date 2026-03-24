@@ -20,7 +20,7 @@ class ProviderMeta:
 class IntegrationProviderRegistry:
     """
     In-process registry of known providers.
-    HRMS / Zoho People is registered at import time; add IDP/Okta-style providers here later.
+    HRMS (Zoho People) and IDP (Microsoft Entra commercial + GCC High) are registered at import time.
     """
 
     def __init__(self) -> None:
@@ -43,5 +43,21 @@ registry.register(
         key="zoho_people",
         display_name="Zoho People",
         description="HR evidence via Zoho People APIs (OAuth + collectors).",
+    )
+)
+registry.register(
+    ProviderMeta(
+        category=IntegrationCategory.IDP,
+        key="microsoft_entra",
+        display_name="Microsoft Entra ID",
+        description="Identity evidence via Microsoft Graph (commercial cloud; OAuth + collectors).",
+    )
+)
+registry.register(
+    ProviderMeta(
+        category=IntegrationCategory.IDP,
+        key="microsoft_entra_gcc_high",
+        display_name="Microsoft Entra ID (GCC High)",
+        description="Identity evidence via Microsoft Graph US sovereign cloud (OAuth + collectors).",
     )
 )

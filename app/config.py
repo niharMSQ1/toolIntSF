@@ -37,6 +37,17 @@ class Settings(BaseSettings):
     # After Zoho OAuth completes in the browser, redirect here (GRC UI). Set empty to return JSON instead.
     post_oauth_success_redirect_url: str = "http://192.168.6.4/evidence/all-evidence"
 
+    # Microsoft Entra (commercial / worldwide) — Vanta-style: app registration credentials on the server.
+    # Optional if you pass client_id/client_secret in tool_integrations.configuration_data (BYO app).
+    entra_client_id: str | None = None
+    entra_client_secret: str | None = None
+    entra_redirect_uri: str | None = None
+
+    # Microsoft Entra GCC High (Azure Government) — separate app registration in portal.azure.us.
+    entra_gcc_high_client_id: str | None = None
+    entra_gcc_high_client_secret: str | None = None
+    entra_gcc_high_redirect_uri: str | None = None
+
     @property
     def effective_db_name(self) -> str | None:
         """Prefer TOOLS_INTEGRATIONS_DB_NAME when set so this app writes where you expect."""
