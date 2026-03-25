@@ -109,6 +109,49 @@ If **`post_oauth_success_redirect_url`** is set in [`app/config.py`](../app/conf
 
 ---
 
+## Unified sync API (all integrations — manual + cron)
+
+Use **`POST /api/v1/integrations/sync`** to refresh evidence for **any** configured integration using one contract (same logic as provider-specific collect endpoints). Suitable for **scheduled jobs** and **manual refresh**.
+
+| Method | Path |
+|--------|------|
+| POST | `/api/v1/integrations/sync` |
+
+- **`provider_key`** (optional): `zoho_people` \| `microsoft_entra` \| `microsoft_entra_gcc_high`. If omitted, the server infers the provider from the first seeded **`evidence_masters.source`** for this **`tool_id`** (requires **configure** to have run at least once).
+- Other fields match **`CollectEvidenceBody`**: **`evidence_codes`**, **`date_from`**, **`date_to`**.
+
+Implementation: [`sync_dispatch.py`](../app/integrations/core/sync_dispatch.py), [`integration_sync.py`](../app/integrations/routers/integration_sync.py).
+
+### Zoho People — example payloads for `/api/v1/integrations/sync`
+
+**Minimal** (provider inferred from `evidence_masters.source` = `zoho_people` after configure):
+
+```json
+{
+  "org_id": "019ce23e-66b9-71fa-8223-8d66f1925bd5",
+  "user_id": "019ce23e-67e0-702e-957d-ab3af1f8a619",
+  "tool_id": "019ce23d-c16d-7304-a8b5-3500e3cbadbc"
+}
+```
+
+**Explicit `provider_key`** (recommended for **cron** so jobs do not depend on inference):
+
+```json
+{
+  "org_id": "019ce23e-66b9-71fa-8223-8d66f1925bd5",
+  "user_id": "019ce23e-67e0-702e-957d-ab3af1f8a619",
+  "tool_id": "019ce23d-c16d-7304-a8b5-3500e3cbadbc",
+  "provider_key": "zoho_people",
+  "evidence_codes": ["HR_EMPLOYEE_MASTER", "HR_ACTIVE_EMPLOYEES"],
+  "date_from": "2025-01-01",
+  "date_to": "2025-12-31"
+}
+```
+
+**Response** includes **`provider_key`** (resolved or echoed) and **`results`** per evidence master (same idea as **`POST /api/v1/evidence/collect`**).
+
+---
+
 ## Initial `configuration_data` (after G1)
 
 Typical first save (before OAuth completes):

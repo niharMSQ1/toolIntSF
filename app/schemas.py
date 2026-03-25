@@ -89,6 +89,34 @@ class CollectEvidenceResponse(BaseModel):
     results: list[CollectionItemResult]
 
 
+class SyncIntegrationBody(BaseModel):
+    """Unified sync: same optional filters as collect; provider is optional if evidence_masters exist."""
+
+    org_id: str
+    user_id: str
+    tool_id: str
+    provider_key: str | None = Field(
+        default=None,
+        description=(
+            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high. "
+            "Omit to infer from evidence_masters.source (after configure)."
+        ),
+    )
+    evidence_codes: list[str] | None = None
+    date_from: str | None = None
+    date_to: str | None = None
+
+
+class SyncIntegrationResponse(BaseModel):
+    """Result of POST /api/v1/integrations/sync."""
+
+    provider_key: str = Field(description="Provider used for this run (from request or auto-detected).")
+    org_id: str
+    tool_id: str
+    user_id: str
+    results: list[CollectionItemResult]
+
+
 class ZohoFlowResponse(BaseModel):
     """Where you are in configure → OAuth → collect."""
 

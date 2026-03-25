@@ -14,6 +14,7 @@ from app.integrations.categories.idp.microsoft_entra.routers import (
     evidence as entra_evidence,
     oauth as entra_oauth,
 )
+from app.integrations.routers import integration_sync
 
 
 def mount_integration_routes(app: FastAPI) -> None:
@@ -28,3 +29,4 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(entra_configure.gcc_high_idp_router)
     app.include_router(entra_oauth.router)
     app.include_router(entra_evidence.router)
+    app.include_router(integration_sync.router)

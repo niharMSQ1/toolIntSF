@@ -114,6 +114,14 @@ If **`post_oauth_success_redirect_url`** is set in settings, successful callback
 
 Body (same shape as Zoho collect): `org_id`, `user_id`, `tool_id`, optional `evidence_codes`, optional `date_from` / `date_to` (not used for directory snapshots in the current Graph collectors).
 
+### Unified sync (same as Zoho)
+
+| Method | Path |
+|--------|------|
+| POST | `/api/v1/integrations/sync` |
+
+Pass **`provider_key`**: `microsoft_entra` or `microsoft_entra_gcc_high` (recommended for cron), or omit after configure so **`evidence_masters.source`** disambiguates. See **[0002 - zoho_integration.md](0002%20-%20zoho_integration.md)** unified sync section.
+
 ---
 
 ## Initial payload examples
