@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Integration Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+        
+        .main-content {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .section {
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 20px;
+            background: #fafbfc;
+        }
+        
+        h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        button.secondary {
+            background: #95a5a6;
+        }
+        
+        button.secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .response.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .response.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .response.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .json-input {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            min-height: 120px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tool Integration Tester</h1>
+            <p>Test and configure HRMS, IDP, and other tool integrations</p>
+        </header>
+        
+        <div class="main-content">
+            <!-- Configuration Section -->
+            <div class="section">
+                <h2>Configure Integration</h2>
+                <div class="form-group">
+                    <label for="provider">Provider</label>
+                    <select id="provider">
+                        <!-- Existing integrations -->
+                        <option value="zoho">Zoho People (HRMS)</option>
+                        <option value="entra">Microsoft Entra (Commercial)</option>
+                        <option value="entra-gcc-high">Microsoft Entra (GCC High)</option>
+                        
+                        <!-- DevTools integrations -->
+                        <optgroup label="DevTools">
+                            <option value="github">GitHub</option>
+                            <option value="gitlab">GitLab</option>
+                            <option value="bitbucket">Bitbucket</option>
+                        </optgroup>
+                        
+                        <!-- Cloud Infrastructure -->
+                        <optgroup label="Cloud Infrastructure">
+                            <option value="aws">Amazon Web Services</option>
+                            <option value="azure">Microsoft Azure</option>
+                            <option value="gcp">Google Cloud Platform</option>
+                        </optgroup>
+                        
+                        <!-- Identity & Access Management --> 
+                        <optgroup label="Identity & Access">
+                            <option value="google-workspace">Google Workspace</option>
+                            <option value="okta">Okta</option>
+                            <option value="keycloak">Keycloak</option>
+                        </optgroup>
+                        
+                        <!-- Security Tools -->
+                        <optgroup label="Security Tools">
+                            <option value="splunk">Splunk SIEM</option>
+                            <option value="qualys">Qualys VMDR</option>
+                            <option value="wiz">Wiz CSPM</option>
+                            <option value="crowdstrike">CrowdStrike Falcon</option>
+                        </optgroup>
+                        
+                        <!-- Endpoint Management -->
+                        <optgroup label="Endpoint Management">
+                            <option value="intune">Microsoft Intune</option>
+                            <option value="jamf">Jamf Pro</option>
+                        </optgroup>
+                        
+                        <!-- ITSM -->
+                        <optgroup label="ITSM">
+                            <option value="servicenow">ServiceNow</option>
+                            <option value="jira">Atlassian Jira</option>
+                            <option value="freshservice">Freshservice</option>
+                        </optgroup>
+                        
+                        <!-- HRMS Extensions -->
+                        <optgroup label="HRMS">
+                            <option value="darwinbox">Darwinbox</option>
+                            <option value="workday">Workday</option>
+                        </optgroup>
+                        
+                        <!-- Policy & Compliance -->
+                        <optgroup label="Policy & Compliance">
+                            <option value="confluence">Confluence</option>
+                            <option value="docusign">DocuSign</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orgId">Organization ID</label>
+                    <input type="text" id="orgId" placeholder="019ce23e-66b9-71fa-8223-8d66f1925bd5">
+                </div>
+                
+                <div class="form-group">
+                    <label for="userId">User ID</label>
+                    <input type="text" id="userId" placeholder="019ce23e-67e0-702e-957d-ab3af1f8a619">
+                </div>
+                
+                <div class="form-group">
+                    <label for="toolId">Tool ID</label>
+                    <input type="text" id="toolId" placeholder="019ce23d-c16d-7304-a8b5-3500e3cbadbc">
+                </div>
+                
+                <div class="form-group">
+                    <label for="configData">Configuration Data (JSON)</label>
+                    <textarea id="configData" class="json-input" placeholder='{
+  "client_id": "your-client-id",
+  "client_secret": "your-client-secret",
+  "redirect_uri": "http://localhost:8006/hrms/zoho/callback",
+  "region": "in"
+}'></textarea>
+                </div>
+                
+                <button onclick="configureIntegration()">Configure Integration</button>
+                <button onclick="getFlow()" class="secondary">Check Flow Status</button>
+                <button onclick="getStatus()" class="secondary">Get Status</button>
+                
+                <div id="configResponse" class="response" style="display: none;"></div>
+            </div>
+            
+            <!-- Evidence Collection Section -->
+            <div class="section">
+                <h2>Evidence Collection</h2>
+                <div class="form-group">
+                    <label for="evidenceOrgId">Organization ID</label>
+                    <input type="text" id="evidenceOrgId" placeholder="019ce23e-66b9-71fa-8223-8d66f1925bd5">
+                </div>
+                
+                <div class="form-group">
+                    <label for="evidenceUserId">User ID</label>
+                    <input type="text" id="evidenceUserId" placeholder="019ce23e-67e0-702e-957d-ab3af1f8a619">
+                </div>
+                
+                <div class="form-group">
+                    <label for="evidenceToolId">Tool ID</label>
+                    <input type="text" id="evidenceToolId" placeholder="019ce23d-c16d-7304-a8b5-3500e3cbadbc">
+                </div>
+                
+                <div class="form-group">
+                    <label for="evidenceCodes">Evidence Codes (JSON Array)</label>
+                    <textarea id="evidenceCodes" class="json-input" placeholder='["HR_EMPLOYEE_MASTER", "IDP_DIRECTORY_USERS"]'></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dateFrom">Date From (YYYY-MM-DD)</label>
+                    <input type="date" id="dateFrom">
+                </div>
+                
+                <div class="form-group">
+                    <label for="dateTo">Date To (YYYY-MM-DD)</label>
+                    <input type="date" id="dateTo">
+                </div>
+                
+                <button onclick="collectEvidence()">Collect Evidence</button>
+                <button onclick="refreshTokens()" class="secondary">Refresh Tokens</button>
+                
+                <div id="evidenceResponse" class="response" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        
+        function showResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `response ${isError ? 'error' : 'success'}`;
+            element.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        }
+        
+        function showInfo(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = 'response info';
+            element.textContent = message;
+        }
+        
+        async function makeRequest(url, options = {}) {
+            try {
+                showInfo(options.responseId || 'configResponse', 'Making request...');
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.text();
+                let jsonData;
+                try {
+                    jsonData = JSON.parse(data);
+                } catch {
+                    jsonData = data;
+                }
+                
+                showResponse(options.responseId || 'configResponse', jsonData, !response.ok);
+                return { ok: response.ok, data: jsonData };
+            } catch (error) {
+                showResponse(options.responseId || 'configResponse', `Network Error: ${error.message}`, true);
+                return { ok: false, error };
+            }
+        }
+        
+        async function configureIntegration() {
+            const provider = document.getElementById('provider').value;
+            const orgId = document.getElementById('orgId').value;
+            const userId = document.getElementById('userId').value;
+            const toolId = document.getElementById('toolId').value;
+            const configDataText = document.getElementById('configData').value;
+            
+            if (!orgId || !userId || !toolId) {
+                showResponse('configResponse', 'Please fill in Organization ID, User ID, and Tool ID', true);
+                return;
+            }
+            
+            let configData = {};
+            if (configDataText.trim()) {
+                try {
+                    configData = JSON.parse(configDataText);
+                } catch (error) {
+                    showResponse('configResponse', `Invalid JSON in Configuration Data: ${error.message}`, true);
+                    return;
+                }
+            }
+            
+            const payload = {
+                org_id: orgId,
+                user_id: userId,
+                tool_id: toolId,
+                configuration_data: configData
+            };
+            
+            const url = `${API_BASE}/api/v1/integrations/${provider}/configure`;
+            await makeRequest(url, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                responseId: 'configResponse'
+            });
+        }
+        
+        async function getFlow() {
+            const provider = document.getElementById('provider').value;
+            const orgId = document.getElementById('orgId').value;
+            const toolId = document.getElementById('toolId').value;
+            
+            if (!orgId || !toolId) {
+                showResponse('configResponse', 'Please fill in Organization ID and Tool ID', true);
+                return;
+            }
+            
+            const url = `${API_BASE}/api/v1/integrations/${provider}/flow?org_id=${orgId}&tool_id=${toolId}`;
+            await makeRequest(url, { responseId: 'configResponse' });
+        }
+        
+        async function getStatus() {
+            const provider = document.getElementById('provider').value;
+            const orgId = document.getElementById('orgId').value;
+            const toolId = document.getElementById('toolId').value;
+            
+            if (!orgId || !toolId) {
+                showResponse('configResponse', 'Please fill in Organization ID and Tool ID', true);
+                return;
+            }
+            
+            const url = `${API_BASE}/api/v1/integrations/${provider}/status?org_id=${orgId}&tool_id=${toolId}`;
+            await makeRequest(url, { responseId: 'configResponse' });
+        }
+        
+        async function collectEvidence() {
+            const orgId = document.getElementById('evidenceOrgId').value;
+            const userId = document.getElementById('evidenceUserId').value;
+            const toolId = document.getElementById('evidenceToolId').value;
+            const evidenceCodesText = document.getElementById('evidenceCodes').value;
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            
+            if (!orgId || !userId || !toolId) {
+                showResponse('evidenceResponse', 'Please fill in Organization ID, User ID, and Tool ID', true);
+                return;
+            }
+            
+            let evidenceCodes = [];
+            if (evidenceCodesText.trim()) {
+                try {
+                    evidenceCodes = JSON.parse(evidenceCodesText);
+                } catch (error) {
+                    showResponse('evidenceResponse', `Invalid JSON in Evidence Codes: ${error.message}`, true);
+                    return;
+                }
+            }
+            
+            const payload = {
+                org_id: orgId,
+                user_id: userId,
+                tool_id: toolId,
+                evidence_codes: evidenceCodes,
+                ...(dateFrom && { date_from: dateFrom }),
+                ...(dateTo && { date_to: dateTo })
+            };
+            
+            const url = `${API_BASE}/api/v1/evidence/collect`;
+            await makeRequest(url, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                responseId: 'evidenceResponse'
+            });
+        }
+        
+        async function refreshTokens() {
+            const orgId = document.getElementById('evidenceOrgId').value;
+            const toolId = document.getElementById('evidenceToolId').value;
+            const provider = document.getElementById('provider').value;
+            
+            if (!orgId || !toolId) {
+                showResponse('evidenceResponse', 'Please fill in Organization ID and Tool ID', true);
+                return;
+            }
+            
+            const payload = {
+                org_id: orgId,
+                tool_id: toolId,
+                force: false
+            };
+            
+            const url = `${API_BASE}/api/v1/integrations/${provider}/refresh-tokens`;
+            await makeRequest(url, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                responseId: 'evidenceResponse'
+            });
+        }
+        
+        // Update config data example based on provider selection
+        document.getElementById('provider').addEventListener('change', function(e) {
+            const provider = e.target.value;
+            const configTextarea = document.getElementById('configData');
+            
+            const examples = {
+                'zoho': `{
+  "client_id": "1000.JX39AHRQ82RG0TSZUYJ1WSU99S7ULW",
+  "client_secret": "4136fb0f1435598dd1428d3cc6e11a80ab030b0a40", 
+  "redirect_uri": "http://localhost:8006/hrms/zoho/callback",
+  "region": "in"
+}`,
+                'entra': `{
+  "tenant_id": "00000000-0000-0000-0000-000000000000",
+  "client_id": "00000000-0000-0000-0000-000000000000",
+  "client_secret": "your-client-secret"
+}`,
+                'github': `{
+  "personal_access_token": "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "organization": "your-org-name"
+}`,
+                'aws': `{
+  "aws_access_key_id": "AKIAIOSFODNN7EXAMPLE",
+  "aws_secret_access_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+  "region": "us-east-1"
+}`,
+                'splunk': `{
+  "splunk_url": "https://your-splunk-instance.com:8089",
+  "api_token": "your-splunk-token"
+}`,
+                'google-workspace': `{
+  "client_id": "your-google-client-id.apps.googleusercontent.com",
+  "client_secret": "your-google-client-secret",
+  "domain": "your-domain.com"
+}`,
+                'okta': `{
+  "domain": "your-company.okta.com",
+  "api_token": "your-okta-api-token"
+}`,
+                'servicenow': `{
+  "instance_url": "https://your-instance.service-now.com",
+  "username": "your-username",
+  "password": "your-password"
+}`,
+                'jira': `{
+  "base_url": "https://your-company.atlassian.net",
+  "email": "your-email@company.com", 
+  "api_token": "your-jira-api-token"
+}`
+            };
+            
+            if (examples[provider]) {
+                configTextarea.value = examples[provider];
+            }
+        });
+        
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const lastMonth = new Date();
+            lastMonth.setMonth(lastMonth.getMonth() - 1);
+            const lastMonthStr = lastMonth.toISOString().split('T')[0];
+            
+            document.getElementById('dateFrom').value = lastMonthStr;
+            document.getElementById('dateTo').value = today;
+        });
+    </script>
+</body>
+</html>

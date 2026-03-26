@@ -585,12 +585,29 @@ class SuggestEvidence(Base):
     suggest_evidence_control_mappings: Mapped[list['SuggestEvidenceControlMappings']] = relationship('SuggestEvidenceControlMappings', back_populates='suggest_evidence')
 
 
+class Domains(Base):
+    __tablename__ = 'domains'
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='domains_pkey'),
+        UniqueConstraint('name', name='domains_name_unique')
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+
+    tools: Mapped[list['Tools']] = relationship('Tools', back_populates='domain')
+    evidence_masters: Mapped[list['EvidenceMasters']] = relationship('EvidenceMasters', back_populates='domain')
+
+
 class Tools(Base):
     __tablename__ = 'tools'
     __table_args__ = (
+        ForeignKeyConstraint(['domain_id'], ['domains.id'], name='tools_domain_id_foreign'),
         PrimaryKeyConstraint('id', name='tools_pkey'),
         UniqueConstraint('name', name='tools_name_unique'),
-        Index('tools_category_index', 'category'),
+        Index('tools_domain_id_index', 'domain_id'),
         Index('tools_name_index', 'name'),
         Index('tools_status_index', 'status')
     )
@@ -600,7 +617,7 @@ class Tools(Base):
     name: Mapped[Optional[str]] = mapped_column(String(255))
     image_path: Mapped[Optional[str]] = mapped_column(String(255))
     configuration_keys: Mapped[Optional[dict]] = mapped_column(JSON)
-    category: Mapped[Optional[str]] = mapped_column(String(255))
+    domain_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
     sync_type: Mapped[Optional[str]] = mapped_column(Text)
     scope: Mapped[Optional[dict]] = mapped_column(JSON)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
@@ -609,9 +626,9 @@ class Tools(Base):
     permissions: Mapped[Optional[dict]] = mapped_column(JSON)
     resources: Mapped[Optional[dict]] = mapped_column(JSON)
 
+    domain: Mapped[Optional['Domains']] = relationship('Domains', back_populates='tools')
     control_scenarios: Mapped[list['ControlScenarios']] = relationship('ControlScenarios', back_populates='tool')
     evidence: Mapped[list['Evidence']] = relationship('Evidence', back_populates='tool')
-    evidence_masters: Mapped[list['EvidenceMasters']] = relationship('EvidenceMasters', back_populates='tool')
     tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='tool')
 
 
@@ -1143,28 +1160,29 @@ class Evidence(Base):
 class EvidenceMasters(Base):
     __tablename__ = 'evidence_masters'
     __table_args__ = (
-        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', name='evidence_masters_tool_id_foreign'),
+        ForeignKeyConstraint(['domain_id'], ['domains.id'], name='evidence_masters_domain_id_foreign'),
         PrimaryKeyConstraint('id', name='evidence_masters_pkey'),
         UniqueConstraint('code', name='evidence_masters_code_unique'),
         Index('evidence_masters_category_index', 'category'),
-        Index('evidence_masters_tool_id_index', 'tool_id')
+        Index('evidence_masters_domain_id_index', 'domain_id')
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
     code: Mapped[str] = mapped_column(String(50), nullable=False)
     name: Mapped[str] = mapped_column(String(150), nullable=False)
     is_required_evidence: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('true'))
-    tool_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
+    domain_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
     category: Mapped[Optional[str]] = mapped_column(String(100))
     evidence_type: Mapped[Optional[str]] = mapped_column(String(50))
     source: Mapped[Optional[str]] = mapped_column(String(100))
     api_endpoint: Mapped[Optional[str]] = mapped_column(String(255))
     description: Mapped[Optional[str]] = mapped_column(Text)
     expected_frequency: Mapped[Optional[str]] = mapped_column(String(50))
+    required_fields: Mapped[Optional[dict]] = mapped_column(JSON)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
-    tool: Mapped[Optional['Tools']] = relationship('Tools', back_populates='evidence_masters')
+    domain: Mapped[Optional['Domains']] = relationship('Domains', back_populates='evidence_masters')
     control_evidence_master: Mapped[list['ControlEvidenceMaster']] = relationship('ControlEvidenceMaster', back_populates='evidence_master')
 
 

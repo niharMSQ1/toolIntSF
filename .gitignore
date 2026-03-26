@@ -1,2 +1,3 @@
 .env
 *.pyc
+.claude/settings.local.json
