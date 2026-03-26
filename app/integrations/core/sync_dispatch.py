@@ -1,12 +1,11 @@
-"""
+﻿"""
 Unified sync dispatcher: one entry point for cron and manual refresh across registered integrations.
 
-Resolves provider from ``provider_key`` or the first ``evidence_masters.source`` row for ``tool_id``.
+Resolves provider from ``provider_key`` or ``evidence_masters.source`` for the tool domain.
 """
 
 from __future__ import annotations
 
-import uuid
 from typing import Any
 
 from sqlalchemy import select
@@ -31,19 +30,24 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
 SYNC_PROVIDER_KEYS: frozenset[str] = frozenset(_SOURCE_TO_PROVIDER_KEY.values())
 
 
-def _uuid(x: str | uuid.UUID) -> uuid.UUID:
-    return x if isinstance(x, uuid.UUID) else uuid.UUID(str(x))
-
-
-def detect_provider_key_from_db(session: Session, tool_id: str) -> str | None:
-    """Infer sync provider from seeded evidence_masters.source (first row)."""
-    tid = _uuid(tool_id)
-    src = session.scalars(
-        select(EvidenceMaster.source).where(EvidenceMaster.tool_id == tid).limit(1)
-    ).first()
-    if src is None or str(src).strip() == "":
+def detect_provider_key_from_db(session: Session, tool_id: str, cfg: dict[str, Any] | None = None) -> str | None:
+    """Infer sync provider from seeded ``evidence_masters.source`` for the tool domain."""
+    did = persistence.get_domain_id_for_tool(session, tool_id)
+    raw = session.scalars(
+        select(EvidenceMaster.source).where(EvidenceMaster.domain_id == did).distinct()
+    ).all()
+    srcs = sorted({str(r).strip() for r in raw if r is not None and str(r).strip()})
+    if not srcs:
         return None
-    return _SOURCE_TO_PROVIDER_KEY.get(str(src).strip())
+    if len(srcs) == 1:
+        return _SOURCE_TO_PROVIDER_KEY.get(srcs[0])
+    # Multiple sources: disambiguate Entra commercial vs GCC High when both exist for the domain.
+    if cfg is not None and set(srcs).issubset({"microsoft_entra", "microsoft_entra_gcc_high"}):
+        cloud = resolve_national_cloud(cfg)
+        want = "microsoft_entra_gcc_high" if cloud == NationalCloud.GCC_HIGH else "microsoft_entra"
+        if want in srcs:
+            return _SOURCE_TO_PROVIDER_KEY.get(want)
+    return None
 
 
 def _assert_entra_provider_matches_integration(provider_key: str, cfg: dict[str, Any]) -> None:
@@ -75,7 +79,7 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
         cfg = {}
 
     resolved = body.provider_key.strip() if body.provider_key and body.provider_key.strip() else None
-    detected = detect_provider_key_from_db(session, body.tool_id)
+    detected = detect_provider_key_from_db(session, body.tool_id, cfg)
 
     if resolved and detected and resolved != detected:
         raise ValueError(

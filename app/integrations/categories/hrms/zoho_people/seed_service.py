@@ -1,4 +1,4 @@
-"""Seed `evidence_masters` rows for Zoho People (per tool_id)."""
+﻿"""Seed `evidence_masters` rows for Zoho People (scoped by tool domain)."""
 
 from __future__ import annotations
 
@@ -9,21 +9,19 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.integrations.categories.hrms.zoho_people.seed import ZOHO_EVIDENCE_SEED_ROWS
+from app.integrations.core.persistence.tool_integration_service import get_domain_id_for_tool
 from app.models import EvidenceMaster
 
 
-def _uuid(x: str | uuid.UUID) -> uuid.UUID:
-    return x if isinstance(x, uuid.UUID) else uuid.UUID(str(x))
-
-
 def seed_zoho_evidence_masters(session: Session, tool_id: str) -> int:
-    tid = _uuid(tool_id)
+    did = get_domain_id_for_tool(session, tool_id)
     count = 0
     for row in ZOHO_EVIDENCE_SEED_ROWS:
         exists = session.scalars(
             select(EvidenceMaster.id).where(
-                EvidenceMaster.tool_id == tid,
+                EvidenceMaster.domain_id == did,
                 EvidenceMaster.code == row["code"],
+                EvidenceMaster.source == "zoho_people",
             ).limit(1)
         ).first()
         if exists:
@@ -32,7 +30,7 @@ def seed_zoho_evidence_masters(session: Session, tool_id: str) -> int:
         session.add(
             EvidenceMaster(
                 id=uuid.uuid4(),
-                tool_id=tid,
+                domain_id=did,
                 name=row["name"],
                 code=row["code"],
                 category=row["category"],

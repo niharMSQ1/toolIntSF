@@ -51,9 +51,10 @@ def run_evidence_collection(
         tool_id=tool_id,
         evidence_codes=evidence_codes,
         master_name_order=EVIDENCE_MASTER_NAME_ORDER,
+        source="zoho_people",
     )
     if not masters:
-        raise ValueError("No evidence_masters for this tool_id; run /configure to seed.")
+        raise ValueError("No evidence_masters for this tool's domain; run /configure to seed.")
 
     token = resolve_access_token(cfg)
     base = cfg.get("people_base_url") or people_base_url(resolve_region(cfg))

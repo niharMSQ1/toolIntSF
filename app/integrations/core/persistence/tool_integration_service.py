@@ -21,6 +21,7 @@ from app.models import (
     EvidenceMapped,
     EvidenceMaster,
     ToolIntegration,
+    Tools,
 )
 
 
@@ -52,7 +53,7 @@ def _integration_row(t: ToolIntegration) -> dict[str, Any]:
 def _master_to_dict(m: EvidenceMaster) -> dict[str, Any]:
     return {
         "id": m.id,
-        "tool_id": m.tool_id,
+        "domain_id": m.domain_id,
         "name": m.name,
         "code": m.code,
         "category": m.category,
@@ -61,6 +62,17 @@ def _master_to_dict(m: EvidenceMaster) -> dict[str, Any]:
         "api_endpoint": m.api_endpoint,
         "description": m.description,
     }
+
+
+def get_domain_id_for_tool(session: Session, tool_id: str | uuid.UUID) -> uuid.UUID:
+    """Resolve ``tools.domain_id`` for catalog and evidence-masters scoping."""
+    tid = _uuid(tool_id)
+    row = session.get(Tools, tid)
+    if row is None:
+        raise ValueError(f"Tool not found: {tool_id!r}")
+    if row.domain_id is None:
+        raise ValueError("Tool has no domain_id; assign a domain in the tools catalog before integrating.")
+    return row.domain_id
 
 
 def normalize_evidence_master_description(master: dict[str, Any]) -> str | None:
@@ -225,20 +237,27 @@ def list_evidence_masters(
     tool_id: str,
     evidence_codes: list[str] | None,
     master_name_order: tuple[str, ...] | None = None,
+    source: str | None = None,
 ) -> list[dict[str, Any]]:
     """
-    List evidence_masters for a tool. If ``master_name_order`` is set (e.g. Zoho G3→G4 order),
-    rows are sorted by that name sequence; otherwise SQL ``ORDER BY code`` order is kept.
+    List evidence_masters for the tool's domain (``tools.domain_id``).
+
+    ``source`` filters masters for the integration product (e.g. ``zoho_people``, ``microsoft_entra``).
+    If ``master_name_order`` is set (e.g. Zoho G3→G4 order), rows are sorted by that name sequence;
+    otherwise SQL ``ORDER BY code`` order is kept.
     """
-    tid = _uuid(tool_id)
+    did = get_domain_id_for_tool(session, tool_id)
+    criteria = [EvidenceMaster.domain_id == did]
+    if source is not None and str(source).strip():
+        criteria.append(EvidenceMaster.source == str(source).strip())
     if evidence_codes:
         stmt = (
             select(EvidenceMaster)
-            .where(EvidenceMaster.tool_id == tid, EvidenceMaster.code.in_(evidence_codes))
+            .where(*criteria, EvidenceMaster.code.in_(evidence_codes))
             .order_by(EvidenceMaster.code)
         )
     else:
-        stmt = select(EvidenceMaster).where(EvidenceMaster.tool_id == tid).order_by(EvidenceMaster.code)
+        stmt = select(EvidenceMaster).where(*criteria).order_by(EvidenceMaster.code)
     rows = list(session.scalars(stmt).all())
     if master_name_order:
         order = {n: i for i, n in enumerate(master_name_order)}

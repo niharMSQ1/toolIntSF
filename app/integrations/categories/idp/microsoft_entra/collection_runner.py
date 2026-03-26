@@ -11,8 +11,9 @@ from app.integrations.categories.idp.microsoft_entra.collector import (
     collect_for_master,
     graph_evidence_for_tool_storage,
 )
-from app.integrations.categories.idp.microsoft_entra.credentials import has_access_token, resolve_access_token
+from app.integrations.categories.idp.microsoft_entra.credentials import has_access_token, resolve_access_token, resolve_national_cloud
 from app.integrations.categories.idp.microsoft_entra.seed import EVIDENCE_MASTER_NAME_ORDER
+from app.integrations.categories.idp.microsoft_entra.seed_service import evidence_source_for_cloud
 from app.integrations.categories.idp.microsoft_entra.token_refresh import ensure_fresh_access_token
 from app.integrations.core.persistence import (
     normalize_evidence_master_description,
@@ -47,9 +48,10 @@ def run_entra_evidence_collection(
         tool_id=tool_id,
         evidence_codes=evidence_codes,
         master_name_order=EVIDENCE_MASTER_NAME_ORDER,
+        source=evidence_source_for_cloud(resolve_national_cloud(cfg)),
     )
     if not masters:
-        raise ValueError("No evidence_masters for this tool_id; run /configure to seed.")
+        raise ValueError("No evidence_masters for this tool's domain; run /configure to seed.")
 
     if not resolve_access_token(cfg):
         raise ValueError("Access token missing after refresh.")

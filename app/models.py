@@ -1,4 +1,4 @@
-"""
+﻿"""
 Stable import aliases for ORM classes defined in `models_generated.py`.
 
 Regenerate the full schema with `python generate_model.py` from the project root.
@@ -15,6 +15,7 @@ from app.models_generated import (
     EvidenceMasters,
     EvidenceMappeds,
     ToolIntegrations,
+    Tools,
 )
 
 # Singular names used across services
@@ -35,4 +36,5 @@ __all__ = [
     "EvidenceMasters",
     "ToolIntegration",
     "ToolIntegrations",
+    "Tools",
 ]

@@ -18,7 +18,7 @@ def sync_integration(body: SyncIntegrationBody, session: Session = Depends(get_d
     Pull fresh evidence for a configured integration (same work as provider-specific collect endpoints).
 
     Use for **manual refresh** or **scheduled jobs** (cron). Resolves the integration type from
-    ``provider_key`` or from ``evidence_masters.source`` for this ``tool_id``.
+    ``provider_key`` or from ``evidence_masters.source`` for this tool's domain (via ``tool_id``).
     """
     try:
         return run_integration_sync(session, body)

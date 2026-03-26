@@ -14,7 +14,7 @@ For **Microsoft Entra (IDP)**, see **[0004 - microsoft_entra_integration.md](000
 |--------------|------------------------------|
 | **G1** — User selects tool and supplies data | User picks **Zoho People** (HRMS) and submits **`ToolIntegrationPayload`** (see below), or resumes from saved integration. |
 | **G2** — Persist in `tool_integrations` | One row per `(organization_id, tool_id)`; store OAuth settings and tokens in **`configuration_data`**. Updates are **full replace** on that JSON object (no partial merge). |
-| **G3** — Resolve `evidence_masters` | **POST …/configure** seeds masters from [`seed.py`](../app/integrations/categories/hrms/zoho_people/seed.py). Collectors use **`code`** (e.g. `HR_EMPLOYEE_MASTER`) and master **`name`** must match **`evidence.title`**. |
+| **G3** — Resolve `evidence_masters` | **POST …/configure** seeds masters for the tool's **`domain_id`** (from [`seed.py`](../app/integrations/categories/hrms/zoho_people/seed.py)). Collectors use **`code`** (e.g. `HR_EMPLOYEE_MASTER`) and master **`name`** must match **`evidence.title`**. |
 | **G4** — `evidence` + `evidence_collection` | Call Zoho People APIs with **`Zoho-oauthtoken`**; **`upsert_evidence_full_replace`**; **`insert_evidence_collection`** with `source` = `Zoho People API`. |
 | **G5** — `evidence_mappeds` | **`remap_evidence_to_controls`** links **`evidence.id`** to controls via **`control_evidence_master`** for this **`evidence_master_id`**. |
 
@@ -117,7 +117,7 @@ Use **`POST /api/v1/integrations/sync`** to refresh evidence for **any** configu
 |--------|------|
 | POST | `/api/v1/integrations/sync` |
 
-- **`provider_key`** (optional): `zoho_people` \| `microsoft_entra` \| `microsoft_entra_gcc_high`. If omitted, the server infers the provider from the first seeded **`evidence_masters.source`** for this **`tool_id`** (requires **configure** to have run at least once).
+- **`provider_key`** (optional): `zoho_people` \| `microsoft_entra` \| `microsoft_entra_gcc_high`. If omitted, the server infers the provider from seeded **`evidence_masters.source`** for this tool's **domain** (requires **configure** to have run at least once).
 - Other fields match **`CollectEvidenceBody`**: **`evidence_codes`**, **`date_from`**, **`date_to`**.
 
 Implementation: [`sync_dispatch.py`](../app/integrations/core/sync_dispatch.py), [`integration_sync.py`](../app/integrations/routers/integration_sync.py).
@@ -195,7 +195,7 @@ After OAuth, tokens are stored on the same row — typically under **`oauth_clie
 
 ## Phase B — Evidence inventory (G3)
 
-**POST …/configure** calls **`seed_zoho_evidence_masters`** so each **`evidence_masters`** row exists for this **`tool_id`** (idempotent skip if code already present).
+**POST …/configure** calls **`seed_zoho_evidence_masters`** so each **`evidence_masters`** row exists for this tool's **domain** (idempotent skip if `domain_id` + `code` + `source` already present).
 
 | # | `name` (also `evidence.title`) | `code` | Category |
 |---|--------------------------------|--------|----------|

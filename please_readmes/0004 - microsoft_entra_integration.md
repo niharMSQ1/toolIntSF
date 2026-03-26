@@ -29,7 +29,7 @@ You register **two separate tools** in your catalog (two `tool_id` values) if yo
 |--------------|-----------------------------------|
 | **G1** — User selects tool and supplies data | User picks the Entra tool (commercial or GCC High `tool_id`) and calls **POST …/configure** with `org_id`, `user_id`, `tool_id`, and `configuration_data` (at minimum `tenant_id` when using server-side app credentials). |
 | **G2** — Persist in `tool_integrations` | Same as generic: one row per `(organization_id, tool_id)`; **full replace** on update. OAuth tokens and shell config live in `configuration_data` (including `oauth_clients` after OAuth). |
-| **G3** — Resolve `evidence_masters` | **POST …/configure** seeds `evidence_masters` for this `tool_id` (see inventory table below). Collectors key off **`code`** (e.g. `IDP_DIRECTORY_USERS`). |
+| **G3** — Resolve `evidence_masters` | **POST …/configure** seeds `evidence_masters` for this tool's **`domain_id`** (see inventory table below). Collectors key off **`code`** (e.g. `IDP_DIRECTORY_USERS`). |
 | **G4** — `evidence` + `evidence_collection` | Call Microsoft Graph with Bearer token; upsert **`evidence`** by `organization_id` + `title`; insert **`evidence_collection`** with `source` = `Microsoft Graph` and the Graph payload in `tool_evidence`. |
 | **G5** — `evidence_mappeds` | Same as Zoho: `evidence_masters.id` → `control_evidence_master` → controls; **`evidence_mappeds`** links the saved **`evidence`** row to each control. |
 
@@ -80,7 +80,7 @@ Mounted via [`app/integrations/api.py`](../app/integrations/api.py). Default por
 **Behavior**
 
 - Persists **`tool_integrations`** (G2).
-- Seeds **`evidence_masters`** for this `tool_id` if missing (G3).
+- Seeds **`evidence_masters`** for this tool's domain if missing (G3).
 - If no access token yet: returns **`authorization_url`** and **`state`** for the browser.
 - If tokens already present: queues **background evidence collection** (same as post-OAuth).
 

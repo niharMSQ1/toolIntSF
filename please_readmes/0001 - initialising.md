@@ -44,7 +44,7 @@ where `configuration_data` will vary from tools to toosl
 
 **step 2** — the credentials are first saved in `tool_integrations` table.
 
-**step 3** — the we need to find the name corresponding to the tool in `evidence_masters` and collect that particular evidence if it is possible (for example, if tool is "Zoho People", "name" column in `evidence_masters` could be "employee directory")
+**step 3** — Resolve the tool's **`domain_id`** from **`tools`** (`tools.domain_id`). **`evidence_masters`** is scoped by **`domain_id`** (and by integration **`source`**, e.g. `zoho_people`). Use the masters for that domain to know which evidence to collect; the **`name`** on each master still drives **`evidence.title`** (e.g. `employee directory`).
 
 **step 4** — eviednce is collected from the tool apis and then a record is created in the `evidence` table and then the collection is saved in `evidence_collection` table
 
