@@ -86,6 +86,7 @@ def run_evidence_collection(
                 session,
                 evidence_id=ev["id"],
                 evidence_master_id=master["id"],
+                mapped_by=user_id,
             )
             persistence.insert_evidence_collection(
                 session,

@@ -96,6 +96,30 @@ def _evidence_to_dict(e: Evidence) -> dict[str, Any]:
     }
 
 
+def get_evidence_by_org_title(session: Session, organization_id: str, title: str) -> dict[str, Any] | None:
+    oid = _uuid(organization_id)
+    title_db = _truncate(title, 255)
+    row = session.scalars(
+        select(Evidence).where(Evidence.organization_id == oid, Evidence.title == title_db).limit(1)
+    ).first()
+    if not row:
+        return None
+    return _evidence_to_dict(row)
+
+
+def get_latest_evidence_collection_created_at(
+    session: Session,
+    *,
+    evidence_id: str | uuid.UUID,
+    source: str | None = None,
+) -> datetime | None:
+    eid = _uuid(evidence_id)
+    stmt = select(EvidenceCollection.created_at).where(EvidenceCollection.evidence_id == eid)
+    if source is not None and str(source).strip():
+        stmt = stmt.where(EvidenceCollection.source == str(source).strip())
+    return session.scalars(stmt.order_by(EvidenceCollection.created_at.desc()).limit(1)).first()
+
+
 def get_integration(session: Session, org_id: str, tool_id: str) -> dict[str, Any] | None:
     oid, tid = _uuid(org_id), _uuid(tool_id)
     row = session.scalars(
@@ -158,6 +182,7 @@ def remap_evidence_to_controls(
     *,
     evidence_id: str | uuid.UUID,
     evidence_master_id: str | uuid.UUID,
+    mapped_by: str | None = None,
 ) -> int:
     eid = _uuid(evidence_id)
     emid = _uuid(evidence_master_id)
@@ -168,6 +193,8 @@ def remap_evidence_to_controls(
         )
     ).all()
     n = 0
+    now = datetime.now(timezone.utc)
+    mapped_by_db = _truncate(str(mapped_by), 255) if mapped_by is not None else None
     for control_id in control_ids:
         session.add(
             EvidenceMapped(
@@ -175,6 +202,9 @@ def remap_evidence_to_controls(
                 evidence_id=eid,
                 evidenceable_type=CONTROL_EVIDENCEABLE_TYPE,
                 evidenceable_id=control_id,
+                mapped_by=mapped_by_db,
+                created_at=now,
+                updated_at=now,
             )
         )
         n += 1
