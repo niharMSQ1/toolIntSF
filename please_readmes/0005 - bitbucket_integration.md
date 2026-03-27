@@ -1,8 +1,20 @@
-# Bitbucket Cloud integration
+# Bitbucket Cloud integration (complete flow)
+
+Per-tool index: **[0000 - integrations_index.md](0000%20-%20integrations_index.md)**. Generic steps **G1–G5**: **[0001 - initialising.md](0001%20-%20initialising.md)**.
 
 ## Overview
 
 This integration follows the same persistence patterns as Zoho / Microsoft Entra (`tool_integrations`, domain-scoped `evidence_masters`, `configuration_data` for OAuth tokens) and adds a **Vanta-style** second step: after OAuth, the user **selects Bitbucket workspaces** to sync before evidence collection runs.
+
+## Relationship to `0001 - initialising.md`
+
+| Generic step | What it means for Bitbucket |
+|--------------|-----------------------------|
+| **G1** | User **POST …/configure** with OAuth client settings (or env-backed secrets), completes browser OAuth, then **selects workspaces**. |
+| **G2** | **`tool_integrations`** stores OAuth tokens and **`selected_workspaces`** (or equivalent); **full replace** on reconnect. |
+| **G3** | Configure seeds **`evidence_masters`** with **`source` = `bitbucket_cloud`** for the tool’s **`domain_id`**. |
+| **G4** | Collectors call **Bitbucket Cloud REST API**; **`upsert_evidence_full_replace`**; **`insert_evidence_collection`**. |
+| **G5** | **`remap_evidence_to_controls`** via **`evidence_master_id`**. |
 
 ## OAuth app (Atlassian)
 
@@ -64,3 +76,10 @@ sequenceDiagram
 - **404 on configure**: ensure the URL uses `devtools/bitbucket` (see `static/index.html` tester).
 - **Workspace selection fails**: slugs must appear in the GET `/workspaces` response for the current token.
 - **Token errors**: refresh runs automatically before listing workspaces when `access_token_expires_at` is near expiry.
+
+---
+
+## References
+
+- **[0000 - integrations_index.md](0000%20-%20integrations_index.md)** — all integrated tools.
+- **[0001 - initialising.md](0001%20-%20initialising.md)** — generic model.

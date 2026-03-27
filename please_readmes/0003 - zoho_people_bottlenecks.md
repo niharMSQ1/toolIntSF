@@ -2,6 +2,8 @@
 
 This note complements **[0002 - zoho_integration.md](0002%20-%20zoho_integration.md)**. It describes **performance bottlenecks** and **common API mismatches** seen when running evidence collection against Zoho People (especially with debug logging enabled).
 
+**All integrated tools:** **[0000 - integrations_index.md](0000%20-%20integrations_index.md)**.
+
 ---
 
 ## 1. Redundant employee form fetches (largest throughput cost)

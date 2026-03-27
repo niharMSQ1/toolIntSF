@@ -2,6 +2,8 @@
 
 This document is the **Zoho People–specific** walkthrough aligned with the code under [`app/integrations/categories/hrms/zoho_people/`](../app/integrations/categories/hrms/zoho_people/). The **generic** rules for tables, uniqueness, and control mapping live in **[0001 - initialising.md](0001%20-%20initialising.md)**. Generic steps are labeled **G1–G5** below.
 
+**All integrated tools:** **[0000 - integrations_index.md](0000%20-%20integrations_index.md)**.
+
 For **performance caveats and failure modes**, see **[0003 - zoho_people_bottlenecks.md](0003%20-%20zoho_people_bottlenecks.md)**.
 
 For **Microsoft Entra (IDP)**, see **[0004 - microsoft_entra_integration.md](0004%20-%20microsoft_entra_integration.md)**.
@@ -271,6 +273,7 @@ flowchart TD
 
 ## References
 
+- **[0000 - integrations_index.md](0000%20-%20integrations_index.md)** — all integrated tools and `provider_key` values.
 - **[0001 - initialising.md](0001%20-%20initialising.md)** — generic GRC data model.
 - **[0003 - zoho_people_bottlenecks.md](0003%20-%20zoho_people_bottlenecks.md)** — throughput and API quirks.
 - **[0004 - microsoft_entra_integration.md](0004%20-%20microsoft_entra_integration.md)** — IDP integration using the same persistence layer.

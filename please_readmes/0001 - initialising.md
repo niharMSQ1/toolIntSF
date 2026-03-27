@@ -1,5 +1,9 @@
 # Initialising — tool integrations & evidence flow
 
+**Integration-specific guides** (configure routes, OAuth, collect, unified sync) are listed in **[0000 - integrations_index.md](0000%20-%20integrations_index.md)**.
+
+---
+
 ## Context
 
 hi, I am starting multiple tool integrations categorised as HRMS, IDP, ITSM, IAM, Asset management, Devtools (github, bitbucket etc).

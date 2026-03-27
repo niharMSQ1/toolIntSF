@@ -2,6 +2,8 @@
 
 This document describes the **Microsoft Entra** integrations implemented under [`app/integrations/categories/idp/microsoft_entra/`](../app/integrations/categories/idp/microsoft_entra/). The **generic** rules for tables, uniqueness, and control mapping live in **[0001 - initialising.md](0001%20-%20initialising.md)**. Generic steps are labeled **G1–G5** and apply to both **commercial (worldwide)** and **GCC High (US sovereign)** variants.
 
+**All integrated tools:** **[0000 - integrations_index.md](0000%20-%20integrations_index.md)**.
+
 ---
 
 ## Two products: commercial vs GCC High
@@ -29,7 +31,7 @@ You register **two separate tools** in your catalog (two `tool_id` values) if yo
 |--------------|-----------------------------------|
 | **G1** — User selects tool and supplies data | User picks the Entra tool (commercial or GCC High `tool_id`) and calls **POST …/configure** with `org_id`, `user_id`, `tool_id`, and `configuration_data` (at minimum `tenant_id` when using server-side app credentials). |
 | **G2** — Persist in `tool_integrations` | Same as generic: one row per `(organization_id, tool_id)`; **full replace** on update. OAuth tokens and shell config live in `configuration_data` (including `oauth_clients` after OAuth). |
-| **G3** — Resolve `evidence_masters` | **POST …/configure** seeds `evidence_masters` for this tool's **`domain_id`** (see inventory table below). Collectors key off **`code`** (e.g. `IDP_DIRECTORY_USERS`). |
+| **G3** — Resolve `evidence_masters` | **POST …/configure** seeds `evidence_masters` for this tool's **`domain_id`**. **`code`** / **`name`** / **`category`** match the shared IAM catalog (**`EV-37`…`EV-522`**, same as Okta) — see [`iam_evidence_catalog.py`](../app/integrations/categories/idp/iam_evidence_catalog.py). |
 | **G4** — `evidence` + `evidence_collection` | Call Microsoft Graph with Bearer token; upsert **`evidence`** by `organization_id` + `title`; insert **`evidence_collection`** with `source` = `Microsoft Graph` and the Graph payload in `tool_evidence`. |
 | **G5** — `evidence_mappeds` | Same as Zoho: `evidence_masters.id` → `control_evidence_master` → controls; **`evidence_mappeds`** links the saved **`evidence`** row to each control. |
 
@@ -177,14 +179,11 @@ Until tokens exist, Graph-backed collectors will fail fast with a clear error.
 
 ## Phase B — Evidence inventory (G3)
 
-Seeded **`evidence_masters`** rows (see [`seed.py`](../app/integrations/categories/idp/microsoft_entra/seed.py)):
-
-| # | Master `name` (also `evidence.title`) | `code` | Graph (conceptual) |
-|---|----------------------------------------|--------|---------------------|
-| 1 | Directory Users | `IDP_DIRECTORY_USERS` | `GET /users` (paginated) |
-| 2 | Directory Groups | `IDP_DIRECTORY_GROUPS` | `GET /groups` (paginated) |
+Seeded **`evidence_masters`** rows use the **same IAM evidence codes and names as Okta** (`EV-37` … `EV-522`, category **IAM**). The canonical list is **[`iam_evidence_catalog.py`](../app/integrations/categories/idp/iam_evidence_catalog.py)**; Entra-specific Microsoft Graph hints are in [`seed.py`](../app/integrations/categories/idp/microsoft_entra/seed.py). Collection logic per code is in [`collector.py`](../app/integrations/categories/idp/microsoft_entra/collector.py) (users, directory roles, policies, applications, sign-in logs, Conditional Access, etc.).
 
 `source` in **`evidence_masters`**: `microsoft_entra` (commercial) or `microsoft_entra_gcc_high` (GCC High), set at seed time.
+
+**Note:** `evidence_masters.code` is **globally unique** in the database. If the same **`EV-xx`** row was already created by another integration (e.g. Okta), seeding may skip; admin consent / Graph permissions may be required for audit logs and Conditional Access reads.
 
 ---
 
@@ -237,6 +236,7 @@ flowchart TD
 
 ## References
 
+- **[0000 - integrations_index.md](0000%20-%20integrations_index.md)** — all integrated tools and `provider_key` values.
 - **[0001 - initialising.md](0001%20-%20initialising.md)** — generic GRC data model and uniqueness.
 - **[0002 - zoho_integration.md](0002%20-%20zoho_integration.md)** — parallel HRMS integration (same persistence patterns).
 - **Microsoft Learn** — [Microsoft Graph national cloud deployments](https://learn.microsoft.com/en-us/graph/deployments), Entra app registration, and delegated permissions.
