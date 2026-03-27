@@ -11,7 +11,9 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.integrations.categories.hrms.darwinbox.collection_runner import run_darwinbox_evidence_collection
 from app.integrations.categories.hrms.zoho_people.collection_runner import run_evidence_collection
+from app.integrations.categories.itsm.servicenow.collection_runner import run_servicenow_evidence_collection
 from app.integrations.categories.idp.microsoft_entra.collection_runner import run_entra_evidence_collection
 from app.integrations.categories.idp.microsoft_entra.credentials import resolve_national_cloud
 from app.integrations.categories.idp.microsoft_entra.national_cloud import NationalCloud
@@ -23,6 +25,9 @@ from app.schemas import CollectEvidenceResponse, SyncIntegrationBody, SyncIntegr
 # Must match seeded ``evidence_masters.source`` values and registry keys.
 _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "zoho_people": "zoho_people",
+    "darwinbox": "darwinbox",
+    "servicenow": "servicenow",
+    "itsm_catalog": "servicenow",
     "microsoft_entra": "microsoft_entra",
     "microsoft_entra_gcc_high": "microsoft_entra_gcc_high",
 }
@@ -91,7 +96,7 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     if not provider_key:
         raise ValueError(
             "Could not determine integration provider. Run POST .../configure to seed evidence_masters, "
-            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high)."
+            "or pass provider_key (zoho_people, darwinbox, servicenow, microsoft_entra, microsoft_entra_gcc_high)."
         )
 
     if provider_key not in SYNC_PROVIDER_KEYS:
@@ -103,6 +108,26 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     inner: CollectEvidenceResponse
     if provider_key == "zoho_people":
         inner = run_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "darwinbox":
+        inner = run_darwinbox_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "servicenow":
+        inner = run_servicenow_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,

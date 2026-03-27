@@ -47,6 +47,22 @@ registry.register(
 )
 registry.register(
     ProviderMeta(
+        category=IntegrationCategory.HRMS,
+        key="darwinbox",
+        display_name="Darwinbox",
+        description="HR evidence via Darwinbox collectors configured for this project.",
+    )
+)
+registry.register(
+    ProviderMeta(
+        category=IntegrationCategory.ITSM,
+        key="servicenow",
+        display_name="ServiceNow",
+        description="ITSM evidence via ServiceNow Table API or configured mock collectors.",
+    )
+)
+registry.register(
+    ProviderMeta(
         category=IntegrationCategory.IDP,
         key="microsoft_entra",
         display_name="Microsoft Entra ID",

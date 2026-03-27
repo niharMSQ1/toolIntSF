@@ -37,6 +37,26 @@ class ZohoConfigureResponse(BaseModel):
     )
 
 
+class DarwinboxConfigureResponse(BaseModel):
+    id: str
+    organization_id: str
+    tool_id: str
+    configured: bool
+    collection_started: bool
+    next_step: str
+    configuration_data: dict = Field(description="Saved config for the Darwinbox integration.")
+
+
+class ServiceNowConfigureResponse(BaseModel):
+    id: str
+    organization_id: str
+    tool_id: str
+    configured: bool
+    collection_started: bool
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with any secrets masked.")
+
+
 class AuthorizeQuery(BaseModel):
     org_id: str
     tool_id: str
@@ -89,6 +109,17 @@ class CollectEvidenceResponse(BaseModel):
     results: list[CollectionItemResult]
 
 
+class ServiceNowCollectionItemResult(CollectionItemResult):
+    service_now_response: dict[str, Any] | None = None
+
+
+class ServiceNowCollectEvidenceResponse(BaseModel):
+    org_id: str
+    tool_id: str
+    user_id: str
+    results: list[ServiceNowCollectionItemResult]
+
+
 class SyncIntegrationBody(BaseModel):
     """Unified sync: same optional filters as collect; provider is optional if evidence_masters exist."""
 
@@ -98,7 +129,7 @@ class SyncIntegrationBody(BaseModel):
     provider_key: str | None = Field(
         default=None,
         description=(
-            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high. "
+            "Explicit provider: zoho_people | darwinbox | servicenow | microsoft_entra | microsoft_entra_gcc_high. "
             "Omit to infer from evidence_masters.source (after configure)."
         ),
     )
