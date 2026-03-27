@@ -216,6 +216,7 @@
                         <optgroup label="ITSM">
                             <option value="servicenow">ServiceNow</option>
                             <option value="jira">Atlassian Jira</option>
+                            <option value="linear">Linear</option>
                             <option value="freshservice">Freshservice</option>
                         </optgroup>
                         
@@ -454,6 +455,8 @@
                 ? '/api/v1/evidence/wiz/collect'
                 : provider === 'jira'
                 ? '/api/v1/evidence/jira/collect'
+                : provider === 'linear'
+                ? '/api/v1/evidence/linear/collect'
                 : provider === 'okta'
                 ? '/api/v1/evidence/okta/collect'
                 : '/api/v1/evidence/collect';
@@ -538,6 +541,12 @@
   "client_secret": "<atlassian-oauth-client-secret>",
   "redirect_uri": "http://localhost:8006/itsm/jira/callback",
   "project_keys": "PROJ,ITSM"
+}`,
+                'linear': `{
+  "client_id": "<linear-oauth-client-id>",
+  "client_secret": "<linear-oauth-client-secret>",
+  "redirect_uri": "http://localhost:8006/itsm/linear/callback",
+  "team_ids": ["<linear-team-id>"]
 }`,
                 'devtools/bitbucket': `{
   "redirect_uri": "http://localhost:8006/api/v1/integrations/devtools/bitbucket/oauth/callback"

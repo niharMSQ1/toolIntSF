@@ -55,6 +55,11 @@ class Settings(BaseSettings):
     # Space-separated scopes; defaults applied in bitbucket.oauth if unset.
     bitbucket_oauth_scopes: str | None = None
 
+    # Linear OAuth 2.0 — optional if BYO in tool_integrations.configuration_data.
+    linear_client_id: str | None = None
+    linear_client_secret: str | None = None
+    linear_redirect_uri: str | None = None
+
     # Wiz CSPM (optional defaults; usually set per integration in configuration_data)
     wiz_auth_url: str | None = None
     wiz_audience: str | None = None

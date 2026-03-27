@@ -10,6 +10,7 @@ Structure
 - ``categories.idp.okta``: Okta IAM (Admin API + SSWS token), collectors, routes.
 - ``categories.cspm.wiz``: Wiz CSPM (GraphQL + service account OAuth client credentials).
 - ``categories.itsm.jira``: Jira Cloud (Atlassian 3LO OAuth, JQL search collectors, HTTP routes).
+- ``categories.itsm.linear``: Linear (OAuth 2.0, GraphQL collectors, issue routes).
 - ``core.sync_dispatch`` / ``routers.integration_sync``: unified ``POST /api/v1/integrations/sync`` for all providers.
 
 Use ``app.integrations.api.mount_integration_routes`` in FastAPI ``main``.

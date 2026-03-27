@@ -23,6 +23,10 @@ from app.integrations.categories.hrms.zoho_people.routers import configure, evid
 from app.integrations.categories.itsm.jira.routers import configure as jira_configure
 from app.integrations.categories.itsm.jira.routers import evidence as jira_evidence
 from app.integrations.categories.itsm.jira.routers import oauth as jira_oauth
+from app.integrations.categories.itsm.linear.routers import configure as linear_configure
+from app.integrations.categories.itsm.linear.routers import evidence as linear_evidence
+from app.integrations.categories.itsm.linear.routers import issues as linear_issues
+from app.integrations.categories.itsm.linear.routers import oauth as linear_oauth
 from app.integrations.categories.idp.microsoft_entra.routers import (
     configure as entra_configure,
     evidence as entra_evidence,
@@ -50,6 +54,11 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(jira_configure.itsm_router)
     app.include_router(jira_oauth.router)
     app.include_router(jira_evidence.router)
+    app.include_router(linear_configure.router)
+    app.include_router(linear_configure.itsm_router)
+    app.include_router(linear_oauth.router)
+    app.include_router(linear_evidence.router)
+    app.include_router(linear_issues.router)
     app.include_router(entra_configure.commercial_router)
     app.include_router(entra_configure.commercial_idp_router)
     app.include_router(entra_configure.gcc_high_router)

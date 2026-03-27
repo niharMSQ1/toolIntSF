@@ -61,3 +61,19 @@ registry.register(
         description="Identity evidence via Microsoft Graph US sovereign cloud (OAuth + collectors).",
     )
 )
+registry.register(
+    ProviderMeta(
+        category=IntegrationCategory.ITSM,
+        key="jira_cloud",
+        display_name="Jira Cloud",
+        description="ITSM evidence via Jira Cloud APIs (OAuth + collectors).",
+    )
+)
+registry.register(
+    ProviderMeta(
+        category=IntegrationCategory.ITSM,
+        key="linear",
+        display_name="Linear",
+        description="ITSM evidence and issues via Linear GraphQL API (OAuth + collectors).",
+    )
+)

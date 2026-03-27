@@ -1,1 +1,1 @@
-"""ITSM integrations (e.g. Jira)."""
+"""ITSM integrations (e.g. Jira, Linear)."""

@@ -98,7 +98,7 @@ class SyncIntegrationBody(BaseModel):
     provider_key: str | None = Field(
         default=None,
         description=(
-            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz | jira_cloud | okta. "
+            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz | jira_cloud | linear | okta. "
             "Omit to infer from evidence_masters.source (after configure)."
         ),
     )
@@ -212,6 +212,173 @@ class JiraRefreshTokensResponse(BaseModel):
     refreshed: bool = Field(description="True if Atlassian token API was called.")
     message: str
     configuration_data: dict = Field(description="Saved config with secrets masked.")
+
+
+class LinearConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/linear/configure: saved row + next OAuth step."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool = Field(description="True if access_token already stored (skip browser OAuth).")
+    authorization_url: str | None = Field(
+        default=None,
+        description="Open in browser to authorize Linear (only when oauth_complete is false).",
+    )
+    state: str | None = Field(default=None, description="OAuth state parameter; returned with the callback.")
+    next_step: str
+    configuration_data: dict = Field(
+        description="Saved config with secrets masked (same masking as GET /status).",
+    )
+
+
+class LinearOAuthCallbackResponse(BaseModel):
+    """Returned by GET /itsm/linear/callback after a successful code exchange."""
+
+    ok: bool
+    organization_id: str
+    tool_id: str
+    message: str
+    collection_started: bool = Field(
+        description="True if a background job was queued to pull evidence from Linear.",
+    )
+    next_step: str
+    collect_post_json_example: dict[str, Any] | None = Field(
+        default=None,
+        description="Reserved; always null when collection runs in the background after OAuth.",
+    )
+
+
+class LinearFlowResponse(BaseModel):
+    """Where you are in configure -> OAuth -> collect for Linear."""
+
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool
+    redirect_uri: str | None = None
+    next_step: str
+    authorization_url: str | None = None
+    state: str | None = None
+    collect_post_json_example: dict | None = None
+
+
+class LinearRefreshTokensBody(BaseModel):
+    org_id: str
+    tool_id: str
+    force: bool = Field(
+        default=False,
+        description="If true, always call the Linear token endpoint even when access_token is still valid.",
+    )
+
+
+class LinearRefreshTokensResponse(BaseModel):
+    ok: bool
+    organization_id: str
+    tool_id: str
+    refreshed: bool = Field(description="True if the Linear token endpoint was called.")
+    message: str
+    configuration_data: dict = Field(description="Saved config with secrets masked.")
+
+
+class LinearTeamItem(BaseModel):
+    id: str
+    key: str | None = None
+    name: str
+    description: str | None = None
+    private: bool | None = None
+    archived_at: str | None = None
+
+
+class LinearTeamsResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    teams: list[LinearTeamItem]
+
+
+class LinearProjectItem(BaseModel):
+    id: str
+    name: str
+    description: str | None = None
+    state: str | None = None
+    progress: float | None = None
+    target_date: str | None = None
+
+
+class LinearProjectsResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    projects: list[LinearProjectItem]
+
+
+class LinearIssueItem(BaseModel):
+    id: str
+    identifier: str | None = None
+    title: str
+    description: str | None = None
+    url: str | None = None
+    priority: int | None = None
+    team_id: str | None = None
+    team_key: str | None = None
+    team_name: str | None = None
+    project_id: str | None = None
+    project_name: str | None = None
+    state_id: str | None = None
+    state_name: str | None = None
+    created_at: str | None = None
+    updated_at: str | None = None
+
+
+class LinearIssuesResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    issues: list[LinearIssueItem]
+
+
+class LinearCreateIssueBody(BaseModel):
+    org_id: str
+    tool_id: str
+    team_id: str
+    title: str
+    description: str | None = None
+    project_id: str | None = None
+    state_id: str | None = None
+    priority: int | None = None
+    assignee_id: str | None = None
+    label_ids: list[str] | None = None
+    control_id: str | None = None
+
+
+class LinearUpdateIssueBody(BaseModel):
+    org_id: str
+    tool_id: str
+    title: str | None = None
+    description: str | None = None
+    project_id: str | None = None
+    state_id: str | None = None
+    priority: int | None = None
+    assignee_id: str | None = None
+    label_ids: list[str] | None = None
+
+
+class LinearUpsertIssueBody(BaseModel):
+    org_id: str
+    tool_id: str
+    control_id: str
+    team_id: str
+    title: str
+    description: str | None = None
+    project_id: str | None = None
+    state_id: str | None = None
+    priority: int | None = None
+    assignee_id: str | None = None
+    label_ids: list[str] | None = None
+
+
+class LinearIssueMutationResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    deduplicated: bool = False
+    issue: LinearIssueItem
 
 
 class EntraConfigureResponse(BaseModel):
