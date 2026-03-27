@@ -476,10 +476,6 @@ f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-650	Continuous compliance monitorin
 465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-69	Security Officer Job Description — HR
 465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-88	Security Awareness Training Records — HR
 465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-89	Employee Onboarding Training Records — HR
-465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-HR-JOB-LIB	Job description library
-465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-HR-OFFBOARD	Offboarding checklist
-465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-HR-PERF-CYCLE	Performance review cycle records
-465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-HR-TRAIN-SUM	Training completion summary
 311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-126	SSO Configuration Records — IAM
 311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-127	SSO Authentication Logs — IAM
 311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-151	Role Configuration Records — IAM

@@ -253,15 +253,23 @@ def list_evidence_masters(
     evidence_codes: list[str] | None,
     master_name_order: tuple[str, ...] | None = None,
     source: str | Sequence[str] | None = None,
+    domain_id: str | uuid.UUID | None = None,
 ) -> list[dict[str, Any]]:
     """
-    List evidence_masters for the tool's domain (``tools.domain_id``).
+    List evidence_masters for a domain.
+
+    If ``domain_id`` is set (e.g. from ``configuration_data.catalog_domain_id`` when
+    ``tools.domain_id`` differs from where rows were seeded), it is used. Otherwise
+    ``tools.domain_id`` for ``tool_id`` is used.
 
     ``source`` filters by one or more ``evidence_masters.source`` values (e.g. ``zoho_people``,
     or a tuple like ``("iam", "okta")`` for IAM migrations). If ``master_name_order`` is set
     (e.g. Zoho G3→G4 order), rows are sorted by that name sequence; otherwise SQL ``ORDER BY code``.
     """
-    did = get_domain_id_for_tool(session, tool_id)
+    if domain_id is not None:
+        did = _uuid(domain_id)
+    else:
+        did = get_domain_id_for_tool(session, tool_id)
     criteria = [EvidenceMaster.domain_id == did]
     if source is not None:
         if isinstance(source, str):

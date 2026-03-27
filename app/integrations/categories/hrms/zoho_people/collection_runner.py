@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import uuid
 from datetime import datetime, timezone
 from typing import Any
 
@@ -10,12 +11,14 @@ from sqlalchemy.orm import Session
 
 from app.integrations.categories.hrms.zoho_people.api_endpoints import FORM_EMPLOYEE
 from app.integrations.categories.hrms.zoho_people.collector import (
+    ZohoPeopleApiNonSuccessError,
     collect_for_master,
     fetch_form_records_paginated,
     needs_employee_prefetch,
     zoho_evidence_for_tool_storage,
 )
 from app.integrations.categories.hrms.zoho_people.employee_preview import emit_employee_master_preview
+from app.integrations.categories.hrms.zoho_people.employee_sync import sync_employees_from_zoho_people
 from app.integrations.categories.hrms.zoho_people.credentials import has_access_token, resolve_access_token, resolve_region
 from app.integrations.categories.hrms.zoho_people.regions import people_base_url
 from app.integrations.categories.hrms.zoho_people.seed import EVIDENCE_MASTER_NAME_ORDER
@@ -27,6 +30,25 @@ from app.integrations.core.persistence import (
 from app.schemas import CollectEvidenceResponse, CollectionItemResult
 
 logger = logging.getLogger(__name__)
+
+
+def _catalog_domain_id_from_cfg(cfg: Any) -> str | None:
+    """Optional UUID in config when evidence_masters were seeded under a different domain than ``tools.domain_id``."""
+    if not isinstance(cfg, dict):
+        return None
+    for key in ("catalog_domain_id", "evidence_masters_domain_id"):
+        raw = cfg.get(key)
+        if raw is None:
+            continue
+        s = str(raw).strip()
+        if not s:
+            continue
+        try:
+            uuid.UUID(s)
+        except ValueError:
+            continue
+        return s
+    return None
 
 
 def run_evidence_collection(
@@ -48,16 +70,24 @@ def run_evidence_collection(
     if not has_access_token(cfg):
         raise ValueError("Complete OAuth first (tokens missing).")
 
+    catalog_domain_id = _catalog_domain_id_from_cfg(cfg)
+
+    # Scope by tools.domain_id (or catalog_domain_id override only). Do not filter evidence_masters.source.
     masters = persistence.list_evidence_masters(
         session,
         tool_id=tool_id,
         evidence_codes=evidence_codes,
         master_name_order=EVIDENCE_MASTER_NAME_ORDER,
-        source="zoho_people",
+        source=None,
+        domain_id=catalog_domain_id,
     )
     if not masters:
+        tool_domain_id = persistence.get_domain_id_for_tool(session, tool_id)
+        effective = catalog_domain_id or str(tool_domain_id)
         raise ValueError(
-            "No evidence_masters for this tool's domain; seed evidence_masters manually before collect."
+            f"No evidence_masters for domain {effective} (tools.domain_id={tool_domain_id}). "
+            "Seed evidence_masters for this tool's domain, or set configuration_data.catalog_domain_id / "
+            "evidence_masters_domain_id if masters live under a different domain UUID."
         )
 
     token = resolve_access_token(cfg)
@@ -66,6 +96,20 @@ def run_evidence_collection(
     if needs_employee_prefetch(masters) and token:
         employee_cache = fetch_form_records_paginated(base, token, FORM_EMPLOYEE)
         emit_employee_master_preview(employee_cache)
+        rows = (employee_cache or {}).get("rows") or []
+        if rows:
+            ins, upd = sync_employees_from_zoho_people(
+                session,
+                organization_id=org_id,
+                sync_user_id=user_id,
+                rows=rows,
+            )
+            logger.info(
+                "Zoho People → employees table: inserted=%s updated=%s (org=%s)",
+                ins,
+                upd,
+                org_id,
+            )
 
     results: list[CollectionItemResult] = []
 
@@ -79,6 +123,21 @@ def run_evidence_collection(
                 date_to=date_to,
                 employee_cache=employee_cache,
             )
+            if isinstance(content, dict) and content.get("skipped"):
+                reason = str(
+                    content.get("reason")
+                    or content.get("error_hint")
+                    or "Collector skipped this evidence type"
+                )
+                results.append(
+                    CollectionItemResult(
+                        evidence_master_code=master["code"],
+                        name=master["name"],
+                        status="skipped",
+                        error=reason,
+                    )
+                )
+                continue
             ev = persistence.upsert_evidence_full_replace(
                 session,
                 organization_id=org_id,
@@ -113,20 +172,28 @@ def run_evidence_collection(
                     error=None,
                 )
             )
+        except ZohoPeopleApiNonSuccessError as e:
+            logger.warning(
+                "Skipping evidence (Zoho non-success): %s %s — %s",
+                master.get("code"),
+                master.get("name"),
+                e,
+            )
+            results.append(
+                CollectionItemResult(
+                    evidence_master_code=master["code"],
+                    name=master["name"],
+                    status="skipped",
+                    error=str(e),
+                )
+            )
+            continue
         except Exception as e:  # noqa: BLE001
             session.rollback()
-            persistence.insert_evidence_collection_after_failed_collect(
-                session,
-                organization_id=org_id,
-                tool_id=tool_id,
-                master=master,
-                user_id=user_id,
-                tool_evidence={},
-                status="failed",
-                detail={"evidence_master_code": master["code"], "name": master["name"]},
-                error_message=str(e)[:8000],
-                started_at=started,
-                completed_at=datetime.now(timezone.utc),
+            logger.exception(
+                "Zoho collect failed for %s %s (no evidence row persisted)",
+                master.get("code"),
+                master.get("name"),
             )
             results.append(
                 CollectionItemResult(

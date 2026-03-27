@@ -13,11 +13,13 @@ from app.integrations.categories.hrms.zoho_people.credentials import OAUTH_CLIEN
 from app.integrations.categories.hrms.zoho_people.regions import accounts_base_url, normalize_region, people_base_url
 
 
-def _log_oauth_http(r: httpx.Response) -> None:
+def _log_oauth_http(r: httpx.Response, *, endpoint: str) -> None:
+    """Print HTTP status for each Zoho Accounts OAuth call."""
+    line = f"[zoho_people] HTTP {r.status_code} | {endpoint} | {str(r.request.url)}"
     if os.environ.get("ZOHO_DEBUG_HTTP"):
-        print(r.status_code, r.text)
+        print(line, r.text)
     else:
-        print(r.status_code, str(r.request.url), f"len={len(r.content)}")
+        print(line, f"len={len(r.content)}")
 
 
 DEFAULT_ZOHO_PEOPLE_SCOPES = (
@@ -84,7 +86,7 @@ def exchange_code_for_tokens(
     }
     with httpx.Client(timeout=60.0) as client:
         r = client.post(token_url, data=data)
-        _log_oauth_http(r)
+        _log_oauth_http(r, endpoint="accounts.oauth2.token (authorization_code)")
         r.raise_for_status()
         return r.json()
 
@@ -105,7 +107,7 @@ def refresh_access_token(
     }
     with httpx.Client(timeout=60.0) as client:
         r = client.post(token_url, data=data)
-        _log_oauth_http(r)
+        _log_oauth_http(r, endpoint="accounts.oauth2.token (refresh_token)")
         r.raise_for_status()
         return r.json()
 

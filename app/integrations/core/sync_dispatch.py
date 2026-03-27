@@ -46,6 +46,18 @@ _IAM_MASTER_SOURCES_ONLY: frozenset[str] = frozenset(
 )
 
 
+def _looks_like_zoho_people_cfg(cfg: dict[str, Any]) -> bool:
+    """When evidence_masters.source is a generic HR catalog tag, infer Zoho from integration config."""
+    if not isinstance(cfg, dict):
+        return False
+    if cfg.get("people_base_url"):
+        return True
+    oc = cfg.get("oauth_clients")
+    if isinstance(oc, list) and oc:
+        return True
+    return bool(str(cfg.get("client_id", "")).strip())
+
+
 def infer_iam_provider_from_cfg(cfg: dict[str, Any]) -> str | None:
     """When IAM evidence uses generic ``iam`` source, pick Okta vs Entra from ``configuration_data``."""
     if not isinstance(cfg, dict):
@@ -61,7 +73,7 @@ def infer_iam_provider_from_cfg(cfg: dict[str, Any]) -> str | None:
 
 
 def detect_provider_key_from_db(session: Session, tool_id: str, cfg: dict[str, Any] | None = None) -> str | None:
-    """Infer sync provider from ``evidence_masters.source`` for the tool domain."""
+    """Infer sync provider from ``evidence_masters.source`` for the tool domain (and integration config when needed)."""
     did = persistence.get_domain_id_for_tool(session, tool_id)
     raw = session.scalars(
         select(EvidenceMaster.source).where(EvidenceMaster.domain_id == did).distinct()
@@ -73,6 +85,8 @@ def detect_provider_key_from_db(session: Session, tool_id: str, cfg: dict[str, A
         only = srcs[0]
         if only == "iam":
             return infer_iam_provider_from_cfg(cfg) if cfg is not None else None
+        if only == "hrms_catalog" and cfg is not None and _looks_like_zoho_people_cfg(cfg):
+            return "zoho_people"
         return _SOURCE_TO_PROVIDER_KEY.get(only)
     # Multiple sources: disambiguate Entra commercial vs GCC High when both exist for the domain.
     if cfg is not None and set(srcs).issubset({"microsoft_entra", "microsoft_entra_gcc_high"}):

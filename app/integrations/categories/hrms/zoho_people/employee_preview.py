@@ -16,7 +16,7 @@ def emit_employee_master_preview(
     emit_print: bool | None = None,
 ) -> None:
     """
-    After prefetching the employee form, emit count + a small sample for operators.
+    After prefetching the employee form, emit count + a full slim field list for every row.
 
     Set env ``ZOHO_PRINT_EMPLOYEE_MASTER=0`` to disable ``print()`` (logging still runs).
     """
@@ -39,7 +39,7 @@ def emit_employee_master_preview(
         return
 
     sample: list[dict[str, Any]] = []
-    for r in rows[:5]:
+    for r in rows:
         if not isinstance(r, dict):
             continue
         sample.append(
@@ -51,6 +51,6 @@ def emit_employee_master_preview(
                 "EmailID": r.get("EmailID") or r.get("Email"),
             }
         )
-    logger.info("Employee master sample (up to 5 rows): %s", sample)
+    logger.info("Employee master sample (all %s rows): %s", len(sample), sample)
     if emit_print:
-        print("Employee master sample (up to 5 rows):", sample)
+        print(f"Employee master sample (all {len(sample)} rows):", sample)

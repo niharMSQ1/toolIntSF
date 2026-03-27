@@ -10,27 +10,18 @@ import httpx
 from app.integrations.categories.hrms.zoho_people import api_endpoints as zoho_api
 from app.integrations.categories.hrms.zoho_people.credentials import resolve_access_token, resolve_region
 from app.integrations.categories.hrms.zoho_people.regions import people_base_url
-from app.integrations.categories.hrms.zoho_people.seed import CODE_TO_COLLECTOR
+from app.integrations.categories.hrms.zoho_people.seed import CODE_TO_COLLECTOR, EMPLOYEE_FORM_COLLECTOR_KEYS
 
-# Collector keys that only need the employee form — safe to share one prefetch per run.
-EMPLOYEE_COLLECTOR_KEYS: frozenset[str] = frozenset(
-    {
-        "employee_master",
-        "active_employees",
-        "terminated_employees",
-        "reporting_hierarchy",
-        "employee_email_list",
-        "new_hire_records",
-        "exit_employees",
-    }
-)
+
+class ZohoPeopleApiNonSuccessError(Exception):
+    """Zoho JSON reported failure (e.g. ``response.status != 0`` or ``error``) despite HTTP 200."""
 
 
 def needs_employee_prefetch(masters: list[dict[str, Any]]) -> bool:
     """True if any selected evidence master will read the employee form."""
     for m in masters:
         key = CODE_TO_COLLECTOR.get(m.get("code") or "")
-        if key in EMPLOYEE_COLLECTOR_KEYS:
+        if key in EMPLOYEE_FORM_COLLECTOR_KEYS:
             return True
     return False
 
@@ -39,11 +30,25 @@ def _people_headers(access_token: str) -> dict[str, str]:
     return {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
 
-def _log_http_line(r: httpx.Response, url: str) -> None:
+def _print_zoho_http(endpoint: str, r: httpx.Response, url: str) -> None:
+    """Log one line per HTTP call: status code, endpoint tag, URL."""
+    line = f"[zoho_people] HTTP {r.status_code} | {endpoint} | {url}"
     if os.environ.get("ZOHO_DEBUG_HTTP"):
-        print(r.status_code, url, r.text)
+        print(line, r.text)
     else:
-        print(r.status_code, url, f"len={len(r.content)}")
+        print(line, f"len={len(r.content)}")
+
+
+def _print_zoho_json_status(endpoint: str, data: Any) -> None:
+    """Log Zoho JSON business status when present (many APIs use response.status=0 for success)."""
+    if not isinstance(data, dict):
+        return
+    err = data.get("error")
+    if err is not None and err != "":
+        print(f"[zoho_people] JSON error | {endpoint} | {err!r}")
+    resp = data.get("response")
+    if isinstance(resp, dict) and "status" in resp:
+        print(f"[zoho_people] Zoho response.status={resp.get('status')} | {endpoint}")
 
 
 def _flatten_form_get_records(payload: dict[str, Any]) -> list[dict[str, Any]]:
@@ -66,13 +71,13 @@ def _flatten_form_get_records(payload: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def validate_zoho_json_payload(data: Any) -> None:
-    """Raise if Zoho returned a business error in JSON (including HTTP 200 bodies)."""
+    """Raise ZohoPeopleApiNonSuccessError if Zoho returned a business error in JSON (including HTTP 200)."""
     if not isinstance(data, dict):
         return
     err = data.get("error")
     if err:
         msg = err if isinstance(err, str) else str(err)
-        raise ValueError(f"Zoho People API error: {msg}")
+        raise ZohoPeopleApiNonSuccessError(f"Zoho People API error: {msg}")
     resp = data.get("response")
     if isinstance(resp, dict):
         st = resp.get("status")
@@ -87,7 +92,7 @@ def validate_zoho_json_payload(data: Any) -> None:
                     msg = msg or str(first.get("message") or first)
                 else:
                     msg = msg or str(errs)
-            raise ValueError(f"Zoho People API error: {msg or resp}")
+            raise ZohoPeopleApiNonSuccessError(f"Zoho People API error: {msg or resp}")
 
 
 def _is_courses_subscription_skip(data: dict[str, Any]) -> bool:
@@ -103,11 +108,19 @@ def _is_courses_subscription_skip(data: dict[str, Any]) -> bool:
     return False
 
 
-def _get_json(client: httpx.Client, url: str, headers: dict[str, str], params: dict[str, Any] | None = None) -> Any:
+def _get_json(
+    client: httpx.Client,
+    url: str,
+    headers: dict[str, str],
+    params: dict[str, Any] | None = None,
+    *,
+    endpoint: str,
+) -> Any:
     r = client.get(url, headers=headers, params=params, timeout=120.0)
-    _log_http_line(r, url)
+    _print_zoho_http(endpoint, r, url)
     r.raise_for_status()
     data = r.json()
+    _print_zoho_json_status(endpoint, data)
     validate_zoho_json_payload(data)
     return data
 
@@ -128,7 +141,8 @@ def fetch_form_records_paginated(
         while True:
             url = f"{base.rstrip('/')}{zoho_api.path_forms_get_records(form_link)}"
             params: dict[str, Any] = {"sIndex": s_index, "limit": limit}
-            raw = _get_json(client, url, headers, params)
+            ep = f"forms.getRecords[{form_link}] sIndex={s_index}"
+            raw = _get_json(client, url, headers, params, endpoint=ep)
             last_raw = raw
             rows = _flatten_form_get_records(raw)
             if not rows:
@@ -321,7 +335,13 @@ def collect_for_master(
                     "edate": z1,
                     "startIndex": start_index,
                 }
-                raw = _get_json(client, url, headers, params)
+                raw = _get_json(
+                    client,
+                    url,
+                    headers,
+                    params,
+                    endpoint=f"attendance.getUserReport startIndex={start_index}",
+                )
                 res = raw.get("result")
                 if not res:
                     break
@@ -352,7 +372,7 @@ def collect_for_master(
                 "limit": 200,
                 "user": user_param,
             }
-            raw = _get_json(client, url, headers, params)
+            raw = _get_json(client, url, headers, params, endpoint="timetracker.gettimesheet")
         note = None
         if not (cfg.get("timesheet_user_id") or cfg.get("timesheet_erecno")):
             note = "timesheet user from first employee row (Zoho_ID); set timesheet_user_id to pin a specific user."
@@ -380,7 +400,13 @@ def collect_for_master(
                     "startIndex": start_index,
                     "limit": 200,
                 }
-                raw = _get_json(client, url, headers, params)
+                raw = _get_json(
+                    client,
+                    url,
+                    headers,
+                    params,
+                    endpoint=f"leavetracker.leaves.records startIndex={start_index}",
+                )
                 if not isinstance(raw, dict):
                     break
                 chunk = raw.get("records") or raw.get("result") or []
@@ -400,9 +426,10 @@ def collect_for_master(
         url = f"{base.rstrip('/')}{zoho_api.PATH_COURSES_V1}"
         with httpx.Client() as client:
             r = client.get(url, headers=headers, params={"startIndex": 0}, timeout=120.0)
-            _log_http_line(r, url)
+            _print_zoho_http("lms.courses (GET /api/v1/courses)", r, url)
             r.raise_for_status()
             raw = r.json()
+            _print_zoho_json_status("lms.courses (GET /api/v1/courses)", raw)
         if isinstance(raw, dict) and _is_courses_subscription_skip(raw):
             return {
                 "source": "zoho_people",
@@ -452,6 +479,8 @@ def collect_for_master(
         try:
             data = fetch_form_records_paginated(base, token, form_link)
             return {"source": "zoho_people", "collector_key": key, "form": form_link, **data}
+        except ZohoPeopleApiNonSuccessError:
+            raise
         except Exception:
             return {
                 "source": "zoho_people",

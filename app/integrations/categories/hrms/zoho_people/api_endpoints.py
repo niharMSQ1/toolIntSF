@@ -1,18 +1,19 @@
 """
 Zoho People HTTP paths used by this integration (HR / Employee Management).
 
-Official documentation (read before changing collectors):
+Official documentation (verify paths and parameters before changing collectors):
 
 - Overview: https://www.zoho.com/people/api/
-- **Forms** (employee, department, custom exit form, etc.): https://www.zoho.com/people/api/forms/
-  - List/get records: ``GET {people_base}/api/forms/{{formLinkName}}/getRecords`` with ``sIndex``, ``limit``.
-- **Attendance**: https://www.zoho.com/people/api/attendance-api/
-  - User report: ``GET {people_base}/people/api/attendance/getUserReport`` — query ``sdate``, ``edate``, ``startIndex`` (dd-MMM-yyyy dates).
-- **Time tracker**: https://www.zoho.com/people/api/timetracker/
-  - Timesheet: ``GET {people_base}/people/api/timetracker/gettimesheet`` — ``fromDate``, ``toDate``, ``user``, ``sIndex``, ``limit``.
-- **Leave**: https://www.zoho.com/people/api/leavetracker/
-  - Leave records (v2): ``GET {people_base}/api/v2/leavetracker/leaves/records`` — ``from``, ``to``, ``startIndex``, ``limit``.
-- **LMS / courses** (optional module): ``GET {people_base}/api/v1/courses`` — may return subscription errors if LMS not purchased.
+- **Bulk form records** (employee, department, custom forms): https://www.zoho.com/people/api/bulk-records.html
+  - ``GET {people_base}/api/forms/{{formLinkName}}/getRecords`` — ``sIndex``, ``limit`` (max 200 per call).
+- **Attendance — user report**: https://www.zoho.com/people/api/userreport.html
+  - ``GET {people_base}/people/api/attendance/getUserReport`` — ``sdate``, ``edate``; multi-employee: ``startIndex`` (0, 100, …).
+- **Time tracker — timesheet**: https://www.zoho.com/people/api/timesheet.html (module index)
+  - ``GET {people_base}/people/api/timetracker/gettimesheet`` — ``fromDate``, ``toDate``, ``user``, ``sIndex``, ``limit``.
+- **Leave — fetch records v2**: https://www.zoho.com/people/api/get-records-v2.html
+  - ``GET {people_base}/api/v2/leavetracker/leaves/records`` — ``from``, ``to``, ``startIndex``, ``limit``.
+- **LMS — fetch all courses**: https://www.zoho.com/people/api/LMS/allcourses.html
+  - ``GET {people_base}/api/v1/courses`` — optional module; may error if LMS not purchased.
 
 ``people_base`` is region-specific (e.g. ``https://people.zoho.in`` for India); see ``regions.people_base_url``.
 """
