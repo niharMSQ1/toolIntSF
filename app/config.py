@@ -55,6 +55,10 @@ class Settings(BaseSettings):
     # Space-separated scopes; defaults applied in bitbucket.oauth if unset.
     bitbucket_oauth_scopes: str | None = None
 
+    # Wiz CSPM (optional defaults; usually set per integration in configuration_data)
+    wiz_auth_url: str | None = None
+    wiz_audience: str | None = None
+
     @property
     def effective_db_name(self) -> str | None:
         """Prefer TOOLS_INTEGRATIONS_DB_NAME when set so this app writes where you expect."""

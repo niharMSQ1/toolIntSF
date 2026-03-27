@@ -98,7 +98,7 @@ class SyncIntegrationBody(BaseModel):
     provider_key: str | None = Field(
         default=None,
         description=(
-            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud. "
+            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz. "
             "Omit to infer from evidence_masters.source (after configure)."
         ),
     )
@@ -253,3 +253,36 @@ class BitbucketSelectWorkspacesBody(BaseModel):
 
 class BitbucketWorkspacesListResponse(BaseModel):
     workspaces: list[dict[str, Any]]
+
+
+class WizConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/cspm/wiz/configure (service account + GraphQL URL)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if OAuth client-credentials exchange returned an access_token.")
+    ready_for_collection: bool = Field(description="True when graphql_url and secrets are valid and token is stored.")
+    collection_started_in_background: bool = Field(
+        default=True,
+        description="When true, a background job is pulling all Wiz evidence (same as POST .../evidence/wiz/collect).",
+    )
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secrets masked (same as GET /status).")
+
+
+class WizFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class WizRefreshTokensResponse(BaseModel):
+    ok: bool
+    organization_id: str
+    tool_id: str
+    refreshed: bool = Field(description="True if a new token was obtained from Wiz auth.")
+    message: str
+    configuration_data: dict = Field(description="Saved config with secrets masked.")

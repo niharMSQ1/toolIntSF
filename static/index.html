@@ -202,7 +202,7 @@
                         <optgroup label="Security Tools">
                             <option value="splunk">Splunk SIEM</option>
                             <option value="qualys">Qualys VMDR</option>
-                            <option value="wiz">Wiz CSPM</option>
+                            <option value="cspm/wiz">Wiz CSPM (GraphQL)</option>
                             <option value="crowdstrike">CrowdStrike Falcon</option>
                         </optgroup>
                         
@@ -450,6 +450,8 @@
             const provider = document.getElementById('provider').value;
             const collectPath = provider === 'devtools/bitbucket'
                 ? '/api/v1/evidence/bitbucket/collect'
+                : provider === 'cspm/wiz'
+                ? '/api/v1/evidence/wiz/collect'
                 : '/api/v1/evidence/collect';
             const url = `${API_BASE}${collectPath}`;
             await makeRequest(url, {
@@ -534,6 +536,13 @@
 }`,
                 'devtools/bitbucket': `{
   "redirect_uri": "http://localhost:8006/api/v1/integrations/devtools/bitbucket/oauth/callback"
+}`,
+                'cspm/wiz': `{
+  "graphql_url": "https://api.us1.app.wiz.io/graphql",
+  "client_id": "<wiz-service-account-client-id>",
+  "client_secret": "<wiz-service-account-secret>",
+  "auth_url": "https://auth.app.wiz.io/oauth/token",
+  "audience": "wiz-api"
 }`
             };
             
