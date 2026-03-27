@@ -98,7 +98,7 @@ class SyncIntegrationBody(BaseModel):
     provider_key: str | None = Field(
         default=None,
         description=(
-            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high. "
+            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud. "
             "Omit to infer from evidence_masters.source (after configure)."
         ),
     )
@@ -208,3 +208,48 @@ class EntraRefreshTokensResponse(BaseModel):
     refreshed: bool = Field(description="True if Microsoft token endpoint was called.")
     message: str
     configuration_data: dict = Field(description="Saved config with secrets masked.")
+
+
+class BitbucketConfigureResponse(BaseModel):
+    """Returned by POST .../devtools/bitbucket/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool
+    workspace_selection_required: bool
+    ready_for_collection: bool
+    authorization_url: str | None = None
+    state: str | None = None
+    next_step: str
+    configuration_data: dict
+
+
+class BitbucketFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool
+    workspace_selection_required: bool
+    ready_for_collection: bool
+    redirect_uri: str | None = None
+    next_step: str
+    authorization_url: str | None = None
+    state: str | None = None
+
+
+class BitbucketOAuthCallbackResponse(BaseModel):
+    ok: bool
+    organization_id: str
+    tool_id: str
+    message: str
+    next_step: str
+
+
+class BitbucketSelectWorkspacesBody(BaseModel):
+    org_id: str
+    tool_id: str
+    workspace_slugs: list[str] = Field(description="Bitbucket workspace slugs to sync (must be in GET /workspaces list).")
+
+
+class BitbucketWorkspacesListResponse(BaseModel):
+    workspaces: list[dict[str, Any]]

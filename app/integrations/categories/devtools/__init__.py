@@ -1,1 +1,1 @@
-"""Developer tools integrations (placeholder — e.g. GitHub, Jira)."""
+"""Developer tools integrations (Bitbucket Cloud, etc.)."""

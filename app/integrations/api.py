@@ -8,6 +8,13 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
+from app.integrations.categories.devtools.bitbucket.routers import (
+    callback_router as bitbucket_callback_router,
+    configure_router as bitbucket_configure_router,
+    evidence_router as bitbucket_evidence_router,
+    oauth_authorize_router as bitbucket_oauth_authorize_router,
+    workspaces_router as bitbucket_workspaces_router,
+)
 from app.integrations.categories.hrms.zoho_people.routers import configure, evidence, oauth
 from app.integrations.categories.idp.microsoft_entra.routers import (
     configure as entra_configure,
@@ -19,6 +26,11 @@ from app.integrations.routers import integration_sync
 
 def mount_integration_routes(app: FastAPI) -> None:
     """Register all provider routers on the FastAPI application."""
+    app.include_router(bitbucket_configure_router)
+    app.include_router(bitbucket_workspaces_router)
+    app.include_router(bitbucket_oauth_authorize_router)
+    app.include_router(bitbucket_callback_router)
+    app.include_router(bitbucket_evidence_router)
     app.include_router(configure.router)
     app.include_router(configure.hrms_router)
     app.include_router(oauth.router)

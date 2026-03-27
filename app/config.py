@@ -48,6 +48,13 @@ class Settings(BaseSettings):
     entra_gcc_high_client_secret: str | None = None
     entra_gcc_high_redirect_uri: str | None = None
 
+    # Bitbucket Cloud OAuth 2.0 (Atlassian 3LO) — optional if BYO in tool_integrations.configuration_data.
+    bitbucket_client_id: str | None = None
+    bitbucket_client_secret: str | None = None
+    bitbucket_redirect_uri: str | None = None
+    # Space-separated scopes; defaults applied in bitbucket.oauth if unset.
+    bitbucket_oauth_scopes: str | None = None
+
     @property
     def effective_db_name(self) -> str | None:
         """Prefer TOOLS_INTEGRATIONS_DB_NAME when set so this app writes where you expect."""

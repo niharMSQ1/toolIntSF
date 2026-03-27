@@ -181,7 +181,7 @@
                         <optgroup label="DevTools">
                             <option value="github">GitHub</option>
                             <option value="gitlab">GitLab</option>
-                            <option value="bitbucket">Bitbucket</option>
+                            <option value="devtools/bitbucket">Bitbucket Cloud</option>
                         </optgroup>
                         
                         <!-- Cloud Infrastructure -->
@@ -447,7 +447,11 @@
                 ...(dateTo && { date_to: dateTo })
             };
             
-            const url = `${API_BASE}/api/v1/evidence/collect`;
+            const provider = document.getElementById('provider').value;
+            const collectPath = provider === 'devtools/bitbucket'
+                ? '/api/v1/evidence/bitbucket/collect'
+                : '/api/v1/evidence/collect';
+            const url = `${API_BASE}${collectPath}`;
             await makeRequest(url, {
                 method: 'POST',
                 body: JSON.stringify(payload),
@@ -527,6 +531,9 @@
   "base_url": "https://your-company.atlassian.net",
   "email": "your-email@company.com", 
   "api_token": "your-jira-api-token"
+}`,
+                'devtools/bitbucket': `{
+  "redirect_uri": "http://localhost:8006/api/v1/integrations/devtools/bitbucket/oauth/callback"
 }`
             };
             
