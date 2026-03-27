@@ -1,8 +1,9 @@
-﻿"""Generic tool/evidence persistence (no vendor OAuth logic)."""
+"""Generic tool/evidence persistence (no vendor OAuth logic)."""
 
 from app.integrations.core.persistence.tool_integration_service import (
     get_domain_id_for_tool,
     get_integration,
+    get_tool_source_label,
     insert_evidence_collection,
     insert_evidence_collection_after_failed_collect,
     list_evidence_masters,
@@ -16,6 +17,7 @@ from app.integrations.core.persistence.tool_integration_service import (
 __all__ = [
     "get_domain_id_for_tool",
     "get_integration",
+    "get_tool_source_label",
     "insert_evidence_collection",
     "insert_evidence_collection_after_failed_collect",
     "list_evidence_masters",

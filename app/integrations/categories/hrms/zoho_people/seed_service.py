@@ -1,4 +1,7 @@
-﻿"""Seed `evidence_masters` rows for Zoho People (scoped by tool domain)."""
+"""Seed `evidence_masters` rows for Zoho People (scoped by tool domain).
+
+Call manually when needed (not from POST /configure).
+"""
 
 from __future__ import annotations
 

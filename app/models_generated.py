@@ -2,7 +2,7 @@ from typing import Optional
 import datetime
 import uuid
 
-from sqlalchemy import BigInteger, Boolean, CHAR, CheckConstraint, Date, ForeignKeyConstraint, Index, Integer, JSON, PrimaryKeyConstraint, SmallInteger, String, Text, UniqueConstraint, Uuid, text
+from sqlalchemy import BigInteger, Boolean, CHAR, CheckConstraint, Date, DateTime, ForeignKeyConstraint, Identity, Index, Integer, JSON, PrimaryKeyConstraint, SmallInteger, String, Text, UniqueConstraint, Uuid, text
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -170,7 +170,6 @@ class Controls(Base):
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
-    control_scenarios: Mapped[list['ControlScenarios']] = relationship('ControlScenarios', back_populates='control')
     internal_controls: Mapped[list['InternalControls']] = relationship('InternalControls', back_populates='control')
     organization_policy_control_mappings: Mapped[list['OrganizationPolicyControlMappings']] = relationship('OrganizationPolicyControlMappings', back_populates='control')
     policy_control_mappings: Mapped[list['PolicyControlMappings']] = relationship('PolicyControlMappings', back_populates='control')
@@ -178,6 +177,7 @@ class Controls(Base):
     trustcenter_company_controls: Mapped[list['TrustcenterCompanyControls']] = relationship('TrustcenterCompanyControls', back_populates='control')
     control_clauses: Mapped[list['ControlClauses']] = relationship('ControlClauses', back_populates='control')
     control_evidence_master: Mapped[list['ControlEvidenceMaster']] = relationship('ControlEvidenceMaster', back_populates='control')
+    control_scenarios: Mapped[list['ControlScenarios']] = relationship('ControlScenarios', back_populates='control')
     organization_certificate_controls: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', back_populates='control')
     risk_controls: Mapped[list['RiskControls']] = relationship('RiskControls', back_populates='control')
 
@@ -212,6 +212,46 @@ class Countries(Base):
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
     states: Mapped[list['States']] = relationship('States', back_populates='country')
+
+
+class DjangoContentType(Base):
+    __tablename__ = 'django_content_type'
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='django_content_type_pkey'),
+        UniqueConstraint('app_label', 'model', name='django_content_type_app_label_model_76bd3d3b_uniq')
+    )
+
+    id: Mapped[int] = mapped_column(Integer, Identity(start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
+    app_label: Mapped[str] = mapped_column(String(100), nullable=False)
+    model: Mapped[str] = mapped_column(String(100), nullable=False)
+
+
+class DjangoMigrations(Base):
+    __tablename__ = 'django_migrations'
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='django_migrations_pkey'),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1), primary_key=True)
+    app: Mapped[str] = mapped_column(String(255), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    applied: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False)
+
+
+class Domains(Base):
+    __tablename__ = 'domains'
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='domains_pkey'),
+        UniqueConstraint('name', name='domains_name_key')
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime, server_default=text('now()'))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime, server_default=text('now()'))
+
+    evidence_masters: Mapped[list['EvidenceMasters']] = relationship('EvidenceMasters', back_populates='domain_')
+    tools: Mapped[list['Tools']] = relationship('Tools', back_populates='domain')
 
 
 class FailedJobs(Base):
@@ -390,6 +430,15 @@ class Organizations(Base):
     primary_country: Mapped[Optional[str]] = mapped_column(String(250))
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    details_name: Mapped[Optional[str]] = mapped_column(String(250))
+    details_organization_size: Mapped[Optional[str]] = mapped_column(String(250))
+    details_primary_sector: Mapped[Optional[str]] = mapped_column(String(250))
+    details_primary_country: Mapped[Optional[str]] = mapped_column(String(250))
+    details_cloud_hosting_model: Mapped[Optional[str]] = mapped_column(String(250))
+    details_types_of_data_handled: Mapped[Optional[dict]] = mapped_column(JSON)
+    details_security_context: Mapped[Optional[dict]] = mapped_column(JSON)
+    details_development_model: Mapped[Optional[str]] = mapped_column(String(250))
+    details_product_service_description: Mapped[Optional[str]] = mapped_column(Text)
 
     assets: Mapped[list['Assets']] = relationship('Assets', back_populates='organization')
     auditors: Mapped[list['Auditors']] = relationship('Auditors', back_populates='organization')
@@ -397,8 +446,9 @@ class Organizations(Base):
     basic_settings: Mapped[Optional['BasicSettings']] = relationship('BasicSettings', uselist=False, back_populates='organization')
     data_subject_requests: Mapped[list['DataSubjectRequests']] = relationship('DataSubjectRequests', back_populates='organization')
     email_logs: Mapped[list['EmailLogs']] = relationship('EmailLogs', back_populates='organization')
+    employee_import_batch_logs: Mapped[list['EmployeeImportBatchLogs']] = relationship('EmployeeImportBatchLogs', back_populates='organization')
+    employee_import_staging: Mapped[list['EmployeeImportStaging']] = relationship('EmployeeImportStaging', back_populates='organization')
     employees: Mapped[list['Employees']] = relationship('Employees', back_populates='organization')
-    evidence: Mapped[list['Evidence']] = relationship('Evidence', back_populates='organization')
     framework_import_drafts: Mapped[list['FrameworkImportDrafts']] = relationship('FrameworkImportDrafts', back_populates='organization')
     integration_data: Mapped[list['IntegrationData']] = relationship('IntegrationData', back_populates='organization')
     notifications: Mapped[list['Notifications']] = relationship('Notifications', back_populates='organization')
@@ -411,15 +461,16 @@ class Organizations(Base):
     risk_libraries: Mapped[list['RiskLibraries']] = relationship('RiskLibraries', back_populates='org')
     sso_setups: Mapped[list['SsoSetups']] = relationship('SsoSetups', back_populates='organization')
     temp_policy_uploads: Mapped[list['TempPolicyUploads']] = relationship('TempPolicyUploads', back_populates='organization')
-    tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='organization')
     user_role_organizations: Mapped[list['UserRoleOrganizations']] = relationship('UserRoleOrganizations', back_populates='organization')
     user_web_tokens: Mapped[list['UserWebTokens']] = relationship('UserWebTokens', back_populates='organization')
     vendor_assessment_question_banks: Mapped[list['VendorAssessmentQuestionBanks']] = relationship('VendorAssessmentQuestionBanks', back_populates='organization')
     vulnerabilities: Mapped[list['Vulnerabilities']] = relationship('Vulnerabilities', back_populates='organization')
+    evidence: Mapped[list['Evidence']] = relationship('Evidence', back_populates='organization')
     organization_certificate_clauses: Mapped[list['OrganizationCertificateClauses']] = relationship('OrganizationCertificateClauses', back_populates='organization')
     organization_certificate_controls: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', back_populates='organization')
     organization_policy_clauses: Mapped[list['OrganizationPolicyClauses']] = relationship('OrganizationPolicyClauses', back_populates='organization')
     risk_registers: Mapped[list['RiskRegisters']] = relationship('RiskRegisters', back_populates='organization')
+    tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='organization')
     organization_vendors: Mapped[list['OrganizationVendors']] = relationship('OrganizationVendors', back_populates='organization')
     vendor_llm_processes: Mapped[list['VendorLlmProcesses']] = relationship('VendorLlmProcesses', back_populates='organization')
 
@@ -583,53 +634,6 @@ class SuggestEvidence(Base):
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
     suggest_evidence_control_mappings: Mapped[list['SuggestEvidenceControlMappings']] = relationship('SuggestEvidenceControlMappings', back_populates='suggest_evidence')
-
-
-class Domains(Base):
-    __tablename__ = 'domains'
-    __table_args__ = (
-        PrimaryKeyConstraint('id', name='domains_pkey'),
-        UniqueConstraint('name', name='domains_name_unique')
-    )
-
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
-    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-
-    tools: Mapped[list['Tools']] = relationship('Tools', back_populates='domain')
-    evidence_masters: Mapped[list['EvidenceMasters']] = relationship('EvidenceMasters', back_populates='domain')
-
-
-class Tools(Base):
-    __tablename__ = 'tools'
-    __table_args__ = (
-        ForeignKeyConstraint(['domain_id'], ['domains.id'], name='tools_domain_id_foreign'),
-        PrimaryKeyConstraint('id', name='tools_pkey'),
-        UniqueConstraint('name', name='tools_name_unique'),
-        Index('tools_domain_id_index', 'domain_id'),
-        Index('tools_name_index', 'name'),
-        Index('tools_status_index', 'status')
-    )
-
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    status: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'active'::character varying"))
-    name: Mapped[Optional[str]] = mapped_column(String(255))
-    image_path: Mapped[Optional[str]] = mapped_column(String(255))
-    configuration_keys: Mapped[Optional[dict]] = mapped_column(JSON)
-    domain_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
-    sync_type: Mapped[Optional[str]] = mapped_column(Text)
-    scope: Mapped[Optional[dict]] = mapped_column(JSON)
-    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-    overview: Mapped[Optional[str]] = mapped_column(Text)
-    permissions: Mapped[Optional[dict]] = mapped_column(JSON)
-    resources: Mapped[Optional[dict]] = mapped_column(JSON)
-
-    domain: Mapped[Optional['Domains']] = relationship('Domains', back_populates='tools')
-    control_scenarios: Mapped[list['ControlScenarios']] = relationship('ControlScenarios', back_populates='tool')
-    evidence: Mapped[list['Evidence']] = relationship('Evidence', back_populates='tool')
-    tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='tool')
 
 
 class TrustCenterConfigs(Base):
@@ -796,19 +800,20 @@ class Users(Base):
 
     audits: Mapped[list['Audits']] = relationship('Audits', back_populates='poc')
     data_subject_requests: Mapped[list['DataSubjectRequests']] = relationship('DataSubjectRequests', back_populates='users')
+    employee_import_batch_logs: Mapped[list['EmployeeImportBatchLogs']] = relationship('EmployeeImportBatchLogs', back_populates='users')
     employees: Mapped[list['Employees']] = relationship('Employees', back_populates='sync_user')
     framework_import_drafts: Mapped[list['FrameworkImportDrafts']] = relationship('FrameworkImportDrafts', back_populates='users')
     internal_controls: Mapped[list['InternalControls']] = relationship('InternalControls', back_populates='owner')
-    org_policies_created_by: Mapped[list['OrgPolicies']] = relationship('OrgPolicies', foreign_keys='[OrgPolicies.created_by]', back_populates='users')
-    org_policies_created_by_: Mapped[list['OrgPolicies']] = relationship('OrgPolicies', foreign_keys='[OrgPolicies.created_by_id]', back_populates='created_by_')
+    org_policies: Mapped[list['OrgPolicies']] = relationship('OrgPolicies', foreign_keys='[OrgPolicies.created_by]', back_populates='users')
+    org_policies_: Mapped[list['OrgPolicies']] = relationship('OrgPolicies', foreign_keys='[OrgPolicies.created_by_id]', back_populates='created_by_')
     temp_policy_uploads: Mapped[list['TempPolicyUploads']] = relationship('TempPolicyUploads', back_populates='users')
     temp_tasks: Mapped[list['TempTasks']] = relationship('TempTasks', back_populates='owner')
-    tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='user')
     audit_clause_statuses: Mapped[list['AuditClauseStatuses']] = relationship('AuditClauseStatuses', back_populates='auditor')
-    organization_certificate_controls_assigned_by: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', foreign_keys='[OrganizationCertificateControls.assigned_by]', back_populates='users')
-    organization_certificate_controls_assignee: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', foreign_keys='[OrganizationCertificateControls.assignee_id]', back_populates='assignee')
+    organization_certificate_controls: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', foreign_keys='[OrganizationCertificateControls.assigned_by]', back_populates='users')
+    organization_certificate_controls_: Mapped[list['OrganizationCertificateControls']] = relationship('OrganizationCertificateControls', foreign_keys='[OrganizationCertificateControls.assignee_id]', back_populates='assignee')
     policy_versions: Mapped[list['PolicyVersions']] = relationship('PolicyVersions', back_populates='users')
     risk_registers: Mapped[list['RiskRegisters']] = relationship('RiskRegisters', back_populates='owner')
+    tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='user')
     organization_internal_controls: Mapped[list['OrganizationInternalControls']] = relationship('OrganizationInternalControls', back_populates='owner')
     policy_approvers: Mapped[list['PolicyApprovers']] = relationship('PolicyApprovers', back_populates='approver')
 
@@ -994,32 +999,6 @@ class Clauses(Base):
     policy_clauses: Mapped[list['PolicyClauses']] = relationship('PolicyClauses', back_populates='clause')
 
 
-class ControlScenarios(Base):
-    __tablename__ = 'control_scenarios'
-    __table_args__ = (
-        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='control_scenarios_control_id_foreign'),
-        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', name='control_scenarios_tool_id_foreign'),
-        PrimaryKeyConstraint('id', name='control_scenarios_pkey'),
-        Index('control_scenarios_control_id_tool_id_index', 'control_id', 'tool_id'),
-        Index('control_scenarios_evidence_name_index', 'evidence_name')
-    )
-
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    control_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    tool_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    evidence_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    status: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'active'::character varying"))
-    evidence_type: Mapped[Optional[str]] = mapped_column(String(50))
-    action: Mapped[Optional[str]] = mapped_column(String(100))
-    actions: Mapped[Optional[dict]] = mapped_column(JSON)
-    description: Mapped[Optional[str]] = mapped_column(Text)
-    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-
-    control: Mapped['Controls'] = relationship('Controls', back_populates='control_scenarios')
-    tool: Mapped['Tools'] = relationship('Tools', back_populates='control_scenarios')
-
-
 class DataSubjectRequests(Base):
     __tablename__ = 'data_subject_requests'
     __table_args__ = (
@@ -1090,77 +1069,140 @@ class EmailLogs(Base):
     organization: Mapped[Optional['Organizations']] = relationship('Organizations', back_populates='email_logs')
 
 
+class EmployeeImportBatchLogs(Base):
+    __tablename__ = 'employee_import_batch_logs'
+    __table_args__ = (
+        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='employee_import_batch_logs_organization_id_foreign'),
+        ForeignKeyConstraint(['uploaded_by'], ['users.id'], ondelete='SET NULL', name='employee_import_batch_logs_uploaded_by_foreign'),
+        PrimaryKeyConstraint('id', name='employee_import_batch_logs_pkey'),
+        UniqueConstraint('import_batch_id', name='employee_import_batch_logs_import_batch_id_unique'),
+        Index('employee_import_batch_logs_organization_id_index', 'organization_id'),
+        Index('employee_import_batch_logs_uploaded_by_index', 'uploaded_by')
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    import_batch_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    staged: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text('0'))
+    skipped: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text('0'))
+    skipped_rows_total: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text('0'))
+    response_payload_truncated: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
+    uploaded_by: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
+    skipped_reason_summary: Mapped[Optional[dict]] = mapped_column(JSON)
+    skipped_rows: Mapped[Optional[dict]] = mapped_column(JSON)
+    duplicate_emails: Mapped[Optional[dict]] = mapped_column(JSON)
+    original_filename: Mapped[Optional[str]] = mapped_column(String(512))
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+
+    organization: Mapped['Organizations'] = relationship('Organizations', back_populates='employee_import_batch_logs')
+    users: Mapped[Optional['Users']] = relationship('Users', back_populates='employee_import_batch_logs')
+
+
+class EmployeeImportStaging(Base):
+    __tablename__ = 'employee_import_staging'
+    __table_args__ = (
+        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='employee_import_staging_organization_id_foreign'),
+        PrimaryKeyConstraint('id', name='employee_import_staging_pkey'),
+        Index('employee_import_staging_import_batch_id_index', 'import_batch_id'),
+        Index('employee_import_staging_organization_id_index', 'organization_id')
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    import_batch_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[int] = mapped_column(SmallInteger, nullable=False, server_default=text("'0'::smallint"))
+    uploaded_by: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
+    sync_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
+    name: Mapped[Optional[str]] = mapped_column(String(255))
+    department: Mapped[Optional[str]] = mapped_column(String(255))
+    designation: Mapped[Optional[str]] = mapped_column(String(255))
+    employee_id: Mapped[Optional[str]] = mapped_column(String(255))
+    employee_type: Mapped[Optional[str]] = mapped_column(String(255))
+    employee_status: Mapped[Optional[str]] = mapped_column(String(255))
+    marital_status: Mapped[Optional[str]] = mapped_column(String(255))
+    gender: Mapped[Optional[str]] = mapped_column(String(255))
+    source_of_hire: Mapped[Optional[str]] = mapped_column(String(255))
+    date_of_joining: Mapped[Optional[datetime.date]] = mapped_column(Date)
+    date_of_exit: Mapped[Optional[datetime.date]] = mapped_column(Date)
+    date_of_birth: Mapped[Optional[datetime.date]] = mapped_column(Date)
+    current_experience: Mapped[Optional[str]] = mapped_column(String(255))
+    total_experience: Mapped[Optional[str]] = mapped_column(String(255))
+    address: Mapped[Optional[str]] = mapped_column(String(255))
+    city: Mapped[Optional[str]] = mapped_column(String(255))
+    state: Mapped[Optional[str]] = mapped_column(String(255))
+    country: Mapped[Optional[str]] = mapped_column(String(255))
+    zip_code: Mapped[Optional[str]] = mapped_column(String(255))
+    phone: Mapped[Optional[str]] = mapped_column(String(255))
+    emergency_contact_name: Mapped[Optional[str]] = mapped_column(String(255))
+    emergency_contact_phone: Mapped[Optional[str]] = mapped_column(String(255))
+    emergency_contact_relationship: Mapped[Optional[str]] = mapped_column(String(255))
+    provider: Mapped[Optional[str]] = mapped_column(String(255))
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    image: Mapped[Optional[str]] = mapped_column(String(512))
+
+    organization: Mapped['Organizations'] = relationship('Organizations', back_populates='employee_import_staging')
+
+
 class Employees(Base):
     __tablename__ = 'employees'
     __table_args__ = (
-        CheckConstraint("status::text = ANY (ARRAY['invited'::character varying, 'active'::character varying, 'inactive'::character varying]::text[])", name='employees_status_check'),
         ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='employees_organization_id_foreign'),
         ForeignKeyConstraint(['sync_user_id'], ['users.id'], ondelete='CASCADE', onupdate='CASCADE', name='employees_sync_user_id_foreign'),
         PrimaryKeyConstraint('id', name='employees_pkey'),
         UniqueConstraint('organization_id', 'email', name='employees_organization_id_email_unique'),
-        Index('employees_department_index', 'department'),
-        Index('employees_designation_index', 'designation'),
-        Index('employees_name_index', 'name'),
-        Index('employees_status_index', 'status')
+        Index('employees_organization_id_index', 'organization_id')
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
     organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     email: Mapped[str] = mapped_column(String(255), nullable=False)
-    status: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'invited'::character varying"))
-    mode: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
     has_changed: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
     sync_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
-    department: Mapped[Optional[str]] = mapped_column(String(255))
-    designation: Mapped[Optional[str]] = mapped_column(String(255))
     name: Mapped[Optional[str]] = mapped_column(String(255))
     password: Mapped[Optional[str]] = mapped_column(String(255))
     image: Mapped[Optional[str]] = mapped_column(String(255))
     provider: Mapped[Optional[str]] = mapped_column(String(255))
     provider_id: Mapped[Optional[str]] = mapped_column(String(255))
-    reg_status: Mapped[Optional[str]] = mapped_column(String(255))
+    employee_id: Mapped[Optional[str]] = mapped_column(String(255))
+    department: Mapped[Optional[str]] = mapped_column(String(255))
+    designation: Mapped[Optional[str]] = mapped_column(String(255))
     employee_status: Mapped[Optional[str]] = mapped_column(String(255))
+    employee_type: Mapped[Optional[str]] = mapped_column(String(255))
+    marital_status: Mapped[Optional[str]] = mapped_column(String(255))
+    gender: Mapped[Optional[str]] = mapped_column(String(255))
+    source_of_hire: Mapped[Optional[str]] = mapped_column(String(255))
+    date_of_joining: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    date_of_exit: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    date_of_birth: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    current_experience: Mapped[Optional[str]] = mapped_column(String(255))
+    total_experience: Mapped[Optional[str]] = mapped_column(String(255))
     remember_token: Mapped[Optional[str]] = mapped_column(String(100))
     changed_values: Mapped[Optional[str]] = mapped_column(String(255))
-    date_of_exit: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    address: Mapped[Optional[str]] = mapped_column(String(255))
+    city: Mapped[Optional[str]] = mapped_column(String(255))
+    state: Mapped[Optional[str]] = mapped_column(String(255))
+    country: Mapped[Optional[str]] = mapped_column(String(255))
+    zip_code: Mapped[Optional[str]] = mapped_column(String(255))
+    phone: Mapped[Optional[str]] = mapped_column(String(255))
+    emergency_contact_name: Mapped[Optional[str]] = mapped_column(String(255))
+    emergency_contact_phone: Mapped[Optional[str]] = mapped_column(String(255))
+    emergency_contact_relationship: Mapped[Optional[str]] = mapped_column(String(255))
+    last_synced_at: Mapped[Optional[str]] = mapped_column(String(255))
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    reg_status: Mapped[Optional[str]] = mapped_column(String)
 
     organization: Mapped['Organizations'] = relationship('Organizations', back_populates='employees')
     sync_user: Mapped[Optional['Users']] = relationship('Users', back_populates='employees')
-    policy_assignees: Mapped[list['PolicyAssignees']] = relationship('PolicyAssignees', back_populates='assignee')
-
-
-class Evidence(Base):
-    __tablename__ = 'evidence'
-    __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='evidence_organization_id_foreign'),
-        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', name='evidence_tool_id_foreign'),
-        PrimaryKeyConstraint('id', name='evidence_pkey'),
-        Index('evidence_title_index', 'title')
-    )
-
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    title: Mapped[str] = mapped_column(String(255), nullable=False)
-    code: Mapped[Optional[str]] = mapped_column(String(255))
-    description: Mapped[Optional[str]] = mapped_column(Text)
-    due_date: Mapped[Optional[datetime.date]] = mapped_column(Date)
-    status: Mapped[Optional[str]] = mapped_column(String(255))
-    tool_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
-    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-
-    organization: Mapped['Organizations'] = relationship('Organizations', back_populates='evidence')
-    tool: Mapped[Optional['Tools']] = relationship('Tools', back_populates='evidence')
-    evidence_collections: Mapped[list['EvidenceCollections']] = relationship('EvidenceCollections', back_populates='evidence')
-    evidence_mappeds: Mapped[list['EvidenceMappeds']] = relationship('EvidenceMappeds', back_populates='evidence')
 
 
 class EvidenceMasters(Base):
     __tablename__ = 'evidence_masters'
     __table_args__ = (
-        ForeignKeyConstraint(['domain_id'], ['domains.id'], name='evidence_masters_domain_id_foreign'),
+        ForeignKeyConstraint(['domain_id'], ['domains.id'], name='evidence_masters_domain_id_fkey'),
         PrimaryKeyConstraint('id', name='evidence_masters_pkey'),
         UniqueConstraint('code', name='evidence_masters_code_unique'),
         Index('evidence_masters_category_index', 'category'),
@@ -1171,18 +1213,19 @@ class EvidenceMasters(Base):
     code: Mapped[str] = mapped_column(String(50), nullable=False)
     name: Mapped[str] = mapped_column(String(150), nullable=False)
     is_required_evidence: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('true'))
-    domain_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
     category: Mapped[Optional[str]] = mapped_column(String(100))
     evidence_type: Mapped[Optional[str]] = mapped_column(String(50))
     source: Mapped[Optional[str]] = mapped_column(String(100))
     api_endpoint: Mapped[Optional[str]] = mapped_column(String(255))
     description: Mapped[Optional[str]] = mapped_column(Text)
     expected_frequency: Mapped[Optional[str]] = mapped_column(String(50))
-    required_fields: Mapped[Optional[dict]] = mapped_column(JSON)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    domain: Mapped[Optional[str]] = mapped_column(String)
+    required_fields: Mapped[Optional[dict]] = mapped_column(JSON)
+    domain_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
 
-    domain: Mapped[Optional['Domains']] = relationship('Domains', back_populates='evidence_masters')
+    domain_: Mapped[Optional['Domains']] = relationship('Domains', back_populates='evidence_masters')
     control_evidence_master: Mapped[list['ControlEvidenceMaster']] = relationship('ControlEvidenceMaster', back_populates='evidence_master')
 
 
@@ -1330,8 +1373,8 @@ class OrgPolicies(Base):
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
-    users: Mapped[Optional['Users']] = relationship('Users', foreign_keys=[created_by], back_populates='org_policies_created_by')
-    created_by_: Mapped['Users'] = relationship('Users', foreign_keys=[created_by_id], back_populates='org_policies_created_by_')
+    users: Mapped[Optional['Users']] = relationship('Users', foreign_keys=[created_by], back_populates='org_policies')
+    created_by_: Mapped['Users'] = relationship('Users', foreign_keys=[created_by_id], back_populates='org_policies_')
     organization: Mapped[Optional['Organizations']] = relationship('Organizations', back_populates='org_policies')
     policy_versions: Mapped[list['PolicyVersions']] = relationship('PolicyVersions', back_populates='org_policy')
 
@@ -1643,30 +1686,35 @@ class TempTasks(Base):
     owner: Mapped[Optional['Users']] = relationship('Users', back_populates='temp_tasks')
 
 
-class ToolIntegrations(Base):
-    __tablename__ = 'tool_integrations'
+class Tools(Base):
+    __tablename__ = 'tools'
     __table_args__ = (
-        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_organization_id_foreign'),
-        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_tool_id_foreign'),
-        ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_user_id_foreign'),
-        PrimaryKeyConstraint('id', name='tool_integrations_pkey'),
-        Index('tool_integrations_organization_id_index', 'organization_id'),
-        Index('tool_integrations_tool_id_index', 'tool_id'),
-        Index('tool_integrations_user_id_index', 'user_id')
+        ForeignKeyConstraint(['domain_id'], ['domains.id'], name='tools_domain_id_fkey'),
+        PrimaryKeyConstraint('id', name='tools_pkey'),
+        UniqueConstraint('name', name='tools_name_unique'),
+        Index('tools_domain_id_index', 'domain_id'),
+        Index('tools_name_index', 'name'),
+        Index('tools_status_index', 'status')
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    user_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    tool_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
-    configuration_data: Mapped[Optional[dict]] = mapped_column(JSON)
+    status: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'active'::character varying"))
+    name: Mapped[Optional[str]] = mapped_column(String(255))
+    image_path: Mapped[Optional[str]] = mapped_column(String(255))
+    configuration_keys: Mapped[Optional[dict]] = mapped_column(JSON)
+    sync_type: Mapped[Optional[str]] = mapped_column(Text)
+    scope: Mapped[Optional[dict]] = mapped_column(JSON)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    overview: Mapped[Optional[str]] = mapped_column(Text)
+    permissions: Mapped[Optional[dict]] = mapped_column(JSON)
+    resources: Mapped[Optional[dict]] = mapped_column(JSON)
+    domain_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
 
-    organization: Mapped['Organizations'] = relationship('Organizations', back_populates='tool_integrations')
-    tool: Mapped['Tools'] = relationship('Tools', back_populates='tool_integrations')
-    user: Mapped['Users'] = relationship('Users', back_populates='tool_integrations')
+    domain: Mapped[Optional['Domains']] = relationship('Domains', back_populates='tools')
+    control_scenarios: Mapped[list['ControlScenarios']] = relationship('ControlScenarios', back_populates='tool')
+    evidence: Mapped[list['Evidence']] = relationship('Evidence', back_populates='tool')
+    tool_integrations: Mapped[list['ToolIntegrations']] = relationship('ToolIntegrations', back_populates='tool')
 
 
 class TrustcenterAccessRequests(Base):
@@ -2026,47 +2074,57 @@ class ControlEvidenceMaster(Base):
     evidence_master: Mapped['EvidenceMasters'] = relationship('EvidenceMasters', back_populates='control_evidence_master')
 
 
-class EvidenceCollections(Base):
-    __tablename__ = 'evidence_collections'
+class ControlScenarios(Base):
+    __tablename__ = 'control_scenarios'
     __table_args__ = (
-        CheckConstraint("evidence_from::text = ANY (ARRAY['document'::character varying, 'link'::character varying, 'integration'::character varying, 'tool'::character varying]::text[])", name='evidence_collections_evidence_from_check'),
-        ForeignKeyConstraint(['evidence_id'], ['evidence.id'], ondelete='CASCADE', name='evidence_collections_evidence_id_foreign'),
-        PrimaryKeyConstraint('id', name='evidence_collections_pkey'),
-        Index('evidence_collection_evidence_id_index', 'evidence_id')
+        ForeignKeyConstraint(['control_id'], ['controls.id'], ondelete='CASCADE', name='control_scenarios_control_id_foreign'),
+        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', name='control_scenarios_tool_id_foreign'),
+        PrimaryKeyConstraint('id', name='control_scenarios_pkey'),
+        Index('control_scenarios_control_id_tool_id_index', 'control_id', 'tool_id'),
+        Index('control_scenarios_evidence_name_index', 'evidence_name')
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    evidence_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    evidence_from: Mapped[Optional[str]] = mapped_column(String(255))
-    source: Mapped[Optional[str]] = mapped_column(String(255))
-    name: Mapped[Optional[str]] = mapped_column(String(255))
-    tool_evidence: Mapped[Optional[dict]] = mapped_column(JSONB)
-    updated_by: Mapped[Optional[str]] = mapped_column(String(255))
+    control_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    tool_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    evidence_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'active'::character varying"))
+    evidence_type: Mapped[Optional[str]] = mapped_column(String(50))
+    action: Mapped[Optional[str]] = mapped_column(String(100))
+    actions: Mapped[Optional[dict]] = mapped_column(JSON)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
-    evidence: Mapped['Evidence'] = relationship('Evidence', back_populates='evidence_collections')
-    tasks: Mapped[list['Tasks']] = relationship('Tasks', back_populates='evidence_collection')
+    control: Mapped['Controls'] = relationship('Controls', back_populates='control_scenarios')
+    tool: Mapped['Tools'] = relationship('Tools', back_populates='control_scenarios')
 
 
-class EvidenceMappeds(Base):
-    __tablename__ = 'evidence_mappeds'
+class Evidence(Base):
+    __tablename__ = 'evidence'
     __table_args__ = (
-        ForeignKeyConstraint(['evidence_id'], ['evidence.id'], ondelete='CASCADE', name='evidence_mappeds_evidence_id_foreign'),
-        PrimaryKeyConstraint('id', name='evidence_mappeds_pkey'),
-        Index('evidence_mappeds_evidenceable_id_index', 'evidenceable_id'),
-        Index('evidence_mappeds_evidenceable_type_evidenceable_id_index', 'evidenceable_type', 'evidenceable_id')
+        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', name='evidence_organization_id_foreign'),
+        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', name='evidence_tool_id_foreign'),
+        PrimaryKeyConstraint('id', name='evidence_pkey'),
+        Index('evidence_title_index', 'title')
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    evidence_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    evidenceable_type: Mapped[str] = mapped_column(String(255), nullable=False)
-    evidenceable_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    mapped_by: Mapped[Optional[str]] = mapped_column(String(255))
+    organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    code: Mapped[Optional[str]] = mapped_column(String(255))
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    due_date: Mapped[Optional[datetime.date]] = mapped_column(Date)
+    status: Mapped[Optional[str]] = mapped_column(String(255))
+    tool_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
-    evidence: Mapped['Evidence'] = relationship('Evidence', back_populates='evidence_mappeds')
+    organization: Mapped['Organizations'] = relationship('Organizations', back_populates='evidence')
+    tool: Mapped[Optional['Tools']] = relationship('Tools', back_populates='evidence')
+    evidence_collection: Mapped[list['EvidenceCollection']] = relationship('EvidenceCollection', back_populates='evidence')
+    evidence_collections: Mapped[list['EvidenceCollections']] = relationship('EvidenceCollections', back_populates='evidence')
+    evidence_mappeds: Mapped[list['EvidenceMappeds']] = relationship('EvidenceMappeds', back_populates='evidence')
 
 
 class OrganizationCertificateClauses(Base):
@@ -2121,8 +2179,8 @@ class OrganizationCertificateControls(Base):
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
-    users: Mapped[Optional['Users']] = relationship('Users', foreign_keys=[assigned_by], back_populates='organization_certificate_controls_assigned_by')
-    assignee: Mapped[Optional['Users']] = relationship('Users', foreign_keys=[assignee_id], back_populates='organization_certificate_controls_assignee')
+    users: Mapped[Optional['Users']] = relationship('Users', foreign_keys=[assigned_by], back_populates='organization_certificate_controls')
+    assignee: Mapped[Optional['Users']] = relationship('Users', foreign_keys=[assignee_id], back_populates='organization_certificate_controls_')
     certificate: Mapped['Certificates'] = relationship('Certificates', back_populates='organization_certificate_controls')
     clause: Mapped['Clauses'] = relationship('Clauses', back_populates='organization_certificate_controls')
     control: Mapped['Controls'] = relationship('Controls', back_populates='organization_certificate_controls')
@@ -2281,6 +2339,32 @@ class TempVendors(Base):
     sub_category: Mapped[Optional['SubCategories']] = relationship('SubCategories', back_populates='temp_vendors')
 
 
+class ToolIntegrations(Base):
+    __tablename__ = 'tool_integrations'
+    __table_args__ = (
+        ForeignKeyConstraint(['organization_id'], ['organizations.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_organization_id_foreign'),
+        ForeignKeyConstraint(['tool_id'], ['tools.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_tool_id_foreign'),
+        ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE', onupdate='CASCADE', name='tool_integrations_user_id_foreign'),
+        PrimaryKeyConstraint('id', name='tool_integrations_pkey'),
+        Index('tool_integrations_organization_id_index', 'organization_id'),
+        Index('tool_integrations_tool_id_index', 'tool_id'),
+        Index('tool_integrations_user_id_index', 'user_id')
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    organization_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    tool_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
+    configuration_data: Mapped[Optional[dict]] = mapped_column(JSON)
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+
+    organization: Mapped['Organizations'] = relationship('Organizations', back_populates='tool_integrations')
+    tool: Mapped['Tools'] = relationship('Tools', back_populates='tool_integrations')
+    user: Mapped['Users'] = relationship('Users', back_populates='tool_integrations')
+
+
 class TrustcenterAccessRules(Base):
     __tablename__ = 'trustcenter_access_rules'
     __table_args__ = (
@@ -2390,6 +2474,74 @@ class Vendors(Base):
     vendor_evidence: Mapped[list['VendorEvidence']] = relationship('VendorEvidence', back_populates='vendor')
 
 
+class EvidenceCollection(Base):
+    __tablename__ = 'evidence_collection'
+    __table_args__ = (
+        ForeignKeyConstraint(['evidence_id'], ['evidence.id'], ondelete='CASCADE', name='evidence_collection_evidence_id_fkey'),
+        PrimaryKeyConstraint('id', name='evidence_collection_pkey'),
+        Index('ix_evidence_collection_evidence_id', 'evidence_id'),
+        Index('ix_evidence_collection_organization_id', 'organization_id'),
+        Index('ix_evidence_collection_tool_id', 'tool_id'),
+        Index('ix_evidence_collection_user_id', 'user_id')
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    organization_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    user_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    tool_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    evidence_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
+    detail: Mapped[Optional[dict]] = mapped_column(JSON)
+    error_message: Mapped[Optional[str]] = mapped_column(Text)
+    started_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+    completed_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+
+    evidence: Mapped[Optional['Evidence']] = relationship('Evidence', back_populates='evidence_collection')
+
+
+class EvidenceCollections(Base):
+    __tablename__ = 'evidence_collections'
+    __table_args__ = (
+        CheckConstraint("evidence_from::text = ANY (ARRAY['document'::character varying, 'link'::character varying, 'integration'::character varying, 'tool'::character varying]::text[])", name='evidence_collections_evidence_from_check'),
+        ForeignKeyConstraint(['evidence_id'], ['evidence.id'], ondelete='CASCADE', name='evidence_collections_evidence_id_foreign'),
+        PrimaryKeyConstraint('id', name='evidence_collections_pkey'),
+        Index('evidence_collection_evidence_id_index', 'evidence_id')
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    evidence_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    evidence_from: Mapped[Optional[str]] = mapped_column(String(255))
+    source: Mapped[Optional[str]] = mapped_column(String(255))
+    name: Mapped[Optional[str]] = mapped_column(String(255))
+    tool_evidence: Mapped[Optional[dict]] = mapped_column(JSONB)
+    updated_by: Mapped[Optional[str]] = mapped_column(String(255))
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+
+    evidence: Mapped['Evidence'] = relationship('Evidence', back_populates='evidence_collections')
+    tasks: Mapped[list['Tasks']] = relationship('Tasks', back_populates='evidence_collection')
+
+
+class EvidenceMappeds(Base):
+    __tablename__ = 'evidence_mappeds'
+    __table_args__ = (
+        ForeignKeyConstraint(['evidence_id'], ['evidence.id'], ondelete='CASCADE', name='evidence_mappeds_evidence_id_foreign'),
+        PrimaryKeyConstraint('id', name='evidence_mappeds_pkey'),
+        Index('evidence_mappeds_evidenceable_id_index', 'evidenceable_id'),
+        Index('evidence_mappeds_evidenceable_type_evidenceable_id_index', 'evidenceable_type', 'evidenceable_id')
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    evidence_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    evidenceable_type: Mapped[str] = mapped_column(String(255), nullable=False)
+    evidenceable_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    mapped_by: Mapped[Optional[str]] = mapped_column(String(255))
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+
+    evidence: Mapped['Evidence'] = relationship('Evidence', back_populates='evidence_mappeds')
+
+
 class OrganizationInternalControls(Base):
     __tablename__ = 'organization_internal_controls'
     __table_args__ = (
@@ -2470,7 +2622,6 @@ class PolicyAssignees(Base):
     __tablename__ = 'policy_assignees'
     __table_args__ = (
         CheckConstraint("status::text = ANY (ARRAY['pending'::character varying, 'acknowledged'::character varying, 'in_review'::character varying, 'rejected'::character varying]::text[])", name='policy_assignees_status_check'),
-        ForeignKeyConstraint(['assignee_id'], ['employees.id'], ondelete='CASCADE', name='policy_assignees_assignee_id_foreign'),
         ForeignKeyConstraint(['policy_version_id'], ['policy_versions.id'], ondelete='CASCADE', name='policy_assignees_policy_version_id_foreign'),
         PrimaryKeyConstraint('id', name='policy_assignees_pkey'),
         Index('policy_assignees_assignee_id_index', 'assignee_id'),
@@ -2485,45 +2636,7 @@ class PolicyAssignees(Base):
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
-    assignee: Mapped[Optional['Employees']] = relationship('Employees', back_populates='policy_assignees')
     policy_version: Mapped['PolicyVersions'] = relationship('PolicyVersions', back_populates='policy_assignees')
-
-
-class Tasks(Base):
-    __tablename__ = 'tasks'
-    __table_args__ = (
-        ForeignKeyConstraint(['evidence_collection_id'], ['evidence_collections.id'], ondelete='SET NULL', onupdate='CASCADE', name='tasks_evidence_collection_id_foreign'),
-        PrimaryKeyConstraint('id', name='tasks_pkey'),
-        Index('tasks_created_by_id_type_created_by_id_id_index', 'created_by_id_type', 'created_by_id_id'),
-        Index('tasks_due_date_index', 'due_date'),
-        Index('tasks_evidence_collection_id_index', 'evidence_collection_id'),
-        Index('tasks_owner_id_type_owner_id_id_index', 'owner_id_type', 'owner_id_id'),
-        Index('tasks_priority_index', 'priority'),
-        Index('tasks_status_index', 'status'),
-        Index('tasks_taskable_type_taskable_id_index', 'taskable_type', 'taskable_id')
-    )
-
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    taskable_type: Mapped[str] = mapped_column(String(255), nullable=False)
-    taskable_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    owner_id_type: Mapped[str] = mapped_column(String(255), nullable=False)
-    owner_id_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    status: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'pending'::character varying"))
-    created_by_id_type: Mapped[str] = mapped_column(String(255), nullable=False)
-    created_by_id_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
-    name: Mapped[Optional[str]] = mapped_column(String(255))
-    description: Mapped[Optional[str]] = mapped_column(Text)
-    priority: Mapped[Optional[str]] = mapped_column(String(255))
-    estimated_effort: Mapped[Optional[str]] = mapped_column(String(255))
-    due_date: Mapped[Optional[datetime.date]] = mapped_column(Date)
-    category: Mapped[Optional[str]] = mapped_column(String(255))
-    subcategory: Mapped[Optional[str]] = mapped_column(String(255))
-    evidence_collection_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
-    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
-
-    evidence_collection: Mapped[Optional['EvidenceCollections']] = relationship('EvidenceCollections', back_populates='tasks')
-    task_attachments: Mapped[list['TaskAttachments']] = relationship('TaskAttachments', back_populates='task')
 
 
 class VendorAssessments(Base):
@@ -2591,28 +2704,46 @@ class VendorDetails(Base):
     provider_id: Mapped[Optional[str]] = mapped_column(String(255))
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    website_url: Mapped[Optional[str]] = mapped_column(String(255))
 
     vendor: Mapped['Vendors'] = relationship('Vendors', back_populates='vendor_details')
 
 
-class TaskAttachments(Base):
-    __tablename__ = 'task_attachments'
+class Tasks(Base):
+    __tablename__ = 'tasks'
     __table_args__ = (
-        ForeignKeyConstraint(['task_id'], ['tasks.id'], ondelete='CASCADE', onupdate='CASCADE', name='task_attachments_task_id_foreign'),
-        PrimaryKeyConstraint('id', name='task_attachments_pkey'),
-        Index('task_attachments_task_id_index', 'task_id')
+        ForeignKeyConstraint(['evidence_collection_id'], ['evidence_collections.id'], ondelete='SET NULL', onupdate='CASCADE', name='tasks_evidence_collection_id_foreign'),
+        PrimaryKeyConstraint('id', name='tasks_pkey'),
+        Index('tasks_created_by_id_type_created_by_id_id_index', 'created_by_id_type', 'created_by_id_id'),
+        Index('tasks_due_date_index', 'due_date'),
+        Index('tasks_evidence_collection_id_index', 'evidence_collection_id'),
+        Index('tasks_owner_id_type_owner_id_id_index', 'owner_id_type', 'owner_id_id'),
+        Index('tasks_priority_index', 'priority'),
+        Index('tasks_status_index', 'status'),
+        Index('tasks_taskable_type_taskable_id_index', 'taskable_type', 'taskable_id')
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    task_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    taskable_type: Mapped[str] = mapped_column(String(255), nullable=False)
+    taskable_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    owner_id_type: Mapped[str] = mapped_column(String(255), nullable=False)
+    owner_id_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    status: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'pending'::character varying"))
+    created_by_id_type: Mapped[str] = mapped_column(String(255), nullable=False)
+    created_by_id_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     name: Mapped[Optional[str]] = mapped_column(String(255))
-    source: Mapped[Optional[str]] = mapped_column(String(255))
-    file_type: Mapped[Optional[str]] = mapped_column(String(255))
-    updated_by: Mapped[Optional[str]] = mapped_column(String(255))
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    priority: Mapped[Optional[str]] = mapped_column(String(255))
+    estimated_effort: Mapped[Optional[str]] = mapped_column(String(255))
+    due_date: Mapped[Optional[datetime.date]] = mapped_column(Date)
+    category: Mapped[Optional[str]] = mapped_column(String(255))
+    subcategory: Mapped[Optional[str]] = mapped_column(String(255))
+    evidence_collection_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
 
-    task: Mapped['Tasks'] = relationship('Tasks', back_populates='task_attachments')
+    evidence_collection: Mapped[Optional['EvidenceCollections']] = relationship('EvidenceCollections', back_populates='tasks')
+    task_attachments: Mapped[list['TaskAttachments']] = relationship('TaskAttachments', back_populates='task')
 
 
 class VendorAssessmentQuestions(Base):
@@ -2744,6 +2875,26 @@ class VendorTrustCenters(Base):
 
     vendor_assessment: Mapped[Optional['VendorAssessments']] = relationship('VendorAssessments', back_populates='vendor_trust_centers')
     vendor: Mapped[Optional['Vendors']] = relationship('Vendors', back_populates='vendor_trust_centers')
+
+
+class TaskAttachments(Base):
+    __tablename__ = 'task_attachments'
+    __table_args__ = (
+        ForeignKeyConstraint(['task_id'], ['tasks.id'], ondelete='CASCADE', onupdate='CASCADE', name='task_attachments_task_id_foreign'),
+        PrimaryKeyConstraint('id', name='task_attachments_pkey'),
+        Index('task_attachments_task_id_index', 'task_id')
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    task_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    name: Mapped[Optional[str]] = mapped_column(String(255))
+    source: Mapped[Optional[str]] = mapped_column(String(255))
+    file_type: Mapped[Optional[str]] = mapped_column(String(255))
+    updated_by: Mapped[Optional[str]] = mapped_column(String(255))
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(TIMESTAMP(precision=0))
+
+    task: Mapped['Tasks'] = relationship('Tasks', back_populates='task_attachments')
 
 
 class VendorEvidence(Base):

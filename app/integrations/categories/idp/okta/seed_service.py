@@ -1,4 +1,7 @@
-"""Seed evidence_masters for Okta (IAM) when codes are not already present globally."""
+"""Seed evidence_masters for Okta (IAM) when codes are not already present globally.
+
+Call manually when needed (not from POST /configure).
+"""
 
 from __future__ import annotations
 
@@ -8,7 +11,7 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.integrations.categories.idp.okta.constants import OKTA_SOURCE
+from app.integrations.categories.idp.iam_evidence_catalog import IAM_MASTER_SOURCE
 from app.integrations.categories.idp.okta.seed import OKTA_IAM_SEED_ROWS
 from app.integrations.core.persistence.tool_integration_service import get_domain_id_for_tool
 from app.models import EvidenceMaster
@@ -31,7 +34,7 @@ def seed_okta_evidence_masters(session: Session, tool_id: str) -> int:
                 name=row["name"],
                 code=row["code"],
                 category=row["category"],
-                source=OKTA_SOURCE,
+                source=IAM_MASTER_SOURCE,
                 evidence_type="API",
                 api_endpoint=row.get("api"),
                 description=None,

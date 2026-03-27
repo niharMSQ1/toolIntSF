@@ -90,7 +90,7 @@ class CollectEvidenceResponse(BaseModel):
 
 
 class SyncIntegrationBody(BaseModel):
-    """Unified sync: same optional filters as collect; provider is optional if evidence_masters exist."""
+    """Unified sync: same optional filters as collect; provider is optional when evidence_masters rows exist for the domain."""
 
     org_id: str
     user_id: str
@@ -99,7 +99,7 @@ class SyncIntegrationBody(BaseModel):
         default=None,
         description=(
             "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz | jira_cloud | okta. "
-            "Omit to infer from evidence_masters.source (after configure)."
+            "Omit to infer from evidence_masters.source when present; generic IAM source ``iam`` is resolved from configuration_data."
         ),
     )
     evidence_codes: list[str] | None = None

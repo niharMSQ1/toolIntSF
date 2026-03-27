@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.integrations.categories.idp.okta.collector import collect_for_master, okta_evidence_for_storage
 from app.integrations.categories.idp.okta.credentials import ready_for_collection, resolve_api_token, resolve_okta_base_url
 from app.integrations.categories.idp.okta import api_client
+from app.integrations.categories.idp.iam_evidence_catalog import iam_evidence_master_filter_sources
 from app.integrations.categories.idp.okta.seed import ALL_OKTA_IAM_EVIDENCE_CODES, EVIDENCE_MASTER_NAME_ORDER
 from app.integrations.core.constants import EVIDENCE_FROM_TOOL
 from app.integrations.core.persistence import (
@@ -82,10 +83,12 @@ def run_okta_evidence_collection(
         tool_id=tool_id,
         evidence_codes=code_filter,
         master_name_order=EVIDENCE_MASTER_NAME_ORDER,
-        source="okta",
+        source=iam_evidence_master_filter_sources(),
     )
     if not masters:
-        raise ValueError("No evidence_masters for this tool's domain; run /configure to seed.")
+        raise ValueError(
+            "No evidence_masters for this tool's domain; seed evidence_masters manually before collect."
+        )
 
     results: list[CollectionItemResult] = []
 
@@ -111,9 +114,9 @@ def run_okta_evidence_collection(
                 evidence_id=ev["id"],
                 evidence_name=master["name"],
                 user_id=user_id,
+                tool_id=tool_id,
                 tool_evidence=okta_evidence_for_storage(content),
                 evidence_from=EVIDENCE_FROM_TOOL,
-                source="Okta Admin API",
                 status="success",
                 detail={"mapped_controls": mapped},
                 error_message=None,

@@ -7,7 +7,8 @@ Platform-specific OAuth and seed data live under `app.integrations.categories.*`
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from collections.abc import Sequence
 from typing import Any
 
 from sqlalchemy import delete, select
@@ -62,6 +63,17 @@ def _master_to_dict(m: EvidenceMaster) -> dict[str, Any]:
         "api_endpoint": m.api_endpoint,
         "description": m.description,
     }
+
+
+def get_tool_source_label(session: Session, tool_id: str | uuid.UUID) -> str:
+    """Label for ``evidence_collections.source``: ``tools.name`` when set, else a stable fallback."""
+    row = session.get(Tools, _uuid(tool_id))
+    if row is None:
+        return _truncate(f"tool:{tool_id}", 255)
+    raw = row.name
+    if raw is not None and str(raw).strip():
+        return _truncate(str(raw).strip(), 255)
+    return _truncate(f"tool:{row.id}", 255)
 
 
 def get_domain_id_for_tool(session: Session, tool_id: str | uuid.UUID) -> uuid.UUID:
@@ -194,6 +206,8 @@ def upsert_evidence_full_replace(
     """
     Persist collected evidence. ``description`` mirrors ``evidence_masters.description``;
     raw API payloads belong in ``evidence_collections.tool_evidence`` (see collection runner).
+
+    New rows get ``due_date`` = today (UTC) + 30 days; existing rows keep their ``due_date``.
     """
     status_val = "collected"
     oid = _uuid(organization_id)
@@ -205,6 +219,7 @@ def upsert_evidence_full_replace(
         select(Evidence).where(Evidence.organization_id == oid, Evidence.title == title_db).limit(1)
     ).first()
     now = datetime.now(timezone.utc)
+    default_due = now.date() + timedelta(days=30)
     if existing:
         existing.code = code_db
         existing.description = evidence_description
@@ -219,7 +234,7 @@ def upsert_evidence_full_replace(
             title=title_db,
             code=code_db,
             description=evidence_description,
-            due_date=None,
+            due_date=default_due,
             status=status_val,
             tool_id=tid_tool,
             created_at=now,
@@ -237,19 +252,26 @@ def list_evidence_masters(
     tool_id: str,
     evidence_codes: list[str] | None,
     master_name_order: tuple[str, ...] | None = None,
-    source: str | None = None,
+    source: str | Sequence[str] | None = None,
 ) -> list[dict[str, Any]]:
     """
     List evidence_masters for the tool's domain (``tools.domain_id``).
 
-    ``source`` filters masters for the integration product (e.g. ``zoho_people``, ``microsoft_entra``).
-    If ``master_name_order`` is set (e.g. Zoho G3→G4 order), rows are sorted by that name sequence;
-    otherwise SQL ``ORDER BY code`` order is kept.
+    ``source`` filters by one or more ``evidence_masters.source`` values (e.g. ``zoho_people``,
+    or a tuple like ``("iam", "okta")`` for IAM migrations). If ``master_name_order`` is set
+    (e.g. Zoho G3→G4 order), rows are sorted by that name sequence; otherwise SQL ``ORDER BY code``.
     """
     did = get_domain_id_for_tool(session, tool_id)
     criteria = [EvidenceMaster.domain_id == did]
-    if source is not None and str(source).strip():
-        criteria.append(EvidenceMaster.source == str(source).strip())
+    if source is not None:
+        if isinstance(source, str):
+            s = source.strip()
+            if s:
+                criteria.append(EvidenceMaster.source == s)
+        else:
+            srcs = [str(x).strip() for x in source if x is not None and str(x).strip()]
+            if srcs:
+                criteria.append(EvidenceMaster.source.in_(srcs))
     if evidence_codes:
         stmt = (
             select(EvidenceMaster)
@@ -271,9 +293,9 @@ def insert_evidence_collection(
     evidence_id: uuid.UUID,
     evidence_name: str,
     user_id: str,
+    tool_id: str,
     tool_evidence: Any | None,
     evidence_from: str = EVIDENCE_FROM_TOOL,
-    source: str = "Zoho People API",
     status: str,
     detail: dict[str, Any] | None,
     error_message: str | None,
@@ -299,12 +321,13 @@ def insert_evidence_collection(
             "completed_at": completed_at.isoformat(),
         }
     now = datetime.now(timezone.utc)
+    source_label = get_tool_source_label(session, tool_id)
     session.add(
         EvidenceCollection(
             id=uuid.uuid4(),
             evidence_id=evidence_id,
             evidence_from=evidence_from,
-            source=_truncate(source, 255),
+            source=source_label,
             name=_truncate(evidence_name, 255),
             tool_evidence=te,
             updated_by=_truncate(str(user_id), 255),
@@ -358,6 +381,7 @@ def insert_evidence_collection_after_failed_collect(
         evidence_id=eid,
         evidence_name=title,
         user_id=user_id,
+        tool_id=tool_id,
         tool_evidence=tool_evidence,
         evidence_from=EVIDENCE_FROM_TOOL,
         status=status,

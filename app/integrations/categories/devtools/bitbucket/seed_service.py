@@ -1,4 +1,7 @@
-"""Seed `evidence_masters` for Bitbucket-backed DevOps evidence (EV-*), when rows are missing."""
+"""Seed `evidence_masters` for Bitbucket-backed DevOps evidence (EV-*), when rows are missing.
+
+Call manually when needed (not from POST /configure).
+"""
 
 from __future__ import annotations
 

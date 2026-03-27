@@ -54,7 +54,9 @@ def run_evidence_collection(
         source="zoho_people",
     )
     if not masters:
-        raise ValueError("No evidence_masters for this tool's domain; run /configure to seed.")
+        raise ValueError(
+            "No evidence_masters for this tool's domain; seed evidence_masters manually before collect."
+        )
 
     token = resolve_access_token(cfg)
     base = cfg.get("people_base_url") or people_base_url(resolve_region(cfg))
@@ -92,6 +94,7 @@ def run_evidence_collection(
                 evidence_id=ev["id"],
                 evidence_name=master["name"],
                 user_id=user_id,
+                tool_id=tool_id,
                 tool_evidence=zoho_evidence_for_tool_storage(content),
                 status="success",
                 detail={"mapped_controls": mapped},

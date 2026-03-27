@@ -22,7 +22,6 @@ from app.integrations.categories.idp.microsoft_entra.credentials import (
 )
 from app.integrations.categories.idp.microsoft_entra.national_cloud import NationalCloud
 from app.integrations.categories.idp.microsoft_entra.oauth import build_authorization_url, build_state
-from app.integrations.categories.idp.microsoft_entra.seed_service import seed_entra_evidence_masters
 from app.integrations.categories.idp.microsoft_entra.token_refresh import refresh_entra_access_tokens
 from app.integrations.core.persistence import tool_integration_service as persistence
 from app.schemas import (
@@ -132,8 +131,6 @@ def _configure_entra_response(
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    seed_entra_evidence_masters(session, payload.tool_id, cloud=cloud)
-
     cfg = row["configuration_data"]
     if not isinstance(cfg, dict):
         raise HTTPException(status_code=500, detail="Invalid configuration_data")

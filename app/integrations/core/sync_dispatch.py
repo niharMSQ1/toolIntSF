@@ -17,14 +17,18 @@ from app.integrations.categories.devtools.bitbucket.collection_runner import run
 from app.integrations.categories.hrms.zoho_people.collection_runner import run_evidence_collection
 from app.integrations.categories.itsm.jira.collection_runner import run_jira_evidence_collection
 from app.integrations.categories.idp.microsoft_entra.collection_runner import run_entra_evidence_collection
-from app.integrations.categories.idp.microsoft_entra.credentials import resolve_national_cloud
+from app.integrations.categories.idp.microsoft_entra.credentials import (
+    resolve_active_oauth_entry,
+    resolve_national_cloud,
+)
 from app.integrations.categories.idp.microsoft_entra.national_cloud import NationalCloud
+from app.integrations.categories.idp.okta.credentials import ready_for_collection
 from app.integrations.core.persistence import tool_integration_service as persistence
 from app.models import EvidenceMaster
 from app.schemas import CollectEvidenceResponse, SyncIntegrationBody, SyncIntegrationResponse
 
 
-# Must match seeded ``evidence_masters.source`` values and registry keys.
+# Must match ``evidence_masters.source`` values and registry keys.
 _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "zoho_people": "zoho_people",
     "microsoft_entra": "microsoft_entra",
@@ -37,9 +41,27 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
 
 SYNC_PROVIDER_KEYS: frozenset[str] = frozenset(_SOURCE_TO_PROVIDER_KEY.values())
 
+_IAM_MASTER_SOURCES_ONLY: frozenset[str] = frozenset(
+    {"iam", "okta", "microsoft_entra", "microsoft_entra_gcc_high"}
+)
+
+
+def infer_iam_provider_from_cfg(cfg: dict[str, Any]) -> str | None:
+    """When IAM evidence uses generic ``iam`` source, pick Okta vs Entra from ``configuration_data``."""
+    if not isinstance(cfg, dict):
+        return None
+    if ready_for_collection(cfg):
+        return "okta"
+    try:
+        resolve_active_oauth_entry(cfg)
+    except ValueError:
+        return None
+    cloud = resolve_national_cloud(cfg)
+    return "microsoft_entra_gcc_high" if cloud == NationalCloud.GCC_HIGH else "microsoft_entra"
+
 
 def detect_provider_key_from_db(session: Session, tool_id: str, cfg: dict[str, Any] | None = None) -> str | None:
-    """Infer sync provider from seeded ``evidence_masters.source`` for the tool domain."""
+    """Infer sync provider from ``evidence_masters.source`` for the tool domain."""
     did = persistence.get_domain_id_for_tool(session, tool_id)
     raw = session.scalars(
         select(EvidenceMaster.source).where(EvidenceMaster.domain_id == did).distinct()
@@ -48,13 +70,19 @@ def detect_provider_key_from_db(session: Session, tool_id: str, cfg: dict[str, A
     if not srcs:
         return None
     if len(srcs) == 1:
-        return _SOURCE_TO_PROVIDER_KEY.get(srcs[0])
+        only = srcs[0]
+        if only == "iam":
+            return infer_iam_provider_from_cfg(cfg) if cfg is not None else None
+        return _SOURCE_TO_PROVIDER_KEY.get(only)
     # Multiple sources: disambiguate Entra commercial vs GCC High when both exist for the domain.
     if cfg is not None and set(srcs).issubset({"microsoft_entra", "microsoft_entra_gcc_high"}):
         cloud = resolve_national_cloud(cfg)
         want = "microsoft_entra_gcc_high" if cloud == NationalCloud.GCC_HIGH else "microsoft_entra"
         if want in srcs:
             return _SOURCE_TO_PROVIDER_KEY.get(want)
+    # Mixed IAM tags (e.g. iam + legacy okta) or only legacy IAM sources: infer from integration config.
+    if cfg is not None and set(srcs).issubset(_IAM_MASTER_SOURCES_ONLY):
+        return infer_iam_provider_from_cfg(cfg)
     return None
 
 
@@ -76,7 +104,7 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     """
     Run evidence collection for the given org/tool.
 
-    ``provider_key`` may be omitted if ``evidence_masters`` were seeded (source disambiguates the tool).
+    ``provider_key`` may be omitted when ``evidence_masters`` rows exist for the domain (source disambiguates the tool).
     """
     row = persistence.get_integration(session, body.org_id, body.tool_id)
     if not row:
@@ -98,8 +126,9 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     provider_key = resolved or detected
     if not provider_key:
         raise ValueError(
-            "Could not determine integration provider. Run POST .../configure to seed evidence_masters, "
-            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, jira_cloud)."
+            "Could not determine integration provider. Ensure evidence_masters exist for this tool's domain (seed manually), "
+            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, jira_cloud, okta). "
+            "For IAM evidence with source=iam, provider is inferred from configuration_data (Okta SSWS vs Entra OAuth)."
         )
 
     if provider_key not in SYNC_PROVIDER_KEYS:

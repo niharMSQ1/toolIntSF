@@ -18,7 +18,6 @@ from app.integrations.categories.hrms.zoho_people.credentials import (
     resolve_region,
 )
 from app.integrations.categories.hrms.zoho_people.oauth import build_authorization_url, build_state
-from app.integrations.categories.hrms.zoho_people.seed_service import seed_zoho_evidence_masters
 from app.integrations.categories.hrms.zoho_people.token_refresh import refresh_zoho_access_tokens
 from app.integrations.core.persistence import tool_integration_service as persistence
 from app.schemas import (
@@ -83,8 +82,6 @@ def _configure_zoho_response(
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    seed_zoho_evidence_masters(session, payload.tool_id)
-
     cfg = row["configuration_data"]
     if not isinstance(cfg, dict):
         raise HTTPException(status_code=500, detail="Invalid configuration_data")
