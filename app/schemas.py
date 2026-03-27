@@ -98,7 +98,7 @@ class SyncIntegrationBody(BaseModel):
     provider_key: str | None = Field(
         default=None,
         description=(
-            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz. "
+            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz | jira_cloud. "
             "Omit to infer from evidence_masters.source (after configure)."
         ),
     )
@@ -144,6 +144,72 @@ class ZohoRefreshTokensResponse(BaseModel):
     organization_id: str
     tool_id: str
     refreshed: bool = Field(description="True if Zoho token API was called.")
+    message: str
+    configuration_data: dict = Field(description="Saved config with secrets masked.")
+
+
+class JiraConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/jira/configure: saved row + next OAuth step."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool = Field(description="True if access_token already stored (skip browser OAuth).")
+    authorization_url: str | None = Field(
+        default=None,
+        description="Open in browser to authorize Atlassian (only when oauth_complete is false).",
+    )
+    state: str | None = Field(default=None, description="OAuth state parameter; returned with the callback.")
+    next_step: str
+    configuration_data: dict = Field(
+        description="Saved config with secrets masked (same masking as GET /status).",
+    )
+
+
+class JiraOAuthCallbackResponse(BaseModel):
+    """Returned by GET /itsm/jira/callback after a successful code exchange."""
+
+    ok: bool
+    organization_id: str
+    tool_id: str
+    message: str
+    collection_started: bool = Field(
+        description="True if a background job was queued to pull evidence from Jira Cloud.",
+    )
+    next_step: str
+    collect_post_json_example: dict[str, Any] | None = Field(
+        default=None,
+        description="Reserved; always null when collection runs in the background after OAuth.",
+    )
+
+
+class JiraFlowResponse(BaseModel):
+    """Where you are in configure → OAuth → collect for Jira Cloud."""
+
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool
+    redirect_uri: str | None = None
+    next_step: str
+    authorization_url: str | None = None
+    state: str | None = None
+    collect_post_json_example: dict | None = None
+
+
+class JiraRefreshTokensBody(BaseModel):
+    org_id: str
+    tool_id: str
+    force: bool = Field(
+        default=False,
+        description="If true, always call Atlassian token endpoint even when access_token is still valid.",
+    )
+
+
+class JiraRefreshTokensResponse(BaseModel):
+    ok: bool
+    organization_id: str
+    tool_id: str
+    refreshed: bool = Field(description="True if Atlassian token API was called.")
     message: str
     configuration_data: dict = Field(description="Saved config with secrets masked.")
 

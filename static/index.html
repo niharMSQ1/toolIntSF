@@ -452,6 +452,8 @@
                 ? '/api/v1/evidence/bitbucket/collect'
                 : provider === 'cspm/wiz'
                 ? '/api/v1/evidence/wiz/collect'
+                : provider === 'jira'
+                ? '/api/v1/evidence/jira/collect'
                 : '/api/v1/evidence/collect';
             const url = `${API_BASE}${collectPath}`;
             await makeRequest(url, {
@@ -530,9 +532,10 @@
   "password": "your-password"
 }`,
                 'jira': `{
-  "base_url": "https://your-company.atlassian.net",
-  "email": "your-email@company.com", 
-  "api_token": "your-jira-api-token"
+  "client_id": "<atlassian-oauth-client-id>",
+  "client_secret": "<atlassian-oauth-client-secret>",
+  "redirect_uri": "http://localhost:8006/itsm/jira/callback",
+  "project_keys": "PROJ,ITSM"
 }`,
                 'devtools/bitbucket': `{
   "redirect_uri": "http://localhost:8006/api/v1/integrations/devtools/bitbucket/oauth/callback"

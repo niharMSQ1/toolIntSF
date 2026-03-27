@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "toolintsf-integrations-v2",
     "name": "Stakflo GRC — Tool Integrations",
-    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl` (e.g. http://localhost:8006), `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`.\n\n**Wiz:** service account — POST configure with `graphql_url`, `client_id`, `client_secret`; no browser OAuth.\n\n**Sync:** `provider_key` optional if `evidence_masters.source` is unique: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz`.",
+    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl` (e.g. http://localhost:8006), `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`.\n\n**Wiz:** service account — POST configure with `graphql_url`, `client_id`, `client_secret`; no browser OAuth.\n\n**Sync:** `provider_key` optional if `evidence_masters.source` is unique: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `jira_cloud`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -239,6 +239,119 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/evidence/collect"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jira Cloud (ITSM)",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/jira/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"client_id\": \"<atlassian-oauth-client-id>\",\n    \"client_secret\": \"<atlassian-oauth-client-secret>\",\n    \"redirect_uri\": \"http://localhost:8000/itsm/jira/callback\",\n    \"project_keys\": \"PROJ,ITSM\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/jira/configure"
+          }
+        },
+        {
+          "name": "POST /itsm/jira/integrations (alias)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"client_id\": \"<atlassian-oauth-client-id>\",\n    \"client_secret\": \"<atlassian-oauth-client-secret>\",\n    \"redirect_uri\": \"http://localhost:8000/itsm/jira/callback\",\n    \"project_keys\": \"PROJ,ITSM\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/itsm/jira/integrations"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/jira/refresh-tokens",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"force\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/jira/refresh-tokens"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/jira/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/jira/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "jira", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/jira/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/jira/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "jira", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/oauth/jira/authorize",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/oauth/jira/authorize?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "oauth", "jira", "authorize"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /itsm/jira/callback (OAuth)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/itsm/jira/callback?code={{oauth_code}}&state={{oauth_state}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["itsm", "jira", "callback"],
+              "query": [
+                { "key": "code", "value": "{{oauth_code}}" },
+                { "key": "state", "value": "{{oauth_state}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/jira/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/jira/collect"
           }
         }
       ]

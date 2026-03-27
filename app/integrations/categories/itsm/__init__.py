@@ -1,1 +1,1 @@
-"""IT service management integrations (placeholder — e.g. ServiceNow)."""
+"""ITSM integrations (e.g. Jira)."""

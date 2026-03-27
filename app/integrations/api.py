@@ -20,6 +20,9 @@ from app.integrations.categories.devtools.bitbucket.routers import (
     workspaces_router as bitbucket_workspaces_router,
 )
 from app.integrations.categories.hrms.zoho_people.routers import configure, evidence, oauth
+from app.integrations.categories.itsm.jira.routers import configure as jira_configure
+from app.integrations.categories.itsm.jira.routers import evidence as jira_evidence
+from app.integrations.categories.itsm.jira.routers import oauth as jira_oauth
 from app.integrations.categories.idp.microsoft_entra.routers import (
     configure as entra_configure,
     evidence as entra_evidence,
@@ -41,6 +44,10 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(configure.hrms_router)
     app.include_router(oauth.router)
     app.include_router(evidence.router)
+    app.include_router(jira_configure.router)
+    app.include_router(jira_configure.itsm_router)
+    app.include_router(jira_oauth.router)
+    app.include_router(jira_evidence.router)
     app.include_router(entra_configure.commercial_router)
     app.include_router(entra_configure.commercial_idp_router)
     app.include_router(entra_configure.gcc_high_router)

@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from app.integrations.categories.cspm.wiz.collection_runner import run_wiz_evidence_collection
 from app.integrations.categories.devtools.bitbucket.collection_runner import run_bitbucket_evidence_collection
 from app.integrations.categories.hrms.zoho_people.collection_runner import run_evidence_collection
+from app.integrations.categories.itsm.jira.collection_runner import run_jira_evidence_collection
 from app.integrations.categories.idp.microsoft_entra.collection_runner import run_entra_evidence_collection
 from app.integrations.categories.idp.microsoft_entra.credentials import resolve_national_cloud
 from app.integrations.categories.idp.microsoft_entra.national_cloud import NationalCloud
@@ -29,6 +30,7 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "microsoft_entra_gcc_high": "microsoft_entra_gcc_high",
     "bitbucket_cloud": "bitbucket_cloud",
     "wiz": "wiz",
+    "jira_cloud": "jira_cloud",
 }
 
 SYNC_PROVIDER_KEYS: frozenset[str] = frozenset(_SOURCE_TO_PROVIDER_KEY.values())
@@ -95,7 +97,7 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     if not provider_key:
         raise ValueError(
             "Could not determine integration provider. Run POST .../configure to seed evidence_masters, "
-            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz)."
+            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, jira_cloud)."
         )
 
     if provider_key not in SYNC_PROVIDER_KEYS:
@@ -127,6 +129,16 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
         )
     elif provider_key == "wiz":
         inner = run_wiz_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "jira_cloud":
+        inner = run_jira_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,
