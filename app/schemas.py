@@ -98,7 +98,7 @@ class SyncIntegrationBody(BaseModel):
     provider_key: str | None = Field(
         default=None,
         description=(
-            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz | jira_cloud. "
+            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz | jira_cloud | okta. "
             "Omit to infer from evidence_masters.source (after configure)."
         ),
     )
@@ -352,3 +352,27 @@ class WizRefreshTokensResponse(BaseModel):
     refreshed: bool = Field(description="True if a new token was obtained from Wiz auth.")
     message: str
     configuration_data: dict = Field(description="Saved config with secrets masked.")
+
+
+class OktaConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/okta/configure (org URL + SSWS API token)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if GET /api/v1/org succeeded with the API token.")
+    ready_for_collection: bool = Field(description="True when org_domain and api_token are valid for collection.")
+    collection_started_in_background: bool = Field(
+        default=True,
+        description="When true, a background job is pulling all Okta IAM evidence (same as POST .../evidence/okta/collect).",
+    )
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secrets masked (same as GET /status).")
+
+
+class OktaFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str

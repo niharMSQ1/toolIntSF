@@ -12,6 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.integrations.categories.cspm.wiz.collection_runner import run_wiz_evidence_collection
+from app.integrations.categories.idp.okta.collection_runner import run_okta_evidence_collection
 from app.integrations.categories.devtools.bitbucket.collection_runner import run_bitbucket_evidence_collection
 from app.integrations.categories.hrms.zoho_people.collection_runner import run_evidence_collection
 from app.integrations.categories.itsm.jira.collection_runner import run_jira_evidence_collection
@@ -31,6 +32,7 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "bitbucket_cloud": "bitbucket_cloud",
     "wiz": "wiz",
     "jira_cloud": "jira_cloud",
+    "okta": "okta",
 }
 
 SYNC_PROVIDER_KEYS: frozenset[str] = frozenset(_SOURCE_TO_PROVIDER_KEY.values())
@@ -139,6 +141,16 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
         )
     elif provider_key == "jira_cloud":
         inner = run_jira_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "okta":
+        inner = run_okta_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,

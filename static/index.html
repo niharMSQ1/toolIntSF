@@ -454,6 +454,8 @@
                 ? '/api/v1/evidence/wiz/collect'
                 : provider === 'jira'
                 ? '/api/v1/evidence/jira/collect'
+                : provider === 'okta'
+                ? '/api/v1/evidence/okta/collect'
                 : '/api/v1/evidence/collect';
             const url = `${API_BASE}${collectPath}`;
             await makeRequest(url, {
@@ -523,8 +525,8 @@
   "domain": "your-domain.com"
 }`,
                 'okta': `{
-  "domain": "your-company.okta.com",
-  "api_token": "your-okta-api-token"
+  "org_domain": "https://your-org.okta.com/",
+  "api_token": "your-okta-ssws-api-token"
 }`,
                 'servicenow': `{
   "instance_url": "https://your-instance.service-now.com",
