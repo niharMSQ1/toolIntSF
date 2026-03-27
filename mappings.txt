@@ -1,0 +1,642 @@
+domain_id	domain_name	code	evidence_name
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-115	Vendor Inventory Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-116	Vendor Data Classification Records — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-16	Asset Inventory Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-17	Asset Ownership Records — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-243	Data Classification Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-248	Sensor System Configuration Records — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-28	Asset Return Records — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-295	Data Asset Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-299	Asset Disposal Records — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-326	AI System Inventory — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-377	Asset Maintenance Log — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-390	User Account Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-429	AI Dataset Inventory — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-433	AI Model Inventory — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-486	Badge Access System Administrator Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-491	Mobile Device Inventory Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-496	Surveillance Camera System Inventory — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-527	PII System Access Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-541	Data Inventory Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-547	Subprocessors Inventory Register — Cloud
+1721b991-e491-4953-b2bb-ca35d815024f	Cloud / Infrastructure	EV-84	Asset Classification Records — Cloud
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-1	Data Backup Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-101	Software Development Lifecycle (SDLC) Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-107	Network Security Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-11	AI Responsible Use Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-111	Security Risk Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-112	Human Resources Security Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-117	Employee Handbook — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-118	Code of Conduct Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-12	Data Protection Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-132	Encryption Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-133	Cryptographic Standards Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-134	Human Resources Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-135	Employee Performance Review Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-141	Penetration Test Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-143	Recruitment and Hiring Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-148	Vendor Risk Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-149	Vendor Risk Assessment Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-15	Asset Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-150	Role-Based Access Matrix — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-152	Data Subject Request Handling Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-155	Risk Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-156	Cryptography and Key Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-158	Data Masking and Anonymization Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-162	Backup Restore Test Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-163	Endpoint Security Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-171	System Hardening Checklist — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-176	Privacy Policy Publication Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-179	System Hardening Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-190	Data Retention and Disposal Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-192	Data Disposal Verification Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-195	Release Communication Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-197	Policy Review and Approval Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-198	Business Continuity Plan — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-199	Disaster Recovery Plan — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-2	Backup Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-20	Privacy Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-200	Control Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-204	Master Services Agreement Template — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-205	Executed Customer Agreements — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-210	Environment Architecture Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-212	Customer Support Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-214	Product Documentation Site URL — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-216	Risk Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-217	Compliance Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-22	AI Feature Disclosure Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-222	Terms of Use Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-223	Terms of Use Webpage URL — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-224	Corporate Governance Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-225	Board of Directors Charter — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-226	Board Meeting Minutes — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-228	Risk Treatment Plan — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-231	Data Retention Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-232	Data Retention Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-234	Information Security Procedures — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-235	Procedure Review and Approval Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-236	Infrastructure Architecture Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-239	Network Architecture Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-24	Employee Offboarding Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-242	Data Handling Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-245	Consent Management Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-246	Consent Preference Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-247	Sensor Data Collection Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-250	AI Governance Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-251	AI Human Oversight Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-252	AI Oversight Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-253	Data Integrity Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-255	Authorized Agent Verification Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-256	Authorized Agent Approval Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-257	Data Sale Prevention Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-258	AI System Override Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-261	Privacy Notice Display Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-263	Vendor Data Processing Agreements — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-264	Third-Party Data Sharing Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-265	AI Governance Review Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-266	AI Governance Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-267	Parental Consent Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-268	Parental Consent Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-269	Data Subject Rights Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-271	AI Model Monitoring Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-274	Breach Notification Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-275	Breach Notification Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-276	Data Subject Access Request Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-279	AI Risk Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-280	External Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-281	Management Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-282	Threat Modeling Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-283	AI Threat Modeling Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-284	Privacy Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-287	Business Impact Analysis Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-288	AI Bias and Fairness Evaluation Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-289	AI Bias and Fairness Evaluation Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-29	Incident Response Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-290	Security Awareness and Training Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-291	Role-based Training Program Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-293	Data Governance Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-294	Data Mapping Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-296	AI Security Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-297	AI Security Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-298	Asset Disposal Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-30	Incident Response Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-300	AI Safety Risk Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-301	Privacy Training Program Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-302	AI Output Review Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-303	AI Output Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-304	Privacy Notice — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-305	Privacy Notice Webpage URL — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-306	Human Subject Testing Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-307	Human Subject Consent Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-308	Internal Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-309	AI Control Review Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-310	AI Control Review Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-311	Internal Audit Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-312	Internal Audit Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-313	Internal Audit Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-314	Internal Audit Plan — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-315	Vendor Audit Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-316	Secure Coding Standard — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-319	AI System Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-320	AI System Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-323	Emergency Change Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-327	AI Business Value Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-328	Complaint Handling Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-33	Security Incident Post-Incident Review Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-333	Human Subject Testing Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-334	Personal Data Update Notification Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-335	Personal Data Update Notification Logs — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-336	Organizational Structure Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-339	Customer Satisfaction Survey Results — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-34	Access Control Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-340	AI System Validation Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-341	AI Validation Review Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-342	Data Protection Impact Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-343	Data Protection Impact Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-344	Company Meeting Agenda and Presentation Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-345	AI Data Preparation Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-348	Organizational Strategy Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-349	Strategy Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-350	AI Training Program Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-352	AI Incident Postmortem Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-353	Security Awareness Training Program Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-354	Network Architecture Diagram — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-355	Data Flow Diagram — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-359	Data Anonymization and De-identification Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-363	Security Team Meeting Agenda — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-364	Security Team Meeting Minutes — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-367	Incident Response Team Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-368	Cyber Attack Simulation Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-369	Data Collection and Usage Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-370	Personal Data Processing Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-374	Data Residency and Location Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-376	Asset Maintenance Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-378	Data Masking Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-383	Incident Communication Roles Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-384	Privacy Governance Program Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-385	Privacy Governance Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-386	Public Content Review Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-388	Threat Intelligence Monitoring Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-389	Security Threat Intelligence Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-392	Regulatory Authorities Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-393	Insider Threat Management Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-395	Simulated Phishing Campaign Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-396	Mobile Device Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-397	Mobile Device Management Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-398	AI Project Team Structure Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-399	Customer Risk Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-400	Customer Risk Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-401	AI Risk Management Roles and Responsibilities Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-403	Customer Support SLA Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-404	AI Quality Assurance Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-406	Customer Engagement Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-407	Customer Communication Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-411	AI Legal and Regulatory Requirements Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-412	System Status Communication Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-418	Management Review Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-419	Management Review Meeting Minutes — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-42	Security Incident Testing Plan — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-420	ISMS Scope Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-421	Statement of Applicability — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-422	Privacy Impact Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-424	AI Impact Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-425	AI Impact Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-428	AI Data Acquisition and Selection Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-43	Security Incident Test Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-430	AI Data Chain of Custody Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-431	AI Dataset Lineage Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-432	AI System Inventory Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-434	AI Incident Response Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-435	AI Incident Communication Roles Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-436	AI Governance Policy Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-438	AI Performance Metrics Definition Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-44	Vendor Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-440	AI Data Quality Standard — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-441	AI Data Quality Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-442	AI Data Quality Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-443	AI Concern Reporting Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-445	Risk Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-446	AI External Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-447	AI External Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-448	Interested Parties Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-449	Interested Parties Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-45	Cloud Security Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-450	Penetration Testing Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-451	Secure Development Lifecycle Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-452	AI Testing Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-455	AI Resource Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-456	Infrastructure Security Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-457	System Time Synchronization Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-46	Cloud Vendor Security Compliance Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-460	Session Management Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-462	Remote Access Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-465	Information Security Program Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-466	System Impact Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-467	System Impact Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-468	File Integrity Monitoring Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-471	Threat Intelligence Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-472	Threat Intelligence Analysis Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-474	Clear Desk Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-475	Physical Security Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-478	Backup Monitoring Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-48	Logging and Monitoring Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-481	Bring Your Own Device Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-482	Malware Protection Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-485	Physical Access Control Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-492	Corrective Action Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-493	Corrective Action Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-494	ISMS Scope Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-495	Surveillance Monitoring Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-498	ISMS Context Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-499	ISMS Context Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-500	Continual Improvement Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-501	Secure System Configuration Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-502	System Hardening Standards — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-504	Network Segmentation Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-505	Business Continuity Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-506	ICT Recovery Plan — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-508	Information Security Objectives Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-509	Information Security Objectives Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-510	Threat Detection Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-513	Infrastructure Capacity Planning Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-514	Capacity Planning Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-515	Capacity Planning Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-516	Project Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-518	User Access Management Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-52	Risk Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-520	Separation of Duties Matrix — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-523	Cloud Service Provider Evaluation Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-524	Cloud Service Provider Risk Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-525	Privileged Commands Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-528	PIMS Context Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-529	PIMS Context Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-53	Cyber Insurance Policy Document — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-530	Privacy Interested Parties Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-531	Privacy Interested Parties Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-532	Privacy Risk Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-533	Privacy Risk Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-534	Privacy Scope Assessment Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-535	Privacy Scope Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-536	Data Processing Activities Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-537	PIMS Statement of Applicability — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-538	PIMS Statement of Applicability Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-539	Data Classification Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-54	Cyber Insurance Coverage Certificate — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-540	Data Classification Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-542	Privacy Compliance Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-545	Privacy by Design Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-546	Vendor Contract Repository Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-548	Public Subprocessors Disclosure Page — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-549	Data Loss Prevention Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-55	Secure Development Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-551	Firewall Ruleset Review Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-552	Firewall Ruleset Review Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-555	Security Monitoring Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-557	Cryptography Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-558	Authentication Security Review Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-559	Record of Processing Activities Register — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-560	Record of Processing Activities Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-561	Remote Work Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-562	Background Verification Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-563	Employee Reference Check Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-565	Vulnerability Disclosure Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-566	Responsible Disclosure Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-567	Public Vulnerability Disclosure Page — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-571	Product Development Lifecycle Procedure — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-572	AI Impact Assessment Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-59	Vendor Security Agreement — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-6	Backup Restoration Test Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-60	Data Processing Agreement — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-61	Vendor Risk Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-63	Customer Security Documentation — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-67	Information Security Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-68	Security Officer Appointment Letter — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-7	Data Encryption Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-70	Change Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-76	Password Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-79	Acceptable Use Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-8	Cryptographic Key Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-85	Risk Assessment Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-86	Asset Inventory Review Records — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-87	Security Awareness Training Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-90	Physical Security Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-93	Business Continuity and Disaster Recovery Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-94	Disaster Recovery Testing Plan — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-95	Disaster Recovery Test Reports — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-96	Vulnerability Management Policy — Compliance
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-GRC-CTRL-TEST	Control testing schedule
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-GRC-EXC-REG	Exception and waiver register
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-GRC-MGMT-ATTEST	Management attestation letters
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-GRC-POLICY-REG	Corporate policy register
+70b4419c-8544-47be-9f13-bc21356bd897	Compliance / GRC	EV-GRC-REG-MAP	Regulatory mapping matrix
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-604	Multi-cloud and account inventory
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-605	Cloud asset and resource inventory
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-606	Security posture and misconfiguration findings
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-607	Compliance framework and policy coverage
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-608	Critical and high-severity issue summary
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-609	Workload and VM vulnerability findings
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-610	Container image vulnerability findings
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-611	Kubernetes cluster security posture
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-612	Cloud IAM and excessive permissions review
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-613	Secrets and sensitive data exposure findings
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-614	Network exposure and public attack surface
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-615	Data store encryption and protection posture
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-616	Storage bucket and object exposure posture
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-617	Serverless and managed service security posture
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-618	IaC and build pipeline security findings
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-619	Issue lifecycle and remediation tracking
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-620	Risk scoring and organizational risk snapshot
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-621	Custom policy and organizational control violations
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-622	Cloud connector and integration configuration
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-623	Audit and activity logging for CSPM platform access
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-624	Logical access — cloud identity inventory (SOC 2 CC6.1 / ISO A.5.16)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-625	Authentication strength and risky auth configs (SOC 2 CC6.1 / ISO A.5.17)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-626	Privileged access paths in cloud (SOC 2 CC6.2 / ISO A.5.18)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-627	Data classification and sensitive asset tagging (SOC 2 CC6.7 / ISO A.5.12)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-628	Encryption and key management posture (SOC 2 CC6.6 / ISO A.8.24)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-629	Vulnerability management program metrics (SOC 2 CC7.1 / ISO A.8.8)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-630	Security monitoring and detection coverage (SOC 2 CC7.2 / ISO A.8.16)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-631	Incident response readiness — cloud blast radius (SOC 2 CC7.3 / ISO A.5.24)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-632	Change management drift — config vs baseline (SOC 2 CC8.1 / ISO A.8.32)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-633	Malware and unwanted software on workloads (SOC 2 CC7.1 / ISO A.8.7)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-634	Backup and recovery visibility for cloud data (SOC 2 CC9.1 / ISO A.8.13)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-635	Vendor and third-party integration risk (SOC 2 CC9.2 / ISO A.5.19)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-636	Regulatory and industry control mapping report (SOC 2 CC2.2 / ISO A.5.31)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-637	Management review of cloud security posture (SOC 2 CC3.2 / ISO A.5.35)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-638	Network segmentation and security group posture (ISO A.8.20 / SOC 2 CC6.6)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-639	API and service endpoint exposure (ISO A.8.26 / SOC 2 CC6.1)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-640	Logging and audit trail enablement for cloud (ISO A.8.15 / SOC 2 CC7.2)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-641	Secure development and pipeline integration (ISO A.8.25 / SOC 2 CC8.1)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-642	Separation of production and non-production (ISO A.8.31 / SOC 2 CC6.1)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-643	Clock synchronization and time integrity (ISO A.8.17 / SOC 2 CC7.2)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-644	Web filtering and egress control posture (ISO A.8.23 / SOC 2 CC6.6)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-645	Data retention and secure deletion posture (ISO A.8.10 / SOC 2 CC6.7)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-646	Business continuity — multi-region and redundancy (ISO A.8.14 / SOC 2 CC9.1)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-647	Outsourced development and supply chain visibility (ISO A.8.30 / SOC 2 CC9.2)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-648	Protection of information during penetration testing (ISO A.8.34 / SOC 2 CC4.1)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-649	Legal and regulatory evidence export for cloud (ISO A.5.31 / SOC 2 CC2.2)
+f3c7a9d4-8e21-4b6f-9c3a-2d5e7f8a1b90	CSPM	EV-650	Continuous compliance monitoring dashboard snapshot (SOC 2 CC4.2 / ISO A.8.16)
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-10	Encryption Key Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-100	Audit Log Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-103	Sprint Planning Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-104	Deployment Logs — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-105	Source Code Repository Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-110	Security Design Review Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-120	Backup Retention Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-157	Storage Encryption Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-166	Backup Storage Location Configuration — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-168	Data Encryption Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-169	Application Performance Monitoring Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-172	Utilization Monitoring Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-174	Key Management System Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-175	Encryption Key Usage Reports — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-177	TLS Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-180	System Hardening Playbooks — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-181	Infrastructure Build Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-196	Release Notification Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-201	Encryption Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-202	CI/CD Pipeline Execution Logs — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-203	Automated Test Execution Reports — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-206	Source Code Repository Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-208	Source Code Repository Activity Logs — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-21	User Consent Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-211	Environment Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-215	Documentation Publication Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-23	User Consent Capture Configuration — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-233	Data Retention Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-237	Infrastructure Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-240	VPN Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-259	AI System Control Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-285	Privacy Management Tool Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-286	Privacy Compliance Monitoring Reports — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-3	Backup Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-318	Static Code Analysis Reports — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-321	CI/CD Pipeline Notification Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-331	CI/CD Pipeline Access Control Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-346	AI Data Preparation Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-356	API Logging Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-361	Schema Validation Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-365	API Documentation Site — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-366	API Specification Files — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-375	Data Storage Location Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-379	Data Masking Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-391	Authentication System Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-4	Automated Backup Job Logs — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-405	AI Model Validation Reports — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-409	Privileged Access Management Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-410	Privileged Access Activity Logs — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-415	GitHub Pull Request Review Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-416	Release Approval Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-423	System Design Review Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-426	AI System Logging Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-439	AI Model Evaluation Reports — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-453	AI Test Set Definitions — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-454	AI Test Execution Reports — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-458	NTP Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-47	Cloud Infrastructure Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-511	Security Monitoring Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-517	Project Security Review Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-553	Software Bill of Materials (SBOM) — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-56	Static Code Analysis Tool Configuration — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-57	Static Code Analysis Scan Reports — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-64	Product Authentication Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-65	Product Access Control Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-66	Product Security Testing Reports — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-73	Code Review Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-74	Production Deployment Logs — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-81	Infrastructure-as-Code Repository Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-82	CI/CD Pipeline Configuration Records — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-83	Infrastructure Deployment Logs — DevOps
+6874f3ab-44fc-4b3e-a95e-bd01e03bf933	DevOps / CI-CD / Source Control	EV-9	Data Store Encryption Configuration Records — DevOps
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-113	Employee Background Verification Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-114	Contractor Background Verification Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-119	Employee Handbook Acknowledgement Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-121	Employee Disciplinary Action Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-128	Organizational Chart — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-129	Employee Role and Responsibility Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-130	Employee Confidentiality Agreement Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-131	Contractor Confidentiality Agreement Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-136	Employee Performance Review Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-137	Employee Probation Review Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-140	Employee Policy Acknowledgement Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-144	Candidate Interview Evaluation Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-146	Job Description Documents — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-160	Acceptable Use Policy Acknowledgement Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-227	Board Composition Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-230	Board Member Qualification Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-25	Employee Termination Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-26	Employee Offboarding Checklist Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-292	Employee Training Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-317	Secure Coding Training Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-337	Privacy Officer Appointment Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-402	Team Role Assignment Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-417	AI Development Training Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-521	Role and Responsibility Register — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-564	Employee Reference Check Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-69	Security Officer Job Description — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-88	Security Awareness Training Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-89	Employee Onboarding Training Records — HR
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-HR-JOB-LIB	Job description library
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-HR-OFFBOARD	Offboarding checklist
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-HR-PERF-CYCLE	Performance review cycle records
+465c7082-4a36-4567-b535-e6fe16994eec	HR / Employee Management	EV-HR-TRAIN-SUM	Training completion summary
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-126	SSO Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-127	SSO Authentication Logs — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-151	Role Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-154	MFA Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-167	Backup Access Control Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-189	Log Access Control Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-207	Repository Access Control Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-37	User Access Provisioning Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-39	Privileged Access Register — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-40	Password Manager User Access Reports — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-461	Session Timeout Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-463	Remote Access Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-476	Account Lockout Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-522	Privileged Access Review Reports — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-75	Access Review Reports — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-77	Password Configuration Records — IAM
+311fd3a8-255b-4bc8-b6a0-0fe625d81341	IAM / Identity Compliance	EV-78	Authentication System Configuration Reports — IAM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-102	Change Management / Deployment Approval Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-106	Change Request Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-13	AI Model Training Data Approval Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-145	Access Request and Approval Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-147	Access Revocation Ticket Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-153	Data Subject Request Ticket Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-159	Production Data Access Approval Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-18	Asset Provisioning Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-19	Asset Decommissioning Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-213	Customer Support Ticket Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-220	Corrective Action Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-221	Corrective Action Tracking Reports — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-229	Incident Management Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-27	Access Revocation Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-270	Data Subject Appeal Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-277	DSAR Request Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-278	DSAR Fulfillment Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-31	Security Incident Register — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-32	Incident Management Ticket Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-324	Emergency Change Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-325	Emergency Change Review Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-329	Customer Complaint Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-330	Complaint Resolution Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-338	Customer Feedback / Complaint Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-347	Internal Support Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-35	Access Request Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-351	AI Incident Management Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-36	Access Approval Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-373	User Behavior Investigation Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-38	Corrective Action Tracking Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-381	Personal Data Correction Requests — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-387	Public Content Approval Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-394	Insider Threat Investigation Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-408	Customer Engagement Activity Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-414	Incident Notification Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-437	Customer Feedback Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-444	AI Concern Reporting Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-473	Security Incident Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-489	Data Disposal Request Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-5	Backup Failure Incident Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-507	Disaster Recovery Test Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-51	Security Alert Investigation Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-519	Access Review Approval Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-543	Data Subject Access Request Register — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-544	Data Subject Access Request Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-554	License Compliance Review Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-568	Vulnerability Report Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-58	Static Code Analysis Vulnerability Tracking Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-62	Vendor Onboarding Approval Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-71	Change Management Tickets — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-72	Change Approval Records — ITSM
+cd4015e2-8a3f-4f54-a3ee-9dfddb048f84	ITSM	EV-99	Vulnerability Remediation Tickets — ITSM
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-184	Physical Access Control System Records — Physical
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-185	Physical Access Revocation Records — Physical
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-186	Physical Access Review Reports — Physical
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-487	Badge Access System Access Logs — Physical
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-497	Surveillance Recording Logs — Physical
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-573	Badge Access System Configuration Records — Physical
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-91	Visitor Access Register — Physical
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-92	Visitor Access Approval Records — Physical
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-PHYS-BADGE-AUD	Badge access audit
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-PHYS-CCTV-RET	CCTV retention policy
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-PHYS-PERIM	Facility perimeter assessment
+2e615251-860d-4f37-9c1e-7334b67fdff4	Physical Security System	EV-PHYS-VIS-LOG	Visitor access records
+55890cf9-a72e-4a13-a9bd-2da8d02d8968	Project Management / Productivity	EV-PM-BURNDOWN	Release burndown chart
+55890cf9-a72e-4a13-a9bd-2da8d02d8968	Project Management / Productivity	EV-PM-RES-ALLOC	Resource allocation view
+55890cf9-a72e-4a13-a9bd-2da8d02d8968	Project Management / Productivity	EV-PM-ROADMAP	Product roadmap snapshot
+55890cf9-a72e-4a13-a9bd-2da8d02d8968	Project Management / Productivity	EV-PM-SPRINT-BL	Sprint backlog export
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-108	Web Application Firewall Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-109	Web Application Firewall Event Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-122	Dependency Vulnerability Scan Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-123	Dependency Scan Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-124	Intrusion Detection System Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-125	Intrusion Detection Alert Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-138	Patch Deployment Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-139	Vulnerability Scan Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-14	AI Training Dataset Access Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-142	Vulnerability Remediation Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-161	Security Logging Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-164	Endpoint Protection Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-165	Endpoint Malware Detection Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-170	Performance Monitoring Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-173	System Utilization Monitoring Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-178	TLS Security Scan Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-182	Firewall Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-183	Firewall Rule Review Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-187	Administrative Activity Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-188	Centralized Log Storage Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-191	Data Deletion Execution Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-193	Centralized Log Collection Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-194	Log Retention Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-209	Endpoint Device Compliance Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-218	Compliance Monitoring Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-219	Compliance Monitoring Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-238	Infrastructure Monitoring Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-241	Network Access Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-244	Data Handling Compliance Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-249	Sensor Data Usage Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-254	Data Integrity Validation Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-260	AI System Override Execution Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-262	Consent Capture Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-272	AI Model Monitoring Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-273	AI Model Monitoring Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-322	Production Change Notification Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-332	Production Deployment Activity Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-357	API Request Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-358	Security Event Monitoring Alerts — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-360	Data Anonymization Execution Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-362	API Validation Error Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-371	User Behavior Analytics Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-372	User Behavior Analytics Alerts — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-380	Data Masking Validation Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-382	Personal Data Update Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-41	Password Vault Access Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-413	System Status Page — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-427	AI System Usage Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-459	Time Synchronization Monitoring Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-464	Remote Access Authentication Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-469	File Integrity Monitoring Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-470	File Integrity Monitoring Alerts — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-477	Authentication Failure Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-479	Backup Monitoring Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-480	Backup Failure Alert Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-483	Anti-Malware Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-484	Malware Detection Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-488	Data Deletion / Disposal Execution Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-49	Security Event Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-490	Mobile Device Management Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-50	Security Event Review Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-503	System Configuration Compliance Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-512	Security Threat Detection Alerts — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-526	Privileged Command Execution Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-550	Data Loss Prevention Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-556	Privileged Access Monitoring Logs — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-569	AI System Monitoring Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-570	AI System Performance Monitoring Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-80	Endpoint Device Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-97	Web Application Vulnerability Scan Reports — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-98	Vulnerability Scan Configuration Records — Security
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-SEC-PATCH	Patch compliance dashboard
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-SEC-PENTEST	Penetration test report
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-SEC-THREAT	Threat intelligence feeds
+cd545de5-0565-447b-89ef-f137d2267a70	Security / Vulnerability Management	EV-SEC-VULN-SCAN	Vulnerability scan results

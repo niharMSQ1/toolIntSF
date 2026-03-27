@@ -8,12 +8,14 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from app.integrations.categories.hrms.zoho_people.api_endpoints import FORM_EMPLOYEE
 from app.integrations.categories.hrms.zoho_people.collector import (
     collect_for_master,
     fetch_form_records_paginated,
     needs_employee_prefetch,
     zoho_evidence_for_tool_storage,
 )
+from app.integrations.categories.hrms.zoho_people.employee_preview import emit_employee_master_preview
 from app.integrations.categories.hrms.zoho_people.credentials import has_access_token, resolve_access_token, resolve_region
 from app.integrations.categories.hrms.zoho_people.regions import people_base_url
 from app.integrations.categories.hrms.zoho_people.seed import EVIDENCE_MASTER_NAME_ORDER
@@ -62,7 +64,8 @@ def run_evidence_collection(
     base = cfg.get("people_base_url") or people_base_url(resolve_region(cfg))
     employee_cache: dict[str, Any] | None = None
     if needs_employee_prefetch(masters) and token:
-        employee_cache = fetch_form_records_paginated(base, token, "employee")
+        employee_cache = fetch_form_records_paginated(base, token, FORM_EMPLOYEE)
+        emit_employee_master_preview(employee_cache)
 
     results: list[CollectionItemResult] = []
 

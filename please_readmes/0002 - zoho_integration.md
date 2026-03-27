@@ -1,6 +1,10 @@
-# Zoho People — HRMS integration (complete flow)
+# Zoho People — HR / Employee Management (HRMS integration)
 
-This document is the **Zoho People–specific** walkthrough aligned with the code under [`app/integrations/categories/hrms/zoho_people/`](../app/integrations/categories/hrms/zoho_people/). The **generic** rules for tables, uniqueness, and control mapping live in **[0001 - initialising.md](0001%20-%20initialising.md)**. Generic steps are labeled **G1–G5** below.
+This document is the **Zoho People–specific** walkthrough aligned with the code under [`app/integrations/categories/hrms/zoho_people/`](../app/integrations/categories/hrms/zoho_people/). Evidence is scoped to the **HR / Employee Management** GRC domain (see `mappings.txt` — e.g. EV-113… HR codes on your tool’s `domain_id`). The **generic** rules for tables, uniqueness, and control mapping live in **[0001 - initialising.md](0001%20-%20initialising.md)**. Generic steps are labeled **G1–G5** below.
+
+**API reference** — Zoho documents all endpoints at [Zoho People API](https://www.zoho.com/people/api/). This repo lists the concrete paths we call in [`api_endpoints.py`](../app/integrations/categories/hrms/zoho_people/api_endpoints.py) and implements them in [`collector.py`](../app/integrations/categories/hrms/zoho_people/collector.py).
+
+**Employee master during integration** — When a run prefetches the employee form (`GET .../api/forms/employee/getRecords`), the worker **logs** and **prints** a short summary (row count + sample of up to 5 employees). Set env `ZOHO_PRINT_EMPLOYEE_MASTER=0` to disable stdout only.
 
 **All integrated tools:** **[0000 - integrations_index.md](0000%20-%20integrations_index.md)**.
 
@@ -16,8 +20,8 @@ For **Microsoft Entra (IDP)**, see **[0004 - microsoft_entra_integration.md](000
 |--------------|------------------------------|
 | **G1** — User selects tool and supplies data | User picks **Zoho People** (HRMS) and submits **`ToolIntegrationPayload`** (see below), or resumes from saved integration. |
 | **G2** — Persist in `tool_integrations` | One row per `(organization_id, tool_id)`; store OAuth settings and tokens in **`configuration_data`**. Updates are **full replace** on that JSON object (no partial merge). |
-| **G3** — Resolve `evidence_masters` | **POST …/configure** seeds masters for the tool's **`domain_id`** (from [`seed.py`](../app/integrations/categories/hrms/zoho_people/seed.py)). Collectors use **`code`** (e.g. `HR_EMPLOYEE_MASTER`) and master **`name`** must match **`evidence.title`**. |
-| **G4** — `evidence` + `evidence_collection` | Call Zoho People APIs with **`Zoho-oauthtoken`**; **`upsert_evidence_full_replace`**; **`insert_evidence_collection`** with `source` = `Zoho People API`. |
+| **G3** — Resolve `evidence_masters` | Seed **`evidence_masters`** manually (or via `seed_zoho_evidence_masters`) for the tool’s **`domain_id`** — see [`seed.py`](../app/integrations/categories/hrms/zoho_people/seed.py). All rows use **`category`** = `HR / Employee Management`. Collectors use **`code`** (e.g. `HR_EMPLOYEE_MASTER`); master **`name`** must match **`evidence.title`**. |
+| **G4** — `evidence` + `evidence_collections` | Call Zoho People APIs with **`Zoho-oauthtoken`**; **`upsert_evidence_full_replace`**; **`insert_evidence_collection`** with **`source`** = **`tools.name`** for `tool_id` (see 0001). |
 | **G5** — `evidence_mappeds` | **`remap_evidence_to_controls`** links **`evidence.id`** to controls via **`control_evidence_master`** for this **`evidence_master_id`**. |
 
 **Uniqueness** (from `0001`):
@@ -32,7 +36,7 @@ For **Microsoft Entra (IDP)**, see **[0004 - microsoft_entra_integration.md](000
 | Item | Value |
 |------|--------|
 | Registry key | `zoho_people` ([`registry.py`](../app/integrations/core/registry.py)) |
-| Category | `hrms` |
+| Category | `hrms` (product area: **HR / Employee Management**) |
 | Package | [`app/integrations/categories/hrms/zoho_people/`](../app/integrations/categories/hrms/zoho_people/) |
 | OAuth + token helpers | [`oauth.py`](../app/integrations/categories/hrms/zoho_people/oauth.py), [`credentials.py`](../app/integrations/categories/hrms/zoho_people/credentials.py), [`regions.py`](../app/integrations/categories/hrms/zoho_people/regions.py) |
 | Evidence collectors | [`collector.py`](../app/integrations/categories/hrms/zoho_people/collector.py) |
@@ -53,7 +57,7 @@ Assume base URL `http://localhost:8006` (see **`app_port`** in [`app/config.py`]
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| POST | `/api/v1/integrations/zoho/configure` | Upsert **`tool_integrations`**, seed **`evidence_masters`**, return OAuth URL or start background collect if tokens exist. |
+| POST | `/api/v1/integrations/zoho/configure` | Upsert **`tool_integrations`**, return OAuth URL or start background collect if tokens exist (does **not** seed **`evidence_masters`**; seed manually). |
 | POST | `/hrms/zoho/integrations` | Same as **configure** (alias path). |
 
 **Request body** — `ToolIntegrationPayload`:
@@ -197,7 +201,7 @@ After OAuth, tokens are stored on the same row — typically under **`oauth_clie
 
 ## Phase B — Evidence inventory (G3)
 
-**POST …/configure** calls **`seed_zoho_evidence_masters`** so each **`evidence_masters`** row exists for this tool's **domain** (idempotent skip if `domain_id` + `code` + `source` already present).
+**Evidence masters** for this tool’s **domain** must exist before collect (call **`seed_zoho_evidence_masters`** or insert rows manually; idempotent skip if `domain_id` + `code` + `source` already present).
 
 | # | `name` (also `evidence.title`) | `code` | Category |
 |---|--------------------------------|--------|----------|

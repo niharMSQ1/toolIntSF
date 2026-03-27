@@ -7,6 +7,7 @@ from typing import Any
 
 import httpx
 
+from app.integrations.categories.hrms.zoho_people import api_endpoints as zoho_api
 from app.integrations.categories.hrms.zoho_people.credentials import resolve_access_token, resolve_region
 from app.integrations.categories.hrms.zoho_people.regions import people_base_url
 from app.integrations.categories.hrms.zoho_people.seed import CODE_TO_COLLECTOR
@@ -125,7 +126,7 @@ def fetch_form_records_paginated(
     last_raw: dict[str, Any] = {}
     with httpx.Client() as client:
         while True:
-            url = f"{base.rstrip('/')}/api/forms/{form_link}/getRecords"
+            url = f"{base.rstrip('/')}{zoho_api.path_forms_get_records(form_link)}"
             params: dict[str, Any] = {"sIndex": s_index, "limit": limit}
             raw = _get_json(client, url, headers, params)
             last_raw = raw
@@ -223,7 +224,7 @@ def _get_employee_form_data(
             "rows": list(employee_cache["rows"]),
             "total_rows": employee_cache.get("total_rows", len(employee_cache["rows"])),
         }
-    return fetch_form_records_paginated(base, token, "employee")
+    return fetch_form_records_paginated(base, token, zoho_api.FORM_EMPLOYEE)
 
 
 def collect_for_master(
@@ -251,7 +252,7 @@ def collect_for_master(
 
     if key == "employee_master":
         data = _get_employee_form_data(employee_cache, base, token)
-        return {"source": "zoho_people", "collector_key": key, "form": "employee", **data}
+        return {"source": "zoho_people", "collector_key": key, "form": zoho_api.FORM_EMPLOYEE, **data}
 
     if key == "active_employees":
         data = _get_employee_form_data(employee_cache, base, token)
@@ -259,7 +260,7 @@ def collect_for_master(
         return {
             "source": "zoho_people",
             "collector_key": key,
-            "form": "employee",
+            "form": zoho_api.FORM_EMPLOYEE,
             "total_rows": len(rows),
             "rows": rows,
         }
@@ -270,14 +271,14 @@ def collect_for_master(
         return {
             "source": "zoho_people",
             "collector_key": key,
-            "form": "employee",
+            "form": zoho_api.FORM_EMPLOYEE,
             "total_rows": len(rows),
             "rows": rows,
         }
 
     if key == "department_structure":
-        data = fetch_form_records_paginated(base, token, "department")
-        return {"source": "zoho_people", "collector_key": key, "form": "department", **data}
+        data = fetch_form_records_paginated(base, token, zoho_api.FORM_DEPARTMENT)
+        return {"source": "zoho_people", "collector_key": key, "form": zoho_api.FORM_DEPARTMENT, **data}
 
     if key == "reporting_hierarchy":
         data = _get_employee_form_data(employee_cache, base, token)
@@ -310,7 +311,7 @@ def collect_for_master(
 
     if key == "attendance_logs":
         headers = _people_headers(token)
-        url = f"{base.rstrip('/')}/people/api/attendance/getUserReport"
+        url = f"{base.rstrip('/')}{zoho_api.PATH_ATTENDANCE_USER_REPORT}"
         out: list[dict[str, Any]] = []
         start_index = 0
         with httpx.Client() as client:
@@ -342,7 +343,7 @@ def collect_for_master(
                 "tool_integrations.configuration_data, or prefetch employees so Zoho_ID can be used."
             )
         headers = _people_headers(token)
-        url = f"{base.rstrip('/')}/people/api/timetracker/gettimesheet"
+        url = f"{base.rstrip('/')}{zoho_api.PATH_TIMETRACKER_GET_TIMESHEET}"
         with httpx.Client() as client:
             params = {
                 "fromDate": z0,
@@ -368,7 +369,7 @@ def collect_for_master(
 
     if key == "leave_records":
         headers = _people_headers(token)
-        url = f"{base.rstrip('/')}/api/v2/leavetracker/leaves/records"
+        url = f"{base.rstrip('/')}{zoho_api.PATH_LEAVETRACKER_RECORDS_V2}"
         rows: list[dict[str, Any]] = []
         start_index = 0
         with httpx.Client() as client:
@@ -396,7 +397,7 @@ def collect_for_master(
 
     if key == "training_completion":
         headers = _people_headers(token)
-        url = f"{base.rstrip('/')}/api/v1/courses"
+        url = f"{base.rstrip('/')}{zoho_api.PATH_COURSES_V1}"
         with httpx.Client() as client:
             r = client.get(url, headers=headers, params={"startIndex": 0}, timeout=120.0)
             _log_http_line(r, url)

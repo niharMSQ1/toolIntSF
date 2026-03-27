@@ -8,7 +8,7 @@ This folder documents **implemented** GRC tool integrations mounted from [`app/i
 
 | Integration | Category | `evidence_masters.source` | `provider_key` (unified sync) | Primary doc |
 |-------------|----------|---------------------------|-------------------------------|-------------|
-| **Zoho People** | HRMS | `zoho_people` | `zoho_people` | [0002 - zoho_integration.md](0002%20-%20zoho_integration.md) |
+| **Zoho People** | HRMS (HR / Employee Management) | `zoho_people` | `zoho_people` | [0002 - zoho_integration.md](0002%20-%20zoho_integration.md) |
 | **Microsoft Entra** (commercial) | IDP | `iam` (shared IAM catalog; legacy `microsoft_entra` possible) | `microsoft_entra` | [0004 - microsoft_entra_integration.md](0004%20-%20microsoft_entra_integration.md) |
 | **Microsoft Entra** (GCC High) | IDP | `iam` / legacy `microsoft_entra_gcc_high` | `microsoft_entra_gcc_high` | [0004 - microsoft_entra_integration.md](0004%20-%20microsoft_entra_integration.md) |
 | **Bitbucket Cloud** | DevTools | `bitbucket_cloud` | `bitbucket_cloud` | [0005 - bitbucket_integration.md](0005%20-%20bitbucket_integration.md) |
