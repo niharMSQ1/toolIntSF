@@ -1,1 +1,1 @@
-"""Integration implementations grouped by category (hrms, idp, devtools, itsm, …)."""
+"""Integration implementations grouped by category (hrms, idp, devtools, itsm, cloud_infra, …)."""

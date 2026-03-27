@@ -10,6 +10,7 @@ from __future__ import annotations
 from app.models_generated import (
     Base,
     ControlEvidenceMaster,
+    Domains,
     Evidence,
     EvidenceCollections,
     EvidenceMasters,
@@ -27,6 +28,7 @@ EvidenceMapped = EvidenceMappeds
 __all__ = [
     "Base",
     "ControlEvidenceMaster",
+    "Domains",
     "Evidence",
     "EvidenceCollection",
     "EvidenceCollections",

@@ -12,3 +12,4 @@ class IntegrationCategory(str, Enum):
     IDP = "idp"
     DEVTOOLS = "devtools"
     ITSM = "itsm"
+    CLOUD_INFRA = "cloud_infra"

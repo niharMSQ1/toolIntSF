@@ -11,6 +11,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.integrations.categories.cloud_infra.aws.collection_runner import run_aws_evidence_collection
 from app.integrations.categories.hrms.darwinbox.collection_runner import run_darwinbox_evidence_collection
 from app.integrations.categories.hrms.zoho_people.collection_runner import run_evidence_collection
 from app.integrations.categories.itsm.servicenow.collection_runner import run_servicenow_evidence_collection
@@ -24,6 +25,7 @@ from app.schemas import CollectEvidenceResponse, SyncIntegrationBody, SyncIntegr
 
 # Must match seeded ``evidence_masters.source`` values and registry keys.
 _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
+    "aws": "aws",
     "zoho_people": "zoho_people",
     "darwinbox": "darwinbox",
     "servicenow": "servicenow",
@@ -37,6 +39,10 @@ SYNC_PROVIDER_KEYS: frozenset[str] = frozenset(_SOURCE_TO_PROVIDER_KEY.values())
 
 def detect_provider_key_from_db(session: Session, tool_id: str, cfg: dict[str, Any] | None = None) -> str | None:
     """Infer sync provider from seeded ``evidence_masters.source`` for the tool domain."""
+    tool_entry = persistence.get_tool_catalog_entry(session, tool_id)
+    tool_name = str(tool_entry.get("name") or "").strip().lower()
+    if tool_name == "aws":
+        return "aws"
     did = persistence.get_domain_id_for_tool(session, tool_id)
     raw = session.scalars(
         select(EvidenceMaster.source).where(EvidenceMaster.domain_id == did).distinct()
@@ -96,7 +102,7 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     if not provider_key:
         raise ValueError(
             "Could not determine integration provider. Run POST .../configure to seed evidence_masters, "
-            "or pass provider_key (zoho_people, darwinbox, servicenow, microsoft_entra, microsoft_entra_gcc_high)."
+            "or pass provider_key (aws, zoho_people, darwinbox, servicenow, microsoft_entra, microsoft_entra_gcc_high)."
         )
 
     if provider_key not in SYNC_PROVIDER_KEYS:
@@ -106,7 +112,17 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
         _assert_entra_provider_matches_integration(provider_key, cfg)
 
     inner: CollectEvidenceResponse
-    if provider_key == "zoho_people":
+    if provider_key == "aws":
+        inner = run_aws_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "zoho_people":
         inner = run_evidence_collection(
             session,
             org_id=body.org_id,

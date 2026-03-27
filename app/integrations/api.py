@@ -8,6 +8,10 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
+from app.integrations.categories.cloud_infra.aws.routers import (
+    configure as aws_configure,
+    evidence as aws_evidence,
+)
 from app.integrations.categories.hrms.darwinbox.routers import (
     configure as darwinbox_configure,
     evidence as darwinbox_evidence,
@@ -27,6 +31,9 @@ from app.integrations.routers import integration_sync
 
 def mount_integration_routes(app: FastAPI) -> None:
     """Register all provider routers on the FastAPI application."""
+    app.include_router(aws_configure.router)
+    app.include_router(aws_configure.cloud_router)
+    app.include_router(aws_evidence.router)
     app.include_router(configure.router)
     app.include_router(configure.hrms_router)
     app.include_router(oauth.router)

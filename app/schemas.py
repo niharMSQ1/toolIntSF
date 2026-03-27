@@ -57,6 +57,16 @@ class ServiceNowConfigureResponse(BaseModel):
     configuration_data: dict = Field(description="Saved config with any secrets masked.")
 
 
+class AwsConfigureResponse(BaseModel):
+    id: str
+    organization_id: str
+    tool_id: str
+    configured: bool
+    collection_started: bool
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with AWS secrets masked.")
+
+
 class AuthorizeQuery(BaseModel):
     org_id: str
     tool_id: str
@@ -130,6 +140,7 @@ class SyncIntegrationBody(BaseModel):
         default=None,
         description=(
             "Explicit provider: zoho_people | darwinbox | servicenow | microsoft_entra | microsoft_entra_gcc_high. "
+            "Add aws for the AWS cloud infrastructure integration. "
             "Omit to infer from evidence_masters.source (after configure)."
         ),
     )

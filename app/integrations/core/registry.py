@@ -63,6 +63,14 @@ registry.register(
 )
 registry.register(
     ProviderMeta(
+        category=IntegrationCategory.CLOUD_INFRA,
+        key="aws",
+        display_name="Amazon Web Services",
+        description="Cloud infrastructure evidence via AWS APIs using domain-based evidence collection.",
+    )
+)
+registry.register(
+    ProviderMeta(
         category=IntegrationCategory.IDP,
         key="microsoft_entra",
         display_name="Microsoft Entra ID",

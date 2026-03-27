@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 from app.integrations.core.constants import CONTROL_EVIDENCEABLE_TYPE, EVIDENCE_FROM_TOOL
 from app.models import (
     ControlEvidenceMaster,
+    Domains,
     Evidence,
     EvidenceCollection,
     EvidenceMapped,
@@ -73,6 +74,26 @@ def get_domain_id_for_tool(session: Session, tool_id: str | uuid.UUID) -> uuid.U
     if row.domain_id is None:
         raise ValueError("Tool has no domain_id; assign a domain in the tools catalog before integrating.")
     return row.domain_id
+
+
+def get_tool_catalog_entry(session: Session, tool_id: str | uuid.UUID) -> dict[str, Any]:
+    """Return a tool row plus its domain metadata from the tools catalog."""
+    tid = _uuid(tool_id)
+    row = session.scalars(select(Tools).where(Tools.id == tid).limit(1)).first()
+    if row is None:
+        raise ValueError(f"Tool not found: {tool_id!r}")
+    domain_name: str | None = None
+    if row.domain_id is not None:
+        domain = session.scalars(select(Domains).where(Domains.id == row.domain_id).limit(1)).first()
+        if domain is not None and domain.name is not None:
+            domain_name = str(domain.name)
+    return {
+        "id": row.id,
+        "name": row.name,
+        "domain_id": row.domain_id,
+        "domain_name": domain_name,
+        "status": row.status,
+    }
 
 
 def normalize_evidence_master_description(master: dict[str, Any]) -> str | None:
@@ -343,6 +364,42 @@ def insert_evidence_collection(
         )
     )
     session.commit()
+
+
+def replace_evidence_collection(
+    session: Session,
+    *,
+    evidence_id: uuid.UUID,
+    evidence_name: str,
+    user_id: str,
+    tool_evidence: Any | None,
+    evidence_from: str = EVIDENCE_FROM_TOOL,
+    source: str = "Zoho People API",
+    status: str,
+    detail: dict[str, Any] | None,
+    error_message: str | None,
+    started_at: datetime,
+    completed_at: datetime,
+    embed_run_snapshot: bool = False,
+) -> None:
+    """Full replace for evidence_collections: delete prior rows for this evidence, then insert the new payload."""
+    session.execute(delete(EvidenceCollection).where(EvidenceCollection.evidence_id == _uuid(evidence_id)))
+    session.flush()
+    insert_evidence_collection(
+        session,
+        evidence_id=_uuid(evidence_id),
+        evidence_name=evidence_name,
+        user_id=user_id,
+        tool_evidence=tool_evidence,
+        evidence_from=evidence_from,
+        source=source,
+        status=status,
+        detail=detail,
+        error_message=error_message,
+        started_at=started_at,
+        completed_at=completed_at,
+        embed_run_snapshot=embed_run_snapshot,
+    )
 
 
 def insert_evidence_collection_after_failed_collect(
