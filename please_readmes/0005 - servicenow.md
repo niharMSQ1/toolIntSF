@@ -11,8 +11,8 @@ This document describes the **ServiceNow** integration implemented under [`app/i
 | **G1** — User selects tool and supplies data | User picks the **ServiceNow** tool and sends `ToolIntegrationPayload` to configure the integration. |
 | **G2** — Persist in `tool_integrations` | One row per `(organization_id, tool_id)` is stored in `tool_integrations`; updates are full replace on `configuration_data`. |
 | **G3** — Resolve `evidence_masters` | The app resolves the tool's `domain_id` from `tools`, then uses ITSM evidence masters already present for that domain. Configure also runs an idempotent ServiceNow seed step for any ServiceNow-specific codes missing from the catalog. |
-| **G4** — `evidence` + `evidence_collection` | For each supported evidence master, the app fetches ServiceNow data, upserts `evidence`, and inserts `evidence_collections` with only the raw ServiceNow records in `tool_evidence`. Failed fetches are not persisted. |
-| **G5** — `evidence_mappeds` | The saved `evidence.id` is remapped to controls via `control_evidence_master` using the selected `evidence_master_id`. |
+| **G4** — `evidence` + `evidence_collection` | For each supported evidence master, the app fetches ServiceNow data, upserts `evidence` only when there is eligible new data, and appends a fresh `evidence_collections` row with only the raw ServiceNow records in `tool_evidence`. Failed fetches are not persisted. |
+| **G5** — `evidence_mappeds` | The saved `evidence.id` is remapped to controls via `control_evidence_master` using the selected `evidence_master_id`, and `mapped_by` is set from the collecting `user_id`. |
 
 **Uniqueness and update rules**
 
@@ -49,7 +49,7 @@ Assume base URL `http://localhost:8002` for local testing in this repo.
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| POST | `/api/v1/integrations/servicenow/configure` | Save integration config, seed any missing ServiceNow evidence masters, and start background collection. |
+| POST | `/api/v1/integrations/servicenow/configure` | Save integration config, seed any missing ServiceNow evidence masters, validate the integration shell, and automatically start background collection. |
 | POST | `/itsm/servicenow/integrations` | Alias route for the same behavior. |
 
 **Request body**
@@ -67,7 +67,7 @@ Assume base URL `http://localhost:8002` for local testing in this repo.
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| POST | `/api/v1/evidence/servicenow/collect` | Run ServiceNow evidence collection manually. |
+| POST | `/api/v1/evidence/servicenow/collect` | Manually re-run ServiceNow evidence collection for debugging or ad-hoc refresh. Normal product flow is configure → auto collect. |
 
 **Request body**
 
@@ -92,6 +92,12 @@ Assume base URL `http://localhost:8002` for local testing in this repo.
 | POST | `/api/v1/integrations/sync` |
 
 Use `provider_key = "servicenow"` when calling the unified sync route.
+
+**Recommended automation**
+
+- Configure the integration once.
+- Then schedule `POST /api/v1/integrations/sync` from cron / scheduler.
+- The ServiceNow collector will skip redundant fetches inside the 30-day window and only collect new eligible data after that.
 
 ---
 
@@ -123,6 +129,8 @@ When `POST /api/v1/integrations/servicenow/configure` is called:
 1. `upsert_tool_integration(...)` saves or updates the `(organization_id, tool_id)` row.
 2. `seed_servicenow_evidence_masters(...)` checks the ServiceNow seed inventory and inserts only codes that do not already exist in `evidence_masters`.
 3. A background task starts `run_servicenow_evidence_collection_after_configure_background(...)`.
+
+If configure fails, collection is not triggered. In the expected product flow, the client only needs to call **configure**; a separate collect call is not required for the initial run.
 
 This logic lives in [`routers/configure.py`](../app/integrations/categories/itsm/servicenow/routers/configure.py).
 
@@ -200,7 +208,22 @@ The API response for Swagger now includes a ServiceNow-style payload under:
 }
 ```
 
-### 6. Persistence only happens on success
+### 6. 30-day collection window
+
+ServiceNow collection now follows a rolling 30-day rule:
+
+1. **First run**
+   - If there is no prior ServiceNow collection for that evidence, fetch the last 30 days of data.
+2. **Repeated call inside 30 days**
+   - Skip the fetch entirely.
+   - Do not create a new `evidence_collections` row.
+3. **Call after 30 days**
+   - Fetch only data after the last collection date.
+   - Save a new `evidence_collections` row only when new eligible records exist.
+
+This logic is handled in [`collection_runner.py`](../app/integrations/categories/itsm/servicenow/collection_runner.py).
+
+### 7. Persistence only happens on success
 
 For each successful evidence master:
 
@@ -211,8 +234,11 @@ For each successful evidence master:
 Current ServiceNow-specific persistence behavior:
 
 - only successful collections are saved
+- only when there is eligible new data
 - failed collections are returned in the API response but are **not** saved to DB
 - `tool_evidence` stores only the raw ServiceNow rows, not our wrapper metadata
+- `evidence_collections` is append-only; old collection rows are not updated
+- `evidence.updated_at` is refreshed only when new data is actually persisted
 
 This success-only behavior is implemented in [`collection_runner.py`](../app/integrations/categories/itsm/servicenow/collection_runner.py).
 
@@ -231,19 +257,23 @@ Stores:
 
 ### `evidence`
 
-For each successful evidence master:
+For each successful evidence master with new eligible data:
 
 - `title` = `evidence_masters.name`
 - `code` = `evidence_masters.code`
 - `tool_id` = ServiceNow tool id
+- existing rows are updated in place instead of creating duplicates
+- `updated_at` changes when new data is persisted
 
 ### `evidence_collections`
 
-For each successful evidence master:
+For each successful evidence master with new eligible data:
 
 - `source` = `ServiceNow API`
 - `name` = evidence master name
 - `tool_evidence` = raw ServiceNow records only
+- a new row is inserted for each successful eligible collection
+- previous collection rows remain unchanged
 
 Example shape of `tool_evidence`:
 
@@ -263,6 +293,7 @@ After saving evidence, the app remaps controls based on:
 
 - `evidence_master_id`
 - `control_evidence_master`
+- `mapped_by = user_id`
 
 This matches the generic G5 flow from **[0001 - initialising.md](0001%20-%20initialising.md)**.
 
@@ -273,8 +304,9 @@ This matches the generic G5 flow from **[0001 - initialising.md](0001%20-%20init
 In Swagger UI:
 
 1. Call **configure** first.
-2. Then call **collect**.
-3. The collect response now shows:
+2. The backend automatically starts collection in the background after successful configure.
+3. Call **collect** only when you want a manual re-run or debugging output in Swagger.
+4. The collect response now shows:
    - app summary fields (`org_id`, `tool_id`, `user_id`)
    - per-evidence status
    - raw ServiceNow payload under `service_now_response.result`
@@ -316,3 +348,5 @@ If Swagger becomes slow, pass only a few `evidence_codes` so the response stays 
 - Repeated configure calls are safe against duplicate `evidence_masters.code` values.
 - Unsupported domain-only ITSM objects are intentionally excluded from ServiceNow collection.
 - Failed ServiceNow fetches are visible in API output but are not saved to DB.
+- The initial user flow is configure → automatic background collection.
+- Long-term automation should use scheduled `POST /api/v1/integrations/sync` calls.

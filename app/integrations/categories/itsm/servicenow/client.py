@@ -10,7 +10,7 @@ import httpx
 
 DEFAULT_BASE_URL = "https://dev302959.service-now.com/login.do?user_name=admin&sys_action=sysverb_login&user_password=%246!AB9KUxuwf"
 DEFAULT_USERNAME = "admin"
-DEFAULT_PASSWORD = "$6!AB9KUxuwf"
+DEFAULT_PASSWORD = "$6!ABKUxuwf"
 
 
 def _auth(configuration_data: dict[str, Any]) -> tuple[str, str] | None:
