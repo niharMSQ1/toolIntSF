@@ -55,6 +55,8 @@ Reference ERDs (if present): folder **`db_structure`**.
 - **`(organization_id, tool_id)`** must be unique.
 - On re-configure: **update** the existing row; **`configuration_data`** is replaced in full (no partial merge of stale keys unless the product explicitly merges).
 
+**Reconfiguring (operational note)** — When you need a clean re-setup for a given **organization** and **tool**, **delete** the existing row from **`tool_integrations`** for that **`(organization_id, tool_id)`** first, **then** run **configure** again with the new credentials/config. Do not rely on partial updates alone if you must drop stale OAuth state, tokens, or other fields that would otherwise linger in JSON.
+
 ### `evidence`
 
 - For a given **`organization_id`**, **`title`** is treated as the stable key for “this evidence line item” (title comes from **`evidence_masters.name`** on collect).
