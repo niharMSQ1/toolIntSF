@@ -11,6 +11,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.integrations.categories.cspm.snyk.collection_runner import run_snyk_evidence_collection
 from app.integrations.categories.cspm.wiz.collection_runner import run_wiz_evidence_collection
 from app.integrations.categories.idp.okta.collection_runner import run_okta_evidence_collection
 from app.integrations.categories.devtools.bitbucket.collection_runner import run_bitbucket_evidence_collection
@@ -35,6 +36,7 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "microsoft_entra_gcc_high": "microsoft_entra_gcc_high",
     "bitbucket_cloud": "bitbucket_cloud",
     "wiz": "wiz",
+    "snyk": "snyk",
     "jira_cloud": "jira_cloud",
     "okta": "okta",
 }
@@ -141,7 +143,7 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     if not provider_key:
         raise ValueError(
             "Could not determine integration provider. Ensure evidence_masters exist for this tool's domain (seed manually), "
-            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, jira_cloud, okta). "
+            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, snyk, jira_cloud, okta). "
             "For IAM evidence with source=iam, provider is inferred from configuration_data (Okta SSWS vs Entra OAuth)."
         )
 
@@ -174,6 +176,16 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
         )
     elif provider_key == "wiz":
         inner = run_wiz_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "snyk":
+        inner = run_snyk_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,

@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "toolintsf-integrations-v2",
     "name": "Stakflo GRC — Tool Integrations",
-    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl` (e.g. http://localhost:8006), `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`.\n\n**Wiz:** service account — POST configure with `graphql_url`, `client_id`, `client_secret`; no browser OAuth.\n\n**Okta:** POST configure with `org_domain` + `api_token` (SSWS); no browser OAuth.\n\n**Sync:** `provider_key` optional if `evidence_masters.source` is unique: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `jira_cloud` | `okta`.",
+    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl` (e.g. http://localhost:8006), `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id` (Snyk org UUID for `org_ids`).\n\n**Wiz:** service account — POST configure with `graphql_url`, `client_id`, `client_secret`; no browser OAuth.\n\n**Snyk:** API key / 90-day access token (`auth_type` `api_key` or `access_token` + `snyk_api_token`) or OAuth 2.0 client credentials (`oauth_client_id`, `oauth_client_secret`); `region` `us`|`eu`|`au`; scope with `org_ids` or `group_id`.\n\n**Okta:** POST configure with `org_domain` + `api_token` (SSWS); no browser OAuth.\n\n**Sync:** `provider_key` optional if `evidence_masters.source` is unique: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `snyk` | `jira_cloud` | `okta`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -11,7 +11,9 @@
     { "key": "tool_id", "value": "" },
     { "key": "user_id", "value": "" },
     { "key": "oauth_code", "value": "" },
-    { "key": "oauth_state", "value": "" }
+    { "key": "oauth_state", "value": "" },
+    { "key": "snyk_api_token", "value": "" },
+    { "key": "snyk_org_id", "value": "" }
   ],
   "item": [
     {
@@ -111,6 +113,97 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/evidence/wiz/collect"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Snyk CSPM",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/snyk/configure (API key / access token)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"auth_type\": \"api_key\",\n    \"snyk_api_token\": \"{{snyk_api_token}}\",\n    \"region\": \"us\",\n    \"org_ids\": [\"{{snyk_org_id}}\"]\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/snyk/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/cspm/snyk/configure (OAuth 2.0 client credentials)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"auth_type\": \"oauth2_client_credentials\",\n    \"oauth_client_id\": \"<snyk-oauth-client-id>\",\n    \"oauth_client_secret\": \"<snyk-oauth-client-secret>\",\n    \"region\": \"us\",\n    \"org_ids\": [\"{{snyk_org_id}}\"]\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/snyk/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/snyk/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/snyk/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "snyk", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/snyk/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/snyk/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "snyk", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/snyk/regions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/snyk/regions"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/snyk/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/snyk/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key snyk)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"snyk\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
           }
         }
       ]
