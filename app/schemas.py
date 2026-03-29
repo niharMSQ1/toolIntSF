@@ -569,6 +569,31 @@ class DefenderForEndpointFlowResponse(BaseModel):
     next_step: str
 
 
+class SentinelOneConfigureResponse(BaseModel):
+    """POST .../endpoint/sentinelone/configure — API token + console URL."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if GET .../web/api/v2.1/agents?limit=1 succeeded with ApiToken auth.",
+    )
+    ready_for_collection: bool = Field(description="True when api_token and api_base_url are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with api_token masked.")
+
+
+class SentinelOneFlowResponse(BaseModel):
+    """Configure → collect flow for SentinelOne."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
 class AwsConfigureResponse(BaseModel):
     """Returned by POST /api/v1/integrations/cloud/aws/configure (IAM role ARN for STS AssumeRole)."""
 

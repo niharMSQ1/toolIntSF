@@ -28,6 +28,10 @@ from app.integrations.categories.endpoint_security.defender_for_endpoint.routers
     configure_router as defender_for_endpoint_configure_router,
     evidence_router as defender_for_endpoint_evidence_router,
 )
+from app.integrations.categories.endpoint_security.sentinelone.routers import (
+    configure_router as sentinelone_configure_router,
+    evidence_router as sentinelone_evidence_router,
+)
 from app.integrations.categories.cspm.aqua_security.routers import (
     configure_router as aqua_security_configure_router,
     evidence_router as aqua_security_evidence_router,
@@ -95,6 +99,8 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(crowdstrike_falcon_evidence_router)
     app.include_router(defender_for_endpoint_configure_router)
     app.include_router(defender_for_endpoint_evidence_router)
+    app.include_router(sentinelone_configure_router)
+    app.include_router(sentinelone_evidence_router)
     app.include_router(aws_configure_router)
     app.include_router(aws_evidence_router)
     app.include_router(bitbucket_configure_router)
