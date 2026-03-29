@@ -7,7 +7,11 @@ from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
-from app.integrations.categories.itsm.linear.collector import collect_for_master, linear_evidence_for_storage
+from app.integrations.categories.itsm.linear.collector import (
+    collect_all_issues,
+    collect_for_master,
+    linear_evidence_for_storage,
+)
 from app.integrations.categories.itsm.linear.credentials import (
     has_access_token,
     resolve_access_token,
@@ -104,12 +108,18 @@ def run_linear_evidence_collection(
     if not masters:
         raise ValueError("No evidence_masters for this tool's domain; run /configure to seed.")
 
+    dataset = collect_all_issues(
+        new_cfg,
+        access_token=token,
+        graphql_url=graphql_url,
+    )
+
     results: list[CollectionItemResult] = []
 
     for master in masters:
         started = datetime.now(timezone.utc)
         try:
-            content = collect_for_master(master, new_cfg, access_token=token, graphql_url=graphql_url)
+            content = collect_for_master(master, dataset)
             ev = persistence.upsert_evidence_full_replace(
                 session,
                 organization_id=org_id,

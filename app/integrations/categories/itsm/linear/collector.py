@@ -1,87 +1,75 @@
-"""Collect Linear issue search results per evidence_masters row."""
+"""Collect Linear issue details for evidence storage."""
 
 from __future__ import annotations
 
-import re
 from typing import Any
 
 from app.integrations.categories.itsm.linear import api_client
 from app.integrations.categories.itsm.linear.credentials import project_ids_list, team_ids_list
 
 
-_STOPWORDS = frozenset(
-    {
-        "the",
-        "and",
-        "for",
-        "itsm",
-        "tickets",
-        "ticket",
-        "records",
-        "record",
-        "management",
-        "request",
-        "requests",
-    }
-)
+def _build_scope_pairs(cfg: dict[str, Any]) -> list[tuple[str | None, str | None]]:
+    """Collect across configured team/project scopes without evidence-name filtering."""
+    team_ids = team_ids_list(cfg)
+    project_ids = project_ids_list(cfg)
+
+    if team_ids and project_ids:
+        return [(team_id, project_id) for team_id in team_ids for project_id in project_ids]
+    if team_ids:
+        return [(team_id, None) for team_id in team_ids]
+    if project_ids:
+        return [(None, project_id) for project_id in project_ids]
+    return [(None, None)]
 
 
-def _keywords_from_evidence_name(name: str, *, max_terms: int = 6) -> list[str]:
-    """Derive a search string from the catalog name (before —)."""
-    part = name.split("—")[0].strip()
-    words = re.split(r"[^\w]+", part)
-    out: list[str] = []
-    for w in words:
-        w = w.strip()
-        if len(w) < 3:
-            continue
-        wl = w.lower()
-        if wl in _STOPWORDS:
-            continue
-        out.append(w)
-        if len(out) >= max_terms:
-            break
-    return out
-
-
-def build_search_query(master: dict[str, Any], cfg: dict[str, Any]) -> str | None:
-    code = str(master.get("code") or "")
-    overrides = cfg.get("search_overrides")
-    if isinstance(overrides, dict) and code in overrides and str(overrides[code]).strip():
-        return str(overrides[code]).strip()
-
-    default_query = cfg.get("default_query")
-    if isinstance(default_query, str) and default_query.strip():
-        return default_query.strip()
-
-    terms = _keywords_from_evidence_name(str(master.get("name") or ""))
-    if not terms:
-        return None
-    return " ".join(terms)
-
-
-def collect_for_master(
-    master: dict[str, Any],
+def collect_all_issues(
     cfg: dict[str, Any],
     *,
     access_token: str,
     graphql_url: str,
 ) -> dict[str, Any]:
-    search_query = build_search_query(master, cfg)
-    data = api_client.search_issues(
-        access_token,
-        graphql_url=graphql_url,
-        query=search_query,
-        team_id=team_ids_list(cfg)[0] if team_ids_list(cfg) else None,
-        project_id=project_ids_list(cfg)[0] if project_ids_list(cfg) else None,
-        first=50,
-    )
+    scopes = _build_scope_pairs(cfg)
+    seen_issue_ids: set[str] = set()
+    issues: list[dict[str, Any]] = []
+
+    for team_id, project_id in scopes:
+        data = api_client.search_issues(
+            access_token,
+            graphql_url=graphql_url,
+            query=None,
+            team_id=team_id,
+            project_id=project_id,
+            first=50,
+        )
+        for issue in data:
+            issue_id = str(issue.get("id") or "").strip()
+            if issue_id and issue_id in seen_issue_ids:
+                continue
+            if issue_id:
+                seen_issue_ids.add(issue_id)
+            issues.append(issue)
+
     return {
-        "evidence_code": master.get("code"),
         "integration": "linear",
-        "search_query": search_query,
-        "issues": data,
+        "source_api": "https://api.linear.app/graphql",
+        "collection_mode": "full_issue_dataset",
+        "scopes": [
+            {
+                "team_id": team_id,
+                "project_id": project_id,
+            }
+            for team_id, project_id in scopes
+        ],
+        "issues_returned": len(issues),
+        "issues": issues,
     }
+
+
+def collect_for_master(master: dict[str, Any], dataset: dict[str, Any]) -> dict[str, Any]:
+    payload = dict(dataset)
+    payload["evidence_code"] = master.get("code")
+    payload["evidence_name"] = master.get("name")
+    return payload
 
 
 def linear_evidence_for_storage(payload: dict[str, Any]) -> dict[str, Any]:
