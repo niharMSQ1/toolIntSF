@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "toolintsf-integrations-v2",
     "name": "Stakflo GRC — Tool Integrations",
-    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl`, `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id`, `aws_role_arn`, `aws_region`, `aws_sts_region`, `aws_external_id`, `aws_evidence_codes`, `prisma_api_base_url`, `prisma_access_key_id`, `prisma_secret_key`.\n\n**Wiz:** service account — `graphql_url`, `client_id`, `client_secret`.\n\n**Prisma Cloud:** CSPM REST — `api_base_url` (tenant API URL per pan.dev), `access_key_id`, `secret_key`; JWT via POST /login. Seed evidence EV-701.. with `source=prisma_cloud` before collect.\n\n**Snyk:** API key / OAuth; `org_ids` or `group_id`.\n\n**AWS (Cloud):** `POST .../integrations/cloud/aws/configure` with `configuration_data.role_arn` (IAM role ARN — **no region in ARN**; account ID only). Server credentials must allow `sts:AssumeRole`. Optional: `region` (default `us-east-1`), `region: \"auto\"` (multi-region via EC2 DescribeRegions), `sts_region` (AssumeRole endpoint, default `us-east-1`), `external_id` (cross-account trust). Evidence: `POST .../evidence/aws/collect` — `evidence_codes` null collects all seeded Cloud EV codes; or pass e.g. `[\"EV-16\",\"EV-541\"]`. Seed `evidence_masters` for the tool domain (app upsert or `scripts/sql/seed_aws_evidence_masters_cloud_domain.sql`).\n\n**Okta:** `org_domain` + `api_token` (SSWS).\n\n**Sync:** `provider_key` optional: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `prisma_cloud` | `snyk` | `aws` | `jira_cloud` | `okta`.",
+    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl`, `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id`, `aws_role_arn`, `aws_region`, `aws_sts_region`, `aws_external_id`, `aws_evidence_codes`, `prisma_api_base_url`, `prisma_access_key_id`, `prisma_secret_key`, `defender_tenant_id`, `defender_client_id`, `defender_client_secret`, `defender_subscription_id`, `orca_api_host`, `orca_api_token`, `lacework_account`, `lacework_key_id`, `lacework_secret`.\n\n**Wiz:** service account — `graphql_url`, `client_id`, `client_secret`.\n\n**Prisma Cloud:** CSPM REST — `api_base_url` (tenant API URL per pan.dev), `access_key_id`, `secret_key`; JWT via POST /login. Seed evidence EV-701.. with `source=prisma_cloud` before collect.\n\n**Snyk:** API key / OAuth; `org_ids` or `group_id`.\n\n**AWS (Cloud):** `POST .../integrations/cloud/aws/configure` with `configuration_data.role_arn` (IAM role ARN — **no region in ARN**; account ID only). Server credentials must allow `sts:AssumeRole`. Optional: `region` (default `us-east-1`), `region: \"auto\"` (multi-region via EC2 DescribeRegions), `sts_region` (AssumeRole endpoint, default `us-east-1`), `external_id` (cross-account trust). Evidence: `POST .../evidence/aws/collect` — `evidence_codes` null collects all seeded Cloud EV codes; or pass e.g. `[\"EV-16\",\"EV-541\"]`. Seed `evidence_masters` for the tool domain (app upsert or `scripts/sql/seed_aws_evidence_masters_cloud_domain.sql`).\n\n**Okta:** `org_domain` + `api_token` (SSWS).\n\n**Defender for Cloud:** Azure AD app (`tenant_id`, `client_id`, `client_secret`) + `subscription_id`; OAuth2 client credentials for `https://management.azure.com/.default`. Seed EV-711.. `source=defender_cloud`.\n\n**Orca Security:** `api_token` + optional `api_host` (default `api.orcasecurity.io`); base URL `https://{host}/api`. Seed EV-721.. `source=orca_security`.\n\n**Lacework:** `lacework_account` (subdomain) + `lacework_key_id` + `lacework_secret`; API v2 at `https://{account}.lacework.net/api/v2`. Seed EV-731.. `source=lacework`.\n\n**Sync:** `provider_key` optional: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `prisma_cloud` | `defender_cloud` | `orca_security` | `lacework` | `snyk` | `aws` | `jira_cloud` | `okta`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -24,7 +24,16 @@
     },
     { "key": "prisma_api_base_url", "value": "https://api.prismacloud.io" },
     { "key": "prisma_access_key_id", "value": "" },
-    { "key": "prisma_secret_key", "value": "" }
+    { "key": "prisma_secret_key", "value": "" },
+    { "key": "defender_tenant_id", "value": "" },
+    { "key": "defender_client_id", "value": "" },
+    { "key": "defender_client_secret", "value": "" },
+    { "key": "defender_subscription_id", "value": "" },
+    { "key": "orca_api_host", "value": "api.orcasecurity.io" },
+    { "key": "orca_api_token", "value": "" },
+    { "key": "lacework_account", "value": "" },
+    { "key": "lacework_key_id", "value": "" },
+    { "key": "lacework_secret", "value": "" }
   ],
   "item": [
     {
@@ -220,6 +229,282 @@
               { "key": "x-redlock-auth", "value": "<paste JWT from /login>" }
             ],
             "url": "{{prisma_api_base_url}}/cloud"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Microsoft Defender for Cloud",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/defender-cloud/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"defender_cloud\",\n    \"tenant_id\": \"{{defender_tenant_id}}\",\n    \"client_id\": \"{{defender_client_id}}\",\n    \"client_secret\": \"{{defender_client_secret}}\",\n    \"subscription_id\": \"{{defender_subscription_id}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/defender-cloud/configure",
+            "description": "App registration needs Microsoft.Security API permissions (e.g. read) on the subscription. See Microsoft Learn."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/defender-cloud/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/defender-cloud/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "defender-cloud", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/defender-cloud/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/defender-cloud/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "defender-cloud", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/defender-cloud/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/defender-cloud/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key defender_cloud)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"defender_cloud\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Azure AD — OAuth2 token (client credentials) reference",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "client_id", "value": "{{defender_client_id}}" },
+                { "key": "client_secret", "value": "{{defender_client_secret}}" },
+                { "key": "scope", "value": "https://management.azure.com/.default" },
+                { "key": "grant_type", "value": "client_credentials" }
+              ]
+            },
+            "url": "https://login.microsoftonline.com/{{defender_tenant_id}}/oauth2/v2.0/token",
+            "description": "Microsoft identity platform client credentials flow (Learn). Use access_token as Bearer for management.azure.com."
+          }
+        },
+        {
+          "name": "ARM — GET secureScores (direct reference)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer <access_token from token request>" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "https://management.azure.com/subscriptions/{{defender_subscription_id}}/providers/Microsoft.Security/secureScores?api-version=2020-01-01"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orca Security",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/orca-security/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"orca_security\",\n    \"api_token\": \"{{orca_api_token}}\",\n    \"api_host\": \"{{orca_api_host}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/orca-security/configure",
+            "description": "Authorization: Token <api_token> to https://{api_host}/api — see Cortex XSOAR Orca pack / Demisto content."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/orca-security/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/orca-security/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "orca-security", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/orca-security/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/orca-security/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "orca-security", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/orca-security/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/orca-security/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key orca_security)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"orca_security\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Orca — POST automations/query/alerts (direct reference)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{orca_api_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"limit\": 1,\n  \"page\": 1\n}"
+            },
+            "url": "https://{{orca_api_host}}/api/automations/query/alerts"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lacework",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/lacework/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"lacework\",\n    \"account\": \"{{lacework_account}}\",\n    \"key_id\": \"{{lacework_key_id}}\",\n    \"secret\": \"{{lacework_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/lacework/configure",
+            "description": "Lacework API v2: POST /access/tokens with X-LW-UAKS; see lacework/go-sdk and docs.lacework.net."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/lacework/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/lacework/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "lacework", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/lacework/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/lacework/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "lacework", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/lacework/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/lacework/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key lacework)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"lacework\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Lacework — POST access/tokens (direct reference)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-LW-UAKS", "value": "{{lacework_secret}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyId\": \"{{lacework_key_id}}\",\n  \"expiryTime\": 3600\n}"
+            },
+            "url": "https://{{lacework_account}}.lacework.net/api/v2/access/tokens"
           }
         }
       ]

@@ -16,6 +16,18 @@ from app.integrations.categories.cspm.snyk.routers import (
     configure_router as snyk_configure_router,
     evidence_router as snyk_evidence_router,
 )
+from app.integrations.categories.cspm.defender_cloud.routers import (
+    configure_router as defender_cloud_configure_router,
+    evidence_router as defender_cloud_evidence_router,
+)
+from app.integrations.categories.cspm.lacework.routers import (
+    configure_router as lacework_configure_router,
+    evidence_router as lacework_evidence_router,
+)
+from app.integrations.categories.cspm.orca_security.routers import (
+    configure_router as orca_security_configure_router,
+    evidence_router as orca_security_evidence_router,
+)
 from app.integrations.categories.cspm.prisma_cloud.routers import (
     configure_router as prisma_cloud_configure_router,
     evidence_router as prisma_cloud_evidence_router,
@@ -51,6 +63,12 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(wiz_evidence_router)
     app.include_router(prisma_cloud_configure_router)
     app.include_router(prisma_cloud_evidence_router)
+    app.include_router(defender_cloud_configure_router)
+    app.include_router(defender_cloud_evidence_router)
+    app.include_router(lacework_configure_router)
+    app.include_router(lacework_evidence_router)
+    app.include_router(orca_security_configure_router)
+    app.include_router(orca_security_evidence_router)
     app.include_router(snyk_configure_router)
     app.include_router(snyk_evidence_router)
     app.include_router(aws_configure_router)

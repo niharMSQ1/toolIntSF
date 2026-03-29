@@ -393,6 +393,82 @@ class PrismaCloudFlowResponse(BaseModel):
     next_step: str
 
 
+class DefenderCloudConfigureResponse(BaseModel):
+    """POST .../cspm/defender-cloud/configure — Azure AD app registration + subscription ID."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if OAuth2 client credentials and ARM Microsoft.Security secureScores call succeeded.",
+    )
+    ready_for_collection: bool = Field(description="True when tenant, app secret, and subscription are set.")
+    collection_started_in_background: bool = Field(
+        default=True,
+        description="When true, background job pulls Defender for Cloud evidence.",
+    )
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secrets and token masked.")
+
+
+class DefenderCloudFlowResponse(BaseModel):
+    """Configure → collect flow for Microsoft Defender for Cloud."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class OrcaSecurityConfigureResponse(BaseModel):
+    """POST .../cspm/orca-security/configure — API token + optional regional host."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if POST .../automations/query/alerts with limit=1 succeeded.")
+    ready_for_collection: bool = Field(description="True when api_token and API base URL are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with token masked.")
+
+
+class OrcaSecurityFlowResponse(BaseModel):
+    """Configure → collect flow for Orca Security."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class LaceworkConfigureResponse(BaseModel):
+    """POST .../cspm/lacework/configure — account subdomain + API key id + secret."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if POST /api/v2/access/tokens and GET /api/v2/UserProfile succeeded.",
+    )
+    ready_for_collection: bool = Field(description="True when account, key_id, and secret are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secret masked.")
+
+
+class LaceworkFlowResponse(BaseModel):
+    """Configure → collect flow for Lacework."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
 class AwsConfigureResponse(BaseModel):
     """Returned by POST /api/v1/integrations/cloud/aws/configure (IAM role ARN for STS AssumeRole)."""
 
