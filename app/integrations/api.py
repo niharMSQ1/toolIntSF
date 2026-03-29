@@ -28,6 +28,7 @@ from app.integrations.categories.devtools.bitbucket.routers import (
     workspaces_router as bitbucket_workspaces_router,
 )
 from app.integrations.categories.hrms.zoho_people.routers import configure, evidence, oauth
+from app.integrations.categories.hrms.bamboohr.routers import configure as bamboohr_configure, evidence as bamboohr_evidence, oauth as bamboohr_oauth, employees as bamboohr_employees
 from app.integrations.categories.itsm.jira.routers import configure as jira_configure
 from app.integrations.categories.itsm.jira.routers import evidence as jira_evidence
 from app.integrations.categories.itsm.jira.routers import oauth as jira_oauth
@@ -62,6 +63,11 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(configure.hrms_router)
     app.include_router(oauth.router)
     app.include_router(evidence.router)
+    app.include_router(bamboohr_configure.router)
+    app.include_router(bamboohr_configure.hrms_router)
+    app.include_router(bamboohr_oauth.router)
+    app.include_router(bamboohr_evidence.router)
+    app.include_router(bamboohr_employees.router)
     app.include_router(jira_configure.router)
     app.include_router(jira_configure.itsm_router)
     app.include_router(jira_oauth.router)

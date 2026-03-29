@@ -130,6 +130,69 @@ class ZohoFlowResponse(BaseModel):
     collect_post_json_example: dict | None = None
 
 
+class BambooConfigureResponse(BaseModel):
+    """Returned by POST /configure for BambooHR setup."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool = Field(
+        description="True when BambooHR is ready to use immediately (API key mode or stored app token)."
+    )
+    authorization_url: str | None = Field(
+        default=None,
+        description="BambooHR app authorization URL when app auth requires a browser step.",
+    )
+    state: str | None = Field(
+        default=None,
+        description="OAuth state value for BambooHR app auth when applicable.",
+    )
+    next_step: str
+    configuration_data: dict = Field(
+        description="Saved config with secrets masked.",
+    )
+
+
+class BambooFlowResponse(BaseModel):
+    """Where you are in configure → auth → collect for BambooHR."""
+
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool
+    redirect_uri: str | None = None
+    next_step: str
+    authorization_url: str | None = None
+    state: str | None = None
+    collect_post_json_example: dict | None = None
+
+
+class BambooOAuthCallbackResponse(BaseModel):
+    """Returned by the BambooHR OAuth callback after a successful code exchange."""
+
+    ok: bool
+    organization_id: str
+    tool_id: str
+    message: str
+    next_step: str
+
+
+class BambooEmployeeDirectoryResponse(BaseModel):
+    """Directory-style BambooHR response wrapper used by preview routes."""
+
+    organization_id: str
+    tool_id: str
+    data: dict[str, Any]
+
+
+class BambooEmployeeResponse(BaseModel):
+    """Single-employee BambooHR response wrapper used by preview routes."""
+
+    organization_id: str
+    tool_id: str
+    employee_id: str
+    data: dict[str, Any]
+
+
 class ZohoRefreshTokensBody(BaseModel):
     org_id: str
     tool_id: str

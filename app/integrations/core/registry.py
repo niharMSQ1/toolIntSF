@@ -47,6 +47,14 @@ registry.register(
 )
 registry.register(
     ProviderMeta(
+        category=IntegrationCategory.HRMS,
+        key="bamboohr",
+        display_name="BambooHR",
+        description="HRMS integration via BambooHR API key or app/OAuth authentication for employee-directory reads and future evidence collection.",
+    )
+)
+registry.register(
+    ProviderMeta(
         category=IntegrationCategory.IDP,
         key="microsoft_entra",
         display_name="Microsoft Entra ID",
