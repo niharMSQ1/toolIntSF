@@ -9,8 +9,9 @@ Use this file if chat context resets. It summarizes **vendor**, **`evidence_mast
 | 3 | Orca Security | `orca_security` | `orca_security` | `app/integrations/categories/cspm/orca_security/` | [0011 - orca-security.md](0011%20-%20orca-security.md) |
 | 4 | Lacework | `lacework` | `lacework` | `app/integrations/categories/cspm/lacework/` | [0012 - lacework.md](0012%20-%20lacework.md) |
 | 5 | Aqua Security (self-hosted CSP) | `aqua_security` | `aqua_security` | `app/integrations/categories/cspm/aqua_security/` | [0013 - aqua-security.md](0013%20-%20aqua-security.md) |
+| 6 | Sysdig Secure | `sysdig_secure` | `sysdig_secure` | `app/integrations/categories/cspm/sysdig_secure/` | [0014 - sysdig-secure.md](0014%20-%20sysdig-secure.md) |
 
-**Remaining (planned queue):** Check Point CloudGuard, Sysdig Secure — same pattern: `please_readmes/0014+`, `sync_dispatch`, `api.py`, Postman.
+**Remaining (planned queue):** Check Point CloudGuard — same pattern: `please_readmes/0015+`, `sync_dispatch`, `api.py`, Postman.
 
 **Unified sync:** `POST /api/v1/integrations/sync` — registry in `app/integrations/core/sync_dispatch.py` (`_SOURCE_TO_PROVIDER_KEY` must include every `source`).
 
@@ -20,4 +21,4 @@ Use this file if chat context resets. It summarizes **vendor**, **`evidence_mast
 
 **Mount:** `app/integrations/api.py` → `mount_integration_routes`
 
-Last updated: 2026-03-28 — Aqua Security self-hosted (`aqua_security`); fixed `lacework` in `sync_dispatch` `_SOURCE_TO_PROVIDER_KEY`; Postman + `0013 - aqua-security.md`.
+Last updated: 2026-03-28 — Sysdig Secure (`sysdig_secure`); Postman + `0014 - sysdig-secure.md`; EV-751+.
