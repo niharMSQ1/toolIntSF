@@ -64,7 +64,9 @@ def run_jira_evidence_collection(
         source="jira_cloud",
     )
     if not masters:
-        raise ValueError("No evidence_masters for this tool's domain; run /configure to seed.")
+        raise ValueError(
+            "No evidence_masters for this tool's domain; seed evidence_masters manually before collect."
+        )
 
     results: list[CollectionItemResult] = []
 
@@ -90,9 +92,9 @@ def run_jira_evidence_collection(
                 evidence_id=ev["id"],
                 evidence_name=master["name"],
                 user_id=user_id,
+                tool_id=tool_id,
                 tool_evidence=jira_evidence_for_storage(content),
                 evidence_from=EVIDENCE_FROM_TOOL,
-                source="Jira Cloud REST API",
                 status="success",
                 detail={"mapped_controls": mapped},
                 error_message=None,

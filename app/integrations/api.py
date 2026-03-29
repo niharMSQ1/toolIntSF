@@ -8,6 +8,14 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
+from app.integrations.categories.cloud.aws.routers import (
+    configure_router as aws_configure_router,
+    evidence_router as aws_evidence_router,
+)
+from app.integrations.categories.cspm.snyk.routers import (
+    configure_router as snyk_configure_router,
+    evidence_router as snyk_evidence_router,
+)
 from app.integrations.categories.cspm.wiz.routers import (
     configure_router as wiz_configure_router,
     evidence_router as wiz_evidence_router,
@@ -41,6 +49,10 @@ def mount_integration_routes(app: FastAPI) -> None:
     """Register all provider routers on the FastAPI application."""
     app.include_router(wiz_configure_router)
     app.include_router(wiz_evidence_router)
+    app.include_router(snyk_configure_router)
+    app.include_router(snyk_evidence_router)
+    app.include_router(aws_configure_router)
+    app.include_router(aws_evidence_router)
     app.include_router(bitbucket_configure_router)
     app.include_router(bitbucket_workspaces_router)
     app.include_router(bitbucket_oauth_authorize_router)

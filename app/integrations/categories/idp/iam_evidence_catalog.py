@@ -3,9 +3,23 @@ Shared IAM evidence catalog (EV-* codes) for IDP integrations (Okta, Microsoft E
 
 ``evidence_masters.code`` is globally unique in the database; each product seeds the same
 codes/names so the catalog aligns across Okta and Entra.
+
+``evidence_masters.source`` for these rows is the generic tag ``iam`` (not vendor-specific).
 """
 
 from __future__ import annotations
+
+# Generic source for IAM catalog rows — shared by Okta, Entra, and any future IAM connectors.
+IAM_MASTER_SOURCE = "iam"
+
+# DB rows created before ``iam`` may still use these; collection lists all of them.
+IAM_LEGACY_MASTER_SOURCES: tuple[str, ...] = ("okta", "microsoft_entra", "microsoft_entra_gcc_high")
+
+
+def iam_evidence_master_filter_sources() -> tuple[str, ...]:
+    """Sources to match when listing IAM evidence_masters (current tag + legacy values)."""
+    return (IAM_MASTER_SOURCE,) + IAM_LEGACY_MASTER_SOURCES
+
 
 IAM_EVIDENCE_SEED_ROWS: list[dict[str, str]] = [
     {"code": "EV-37", "name": "User Access Provisioning Records — IAM", "category": "IAM"},

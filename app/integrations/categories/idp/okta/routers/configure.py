@@ -13,7 +13,6 @@ from app.integrations.categories.idp.okta.collection_runner import (
     validate_okta_credentials,
 )
 from app.integrations.categories.idp.okta.credentials import ready_for_collection, resolve_okta_base_url
-from app.integrations.categories.idp.okta.seed_service import seed_okta_evidence_masters
 from app.integrations.core.persistence import tool_integration_service as persistence
 from app.schemas import OktaConfigureResponse, OktaFlowResponse, ToolIntegrationPayload, ToolIntegrationResponse
 
@@ -57,8 +56,6 @@ def _configure_okta_response(
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    seed_okta_evidence_masters(session, payload.tool_id)
-
     cfg = row["configuration_data"]
     if not isinstance(cfg, dict):
         raise HTTPException(status_code=500, detail="Invalid configuration_data")

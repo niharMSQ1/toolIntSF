@@ -17,7 +17,6 @@ from app.integrations.categories.itsm.jira.credentials import (
     resolve_redirect_uri,
 )
 from app.integrations.categories.itsm.jira.oauth import build_authorization_url, build_state
-from app.integrations.categories.itsm.jira.seed_service import seed_jira_evidence_masters
 from app.integrations.categories.itsm.jira.token_refresh import refresh_jira_access_tokens
 from app.integrations.core.persistence import tool_integration_service as persistence
 from app.schemas import (
@@ -70,8 +69,6 @@ def _configure_jira_response(
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    seed_jira_evidence_masters(session, payload.tool_id)
-
     cfg = row["configuration_data"]
     if not isinstance(cfg, dict):
         raise HTTPException(status_code=500, detail="Invalid configuration_data")

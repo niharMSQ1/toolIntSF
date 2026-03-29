@@ -41,8 +41,8 @@ registry.register(
     ProviderMeta(
         category=IntegrationCategory.HRMS,
         key="zoho_people",
-        display_name="Zoho People",
-        description="HR evidence via Zoho People APIs (OAuth + collectors).",
+        display_name="Zoho People (HR / Employee Management)",
+        description="HR and employee-lifecycle evidence via Zoho People APIs (OAuth, Forms, Attendance, Leave, LMS; see api_endpoints.py).",
     )
 )
 registry.register(

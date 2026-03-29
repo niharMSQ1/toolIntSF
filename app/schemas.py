@@ -90,7 +90,7 @@ class CollectEvidenceResponse(BaseModel):
 
 
 class SyncIntegrationBody(BaseModel):
-    """Unified sync: same optional filters as collect; provider is optional if evidence_masters exist."""
+    """Unified sync: same optional filters as collect; provider is optional when evidence_masters rows exist for the domain."""
 
     org_id: str
     user_id: str
@@ -98,7 +98,7 @@ class SyncIntegrationBody(BaseModel):
     provider_key: str | None = Field(
         default=None,
         description=(
-            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz | jira_cloud | linear | okta. "
+            "Explicit provider: zoho_people | microsoft_entra | microsoft_entra_gcc_high | bitbucket_cloud | wiz | jira_cloud | okta. "
             "Omit to infer from evidence_masters.source (after configure)."
         ),
     )
@@ -502,6 +502,62 @@ class WizConfigureResponse(BaseModel):
     )
     next_step: str
     configuration_data: dict = Field(description="Saved config with secrets masked (same as GET /status).")
+
+
+class SnykConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/cspm/snyk/configure (API key, access token, or OAuth client credentials + scope)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if static token or OAuth credentials validate (e.g. GET /v1/orgs after OAuth exchange when applicable)."
+    )
+    ready_for_collection: bool = Field(description="True when credentials, region, and org_ids or group_id are set.")
+    collection_started_in_background: bool = Field(
+        default=True,
+        description="When true, a background job is pulling Snyk evidence (same as POST .../evidence/snyk/collect).",
+    )
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secrets masked (same as GET /status).")
+
+
+class SnykFlowResponse(BaseModel):
+    """Where you are in configure → collect for Snyk."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class AwsConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/cloud/aws/configure (IAM role ARN for STS AssumeRole)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if role_arn is well-formed and STS AssumeRole + GetCallerIdentity succeeded."
+    )
+    ready_for_collection: bool = Field(description="True when role_arn is set and assumption succeeded.")
+    collection_started_in_background: bool = Field(
+        default=True,
+        description="When true, a background job is pulling AWS evidence (same as POST .../evidence/aws/collect).",
+    )
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secrets masked (same as GET /status).")
+
+
+class AwsFlowResponse(BaseModel):
+    """Where you are in configure → collect for AWS."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
 
 
 class WizFlowResponse(BaseModel):

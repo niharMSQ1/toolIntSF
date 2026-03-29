@@ -1,4 +1,4 @@
-﻿"""
+"""
 Stable import aliases for ORM classes defined in `models_generated.py`.
 
 Regenerate the full schema with `python generate_model.py` from the project root.
@@ -10,6 +10,7 @@ from __future__ import annotations
 from app.models_generated import (
     Base,
     ControlEvidenceMaster,
+    Employees,
     Evidence,
     EvidenceCollections,
     EvidenceMasters,
@@ -27,6 +28,7 @@ EvidenceMapped = EvidenceMappeds
 __all__ = [
     "Base",
     "ControlEvidenceMaster",
+    "Employees",
     "Evidence",
     "EvidenceCollection",
     "EvidenceCollections",

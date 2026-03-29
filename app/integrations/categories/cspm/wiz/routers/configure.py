@@ -14,7 +14,6 @@ from app.integrations.categories.cspm.wiz.credentials import (
     resolve_graphql_url,
 )
 from app.integrations.categories.cspm.wiz.collection_runner import run_wiz_evidence_collection_after_configure_background
-from app.integrations.categories.cspm.wiz.seed_service import seed_wiz_evidence_masters
 from app.integrations.categories.cspm.wiz.token_refresh import force_refresh_access_token
 from app.integrations.core.persistence import tool_integration_service as persistence
 from app.schemas import (
@@ -67,8 +66,6 @@ def configure_wiz(
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    seed_wiz_evidence_masters(session, payload.tool_id)
-
     try:
         row_after = persistence.get_integration(session, payload.org_id, payload.tool_id)
         if not row_after:

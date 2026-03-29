@@ -1,4 +1,7 @@
-﻿"""Seed `evidence_masters` rows for Zoho People (scoped by tool domain)."""
+"""Seed `evidence_masters` rows for Zoho People (scoped by tool domain).
+
+Call manually when needed (not from POST /configure).
+"""
 
 from __future__ import annotations
 
@@ -21,7 +24,6 @@ def seed_zoho_evidence_masters(session: Session, tool_id: str) -> int:
             select(EvidenceMaster.id).where(
                 EvidenceMaster.domain_id == did,
                 EvidenceMaster.code == row["code"],
-                EvidenceMaster.source == "zoho_people",
             ).limit(1)
         ).first()
         if exists:
@@ -34,7 +36,7 @@ def seed_zoho_evidence_masters(session: Session, tool_id: str) -> int:
                 name=row["name"],
                 code=row["code"],
                 category=row["category"],
-                source="zoho_people",
+                source=None,
                 evidence_type="API",
                 api_endpoint=row.get("api"),
                 description=None,

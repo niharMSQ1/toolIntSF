@@ -1,6 +1,10 @@
-# Zoho People — HRMS integration (complete flow)
+# Zoho People — HR / Employee Management (HRMS integration)
 
-This document is the **Zoho People–specific** walkthrough aligned with the code under [`app/integrations/categories/hrms/zoho_people/`](../app/integrations/categories/hrms/zoho_people/). The **generic** rules for tables, uniqueness, and control mapping live in **[0001 - initialising.md](0001%20-%20initialising.md)**. Generic steps are labeled **G1–G5** below.
+This document is the **Zoho People–specific** walkthrough aligned with the code under [`app/integrations/categories/hrms/zoho_people/`](../app/integrations/categories/hrms/zoho_people/). Evidence is scoped to the **HR / Employee Management** GRC domain (see `mappings.txt` — e.g. EV-113… HR codes on your tool’s `domain_id`). The **generic** rules for tables, uniqueness, and control mapping live in **[0001 - initialising.md](0001%20-%20initialising.md)**. Generic steps are labeled **G1–G5** below.
+
+**API reference** — Zoho documents all endpoints at [Zoho People API](https://www.zoho.com/people/api/). This repo lists the concrete paths we call in [`api_endpoints.py`](../app/integrations/categories/hrms/zoho_people/api_endpoints.py) and implements them in [`collector.py`](../app/integrations/categories/hrms/zoho_people/collector.py).
+
+**Employee master during integration** — When a run prefetches the employee form (`GET .../api/forms/employee/getRecords`), the worker **logs** and **prints** a short summary (row count + sample of up to 5 employees). Set env `ZOHO_PRINT_EMPLOYEE_MASTER=0` to disable stdout only.
 
 **All integrated tools:** **[0000 - integrations_index.md](0000%20-%20integrations_index.md)**.
 
@@ -16,8 +20,8 @@ For **Microsoft Entra (IDP)**, see **[0004 - microsoft_entra_integration.md](000
 |--------------|------------------------------|
 | **G1** — User selects tool and supplies data | User picks **Zoho People** (HRMS) and submits **`ToolIntegrationPayload`** (see below), or resumes from saved integration. |
 | **G2** — Persist in `tool_integrations` | One row per `(organization_id, tool_id)`; store OAuth settings and tokens in **`configuration_data`**. Updates are **full replace** on that JSON object (no partial merge). |
-| **G3** — Resolve `evidence_masters` | **POST …/configure** seeds masters for the tool's **`domain_id`** (from [`seed.py`](../app/integrations/categories/hrms/zoho_people/seed.py)). Collectors use **`code`** (e.g. `HR_EMPLOYEE_MASTER`) and master **`name`** must match **`evidence.title`**. |
-| **G4** — `evidence` + `evidence_collection` | Call Zoho People APIs with **`Zoho-oauthtoken`**; **`upsert_evidence_full_replace`**; **`insert_evidence_collection`** with `source` = `Zoho People API`. |
+| **G3** — Resolve `evidence_masters` | Seed **`evidence_masters`** manually (or via `seed_zoho_evidence_masters`) for the tool’s **`domain_id`** — see [`seed.py`](../app/integrations/categories/hrms/zoho_people/seed.py). All rows use **`category`** = `HR / Employee Management`. Collectors use **`code`** (e.g. `EV-521` from **`mappings.txt`**); master **`name`** must match **`evidence.title`**. |
+| **G4** — `evidence` + `evidence_collections` | Call Zoho People APIs with **`Zoho-oauthtoken`**; **`upsert_evidence_full_replace`**; **`insert_evidence_collection`** with **`source`** = **`tools.name`** for `tool_id` (see 0001). |
 | **G5** — `evidence_mappeds` | **`remap_evidence_to_controls`** links **`evidence.id`** to controls via **`control_evidence_master`** for this **`evidence_master_id`**. |
 
 **Uniqueness** (from `0001`):
@@ -32,7 +36,7 @@ For **Microsoft Entra (IDP)**, see **[0004 - microsoft_entra_integration.md](000
 | Item | Value |
 |------|--------|
 | Registry key | `zoho_people` ([`registry.py`](../app/integrations/core/registry.py)) |
-| Category | `hrms` |
+| Category | `hrms` (product area: **HR / Employee Management**) |
 | Package | [`app/integrations/categories/hrms/zoho_people/`](../app/integrations/categories/hrms/zoho_people/) |
 | OAuth + token helpers | [`oauth.py`](../app/integrations/categories/hrms/zoho_people/oauth.py), [`credentials.py`](../app/integrations/categories/hrms/zoho_people/credentials.py), [`regions.py`](../app/integrations/categories/hrms/zoho_people/regions.py) |
 | Evidence collectors | [`collector.py`](../app/integrations/categories/hrms/zoho_people/collector.py) |
@@ -53,7 +57,7 @@ Assume base URL `http://localhost:8006` (see **`app_port`** in [`app/config.py`]
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| POST | `/api/v1/integrations/zoho/configure` | Upsert **`tool_integrations`**, seed **`evidence_masters`**, return OAuth URL or start background collect if tokens exist. |
+| POST | `/api/v1/integrations/zoho/configure` | Upsert **`tool_integrations`**, return OAuth URL or start background collect if tokens exist (does **not** seed **`evidence_masters`**; seed manually). |
 | POST | `/hrms/zoho/integrations` | Same as **configure** (alias path). |
 
 **Request body** — `ToolIntegrationPayload`:
@@ -98,7 +102,7 @@ If **`post_oauth_success_redirect_url`** is set in [`app/config.py`](../app/conf
   "org_id": "<organization UUID>",
   "user_id": "<user UUID>",
   "tool_id": "<Zoho People tool UUID>",
-  "evidence_codes": ["HR_EMPLOYEE_MASTER"],
+  "evidence_codes": ["EV-521"],
   "date_from": "2025-01-01",
   "date_to": "2025-12-31"
 }
@@ -144,7 +148,7 @@ Implementation: [`sync_dispatch.py`](../app/integrations/core/sync_dispatch.py),
   "user_id": "019ce23e-67e0-702e-957d-ab3af1f8a619",
   "tool_id": "019ce23d-c16d-7304-a8b5-3500e3cbadbc",
   "provider_key": "zoho_people",
-  "evidence_codes": ["HR_EMPLOYEE_MASTER", "HR_ACTIVE_EMPLOYEES"],
+  "evidence_codes": ["EV-521", "EV-402"],
   "date_from": "2025-01-01",
   "date_to": "2025-12-31"
 }
@@ -197,26 +201,26 @@ After OAuth, tokens are stored on the same row — typically under **`oauth_clie
 
 ## Phase B — Evidence inventory (G3)
 
-**POST …/configure** calls **`seed_zoho_evidence_masters`** so each **`evidence_masters`** row exists for this tool's **domain** (idempotent skip if `domain_id` + `code` + `source` already present).
+**Evidence masters** for this tool’s **domain** must exist before collect (call **`seed_zoho_evidence_masters`** or insert rows manually; idempotent skip if `domain_id` + `code` already present).
 
-| # | `name` (also `evidence.title`) | `code` | Category |
-|---|--------------------------------|--------|----------|
-| 1 | Exit Employee Records | `HR_EXIT_EMPLOYEES` | HR_LIFECYCLE |
-| 2 | Employee Master List | `HR_EMPLOYEE_MASTER` | HR_EMPLOYEE |
-| 3 | Active Employees List | `HR_ACTIVE_EMPLOYEES` | HR_EMPLOYEE |
-| 4 | Terminated Employees List | `HR_TERMINATED_EMPLOYEES` | HR_EMPLOYEE |
-| 5 | Department Structure | `HR_DEPARTMENT_STRUCTURE` | HR_ORG |
-| 6 | Reporting Hierarchy | `HR_REPORTING_STRUCTURE` | HR_ORG |
-| 7 | Employee Email List | `HR_EMPLOYEE_EMAIL_LIST` | HR_ACCESS |
-| 8 | Attendance Logs | `HR_ATTENDANCE_LOGS` | HR_ATTENDANCE |
-| 9 | Timesheet Records | `HR_TIMESHEETS` | HR_ATTENDANCE |
-| 10 | Leave Records | `HR_LEAVE_RECORDS` | HR_LEAVE |
-| 11 | Training Completion Records | `HR_TRAINING_COMPLETION` | HR_TRAINING |
-| 12 | Policy Acknowledgement Records | `HR_POLICY_ACKNOWLEDGEMENT` | HR_POLICY |
-| 13 | New Hire Records | `HR_NEW_HIRES` | HR_LIFECYCLE |
-| 14 | Exit Clearance Status | `HR_EXIT_CLEARANCE` | HR_LIFECYCLE |
+Codes and titles match **`mappings.txt`** (HR / Employee Management, domain `465c7082-4a36-4567-b535-e6fe16994eec`). Legacy **`HR_*`** codes are still accepted by collectors for existing rows.
 
-`source` on **`evidence_masters`** is **`zoho_people`**.
+| # | `name` (also `evidence.title`) | `code` | `category` |
+|---|--------------------------------|--------|------------|
+| 1 | Employee Offboarding Checklist Records — HR | `EV-26` | HR / Employee Management |
+| 2 | Role and Responsibility Register — HR | `EV-521` | HR / Employee Management |
+| 3 | Team Role Assignment Records — HR | `EV-402` | HR / Employee Management |
+| 4 | Employee Termination Records — HR | `EV-25` | HR / Employee Management |
+| 5 | Organizational Chart — HR | `EV-128` | HR / Employee Management |
+| 6 | Employee Role and Responsibility Records — HR | `EV-129` | HR / Employee Management |
+| 7 | Employee Reference Check Records — HR | `EV-564` | HR / Employee Management |
+| 8 | Security Awareness Training Records — HR | `EV-88` | HR / Employee Management |
+| 9 | Employee Performance Review Records — HR | `EV-136` | HR / Employee Management |
+| 10 | Employee Probation Review Records — HR | `EV-137` | HR / Employee Management |
+| 11 | Employee Training Records — HR | `EV-292` | HR / Employee Management |
+| 12 | Employee Policy Acknowledgement Records — HR | `EV-140` | HR / Employee Management |
+| 13 | Employee Onboarding Training Records — HR | `EV-89` | HR / Employee Management |
+| 14 | Employee Background Verification Records — HR | `EV-113` | HR / Employee Management |
 
 ---
 

@@ -1,4 +1,7 @@
-"""Seed evidence_masters for Jira Cloud (ITSM) when codes are not already present globally."""
+"""Seed evidence_masters for Jira Cloud (ITSM) when codes are not already present globally.
+
+Call manually when needed (not from POST /configure).
+"""
 
 from __future__ import annotations
 

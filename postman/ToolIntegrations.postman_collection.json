@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "toolintsf-integrations-v2",
     "name": "Stakflo GRC — Tool Integrations",
-    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl` (e.g. http://localhost:8006), `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`.\n\n**Wiz:** service account — POST configure with `graphql_url`, `client_id`, `client_secret`; no browser OAuth.\n\n**Okta:** POST configure with `org_domain` + `api_token` (SSWS); no browser OAuth.\n\n**Sync:** `provider_key` optional if `evidence_masters.source` is unique: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `jira_cloud` | `okta`.",
+    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl`, `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id`, `aws_role_arn`, `aws_region`, `aws_sts_region`, `aws_external_id`, `aws_evidence_codes`.\n\n**Wiz:** service account — `graphql_url`, `client_id`, `client_secret`.\n\n**Snyk:** API key / OAuth; `org_ids` or `group_id`.\n\n**AWS (Cloud):** `POST .../integrations/cloud/aws/configure` with `configuration_data.role_arn` (IAM role ARN — **no region in ARN**; account ID only). Server credentials must allow `sts:AssumeRole`. Optional: `region` (default `us-east-1`), `region: \"auto\"` (multi-region via EC2 DescribeRegions), `sts_region` (AssumeRole endpoint, default `us-east-1`), `external_id` (cross-account trust). Evidence: `POST .../evidence/aws/collect` — `evidence_codes` null collects all seeded Cloud EV codes; or pass e.g. `[\"EV-16\",\"EV-541\"]`. Seed `evidence_masters` for the tool domain (app upsert or `scripts/sql/seed_aws_evidence_masters_cloud_domain.sql`).\n\n**Okta:** `org_domain` + `api_token` (SSWS).\n\n**Sync:** `provider_key` optional: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `snyk` | `aws` | `jira_cloud` | `okta`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -11,7 +11,17 @@
     { "key": "tool_id", "value": "" },
     { "key": "user_id", "value": "" },
     { "key": "oauth_code", "value": "" },
-    { "key": "oauth_state", "value": "" }
+    { "key": "oauth_state", "value": "" },
+    { "key": "snyk_api_token", "value": "" },
+    { "key": "snyk_org_id", "value": "" },
+    { "key": "aws_role_arn", "value": "" },
+    { "key": "aws_region", "value": "us-east-1" },
+    { "key": "aws_sts_region", "value": "us-east-1" },
+    { "key": "aws_external_id", "value": "" },
+    {
+      "key": "aws_evidence_codes",
+      "value": "[\"EV-16\", \"EV-541\", \"EV-390\"]"
+    }
   ],
   "item": [
     {
@@ -111,6 +121,234 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/evidence/wiz/collect"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Snyk CSPM",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/snyk/configure (API key / access token)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"auth_type\": \"api_key\",\n    \"snyk_api_token\": \"{{snyk_api_token}}\",\n    \"region\": \"us\",\n    \"org_ids\": [\"{{snyk_org_id}}\"]\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/snyk/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/cspm/snyk/configure (OAuth 2.0 client credentials)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"auth_type\": \"oauth2_client_credentials\",\n    \"oauth_client_id\": \"<snyk-oauth-client-id>\",\n    \"oauth_client_secret\": \"<snyk-oauth-client-secret>\",\n    \"region\": \"us\",\n    \"org_ids\": [\"{{snyk_org_id}}\"]\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/snyk/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/snyk/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/snyk/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "snyk", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/snyk/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/snyk/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "snyk", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/snyk/regions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/snyk/regions"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/snyk/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/snyk/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key snyk)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"snyk\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "AWS Cloud",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cloud/aws/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"aws\",\n    \"role_arn\": \"{{aws_role_arn}}\",\n    \"region\": \"{{aws_region}}\",\n    \"external_id\": \"\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cloud/aws/configure",
+            "description": "Single-region workload default (`aws_region`, e.g. us-east-1). IAM role ARNs do not encode region — only account ID."
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/cloud/aws/configure (region auto)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"aws\",\n    \"role_arn\": \"{{aws_role_arn}}\",\n    \"region\": \"auto\",\n    \"external_id\": \"\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cloud/aws/configure",
+            "description": "Uses EC2 DescribeRegions after AssumeRole to scan multiple commercial regions (requires ec2:DescribeRegions on assumed role)."
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/cloud/aws/configure (sts_region + external_id)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"aws\",\n    \"role_arn\": \"{{aws_role_arn}}\",\n    \"region\": \"{{aws_region}}\",\n    \"sts_region\": \"{{aws_sts_region}}\",\n    \"external_id\": \"{{aws_external_id}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cloud/aws/configure",
+            "description": "Cross-account: optional external_id on trust policy; sts_region controls which regional STS endpoint performs AssumeRole."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cloud/aws/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cloud/aws/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cloud", "aws", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cloud/aws/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cloud/aws/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cloud", "aws", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/aws/collect (all seeded codes)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/aws/collect",
+            "description": "Collects every AWS evidence master linked to this tool's domain (see evidence_map AWS_SEED_ROWS)."
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/aws/collect (subset — aws_evidence_codes)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": {{aws_evidence_codes}},\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/aws/collect",
+            "description": "Set collection variable `aws_evidence_codes` to a JSON array string, e.g. [\"EV-16\",\"EV-541\"]."
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/aws/collect (full Vanta-core list)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": [\n    \"EV-16\",\n    \"EV-17\",\n    \"EV-84\",\n    \"EV-115\",\n    \"EV-116\",\n    \"EV-243\",\n    \"EV-295\",\n    \"EV-326\",\n    \"EV-377\",\n    \"EV-390\",\n    \"EV-433\",\n    \"EV-527\",\n    \"EV-541\",\n    \"EV-547\",\n    \"EV-248\"\n  ],\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/aws/collect",
+            "description": "Explicit list of all Cloud-domain AWS seed codes (same as ALL_AWS_EVIDENCE_CODES in code)."
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key aws)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"aws\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key aws, subset codes)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"aws\",\n  \"evidence_codes\": {{aws_evidence_codes}},\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
           }
         }
       ]
