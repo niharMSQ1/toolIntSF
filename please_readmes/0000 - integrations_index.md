@@ -17,6 +17,7 @@ This folder documents **implemented** GRC tool integrations mounted from [`app/i
 | **Microsoft Defender for Cloud** | CSPM | `defender_cloud` | `defender_cloud` | [0010 - defender-cloud.md](0010%20-%20defender-cloud.md) |
 | **Orca Security** | CSPM | `orca_security` | `orca_security` | [0011 - orca-security.md](0011%20-%20orca-security.md) |
 | **Lacework** | CSPM | `lacework` | `lacework` | [0012 - lacework.md](0012%20-%20lacework.md) |
+| **Aqua Security** (self-hosted CSP) | CSPM | `aqua_security` | `aqua_security` | [0013 - aqua-security.md](0013%20-%20aqua-security.md) |
 | **Jira Cloud** | ITSM | `jira_cloud` | `jira_cloud` | [0007 - jira_cloud_integration.md](0007%20-%20jira_cloud_integration.md) |
 | **Okta** | IAM / IDP | `iam` (shared IAM catalog; legacy `okta` possible) | `okta` | [0008 - okta_iam_integration.md](0008%20-%20okta_iam_integration.md) |
 

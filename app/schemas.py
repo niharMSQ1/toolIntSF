@@ -469,6 +469,31 @@ class LaceworkFlowResponse(BaseModel):
     next_step: str
 
 
+class AquaSecurityConfigureResponse(BaseModel):
+    """POST .../cspm/aqua-security/configure — self-hosted console URL + login id + password."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if POST /api/v1/login and GET /api/v1/hosts succeeded.",
+    )
+    ready_for_collection: bool = Field(description="True when api_base_url, login_id, and password are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with password masked.")
+
+
+class AquaSecurityFlowResponse(BaseModel):
+    """Configure → collect flow for Aqua Security."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
 class AwsConfigureResponse(BaseModel):
     """Returned by POST /api/v1/integrations/cloud/aws/configure (IAM role ARN for STS AssumeRole)."""
 
