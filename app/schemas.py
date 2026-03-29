@@ -365,6 +365,34 @@ class SnykFlowResponse(BaseModel):
     next_step: str
 
 
+class PrismaCloudConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/cspm/prisma-cloud/configure (CSPM REST access key + API URL)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if POST /login succeeded with the configured access key and API base URL.",
+    )
+    ready_for_collection: bool = Field(description="True when api_base_url and keys are valid and JWT is stored.")
+    collection_started_in_background: bool = Field(
+        default=True,
+        description="When true, a background job is pulling Prisma Cloud evidence.",
+    )
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secrets and JWT masked.")
+
+
+class PrismaCloudFlowResponse(BaseModel):
+    """Where you are in configure → collect for Prisma Cloud."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
 class AwsConfigureResponse(BaseModel):
     """Returned by POST /api/v1/integrations/cloud/aws/configure (IAM role ARN for STS AssumeRole)."""
 

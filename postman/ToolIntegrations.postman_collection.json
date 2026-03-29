@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "toolintsf-integrations-v2",
     "name": "Stakflo GRC — Tool Integrations",
-    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl`, `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id`, `aws_role_arn`, `aws_region`, `aws_sts_region`, `aws_external_id`, `aws_evidence_codes`.\n\n**Wiz:** service account — `graphql_url`, `client_id`, `client_secret`.\n\n**Snyk:** API key / OAuth; `org_ids` or `group_id`.\n\n**AWS (Cloud):** `POST .../integrations/cloud/aws/configure` with `configuration_data.role_arn` (IAM role ARN — **no region in ARN**; account ID only). Server credentials must allow `sts:AssumeRole`. Optional: `region` (default `us-east-1`), `region: \"auto\"` (multi-region via EC2 DescribeRegions), `sts_region` (AssumeRole endpoint, default `us-east-1`), `external_id` (cross-account trust). Evidence: `POST .../evidence/aws/collect` — `evidence_codes` null collects all seeded Cloud EV codes; or pass e.g. `[\"EV-16\",\"EV-541\"]`. Seed `evidence_masters` for the tool domain (app upsert or `scripts/sql/seed_aws_evidence_masters_cloud_domain.sql`).\n\n**Okta:** `org_domain` + `api_token` (SSWS).\n\n**Sync:** `provider_key` optional: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `snyk` | `aws` | `jira_cloud` | `okta`.",
+    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl`, `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id`, `aws_role_arn`, `aws_region`, `aws_sts_region`, `aws_external_id`, `aws_evidence_codes`, `prisma_api_base_url`, `prisma_access_key_id`, `prisma_secret_key`.\n\n**Wiz:** service account — `graphql_url`, `client_id`, `client_secret`.\n\n**Prisma Cloud:** CSPM REST — `api_base_url` (tenant API URL per pan.dev), `access_key_id`, `secret_key`; JWT via POST /login. Seed evidence EV-701.. with `source=prisma_cloud` before collect.\n\n**Snyk:** API key / OAuth; `org_ids` or `group_id`.\n\n**AWS (Cloud):** `POST .../integrations/cloud/aws/configure` with `configuration_data.role_arn` (IAM role ARN — **no region in ARN**; account ID only). Server credentials must allow `sts:AssumeRole`. Optional: `region` (default `us-east-1`), `region: \"auto\"` (multi-region via EC2 DescribeRegions), `sts_region` (AssumeRole endpoint, default `us-east-1`), `external_id` (cross-account trust). Evidence: `POST .../evidence/aws/collect` — `evidence_codes` null collects all seeded Cloud EV codes; or pass e.g. `[\"EV-16\",\"EV-541\"]`. Seed `evidence_masters` for the tool domain (app upsert or `scripts/sql/seed_aws_evidence_masters_cloud_domain.sql`).\n\n**Okta:** `org_domain` + `api_token` (SSWS).\n\n**Sync:** `provider_key` optional: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `prisma_cloud` | `snyk` | `aws` | `jira_cloud` | `okta`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -21,7 +21,10 @@
     {
       "key": "aws_evidence_codes",
       "value": "[\"EV-16\", \"EV-541\", \"EV-390\"]"
-    }
+    },
+    { "key": "prisma_api_base_url", "value": "https://api.prismacloud.io" },
+    { "key": "prisma_access_key_id", "value": "" },
+    { "key": "prisma_secret_key", "value": "" }
   ],
   "item": [
     {
@@ -121,6 +124,102 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/evidence/wiz/collect"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prisma Cloud CSPM",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/prisma-cloud/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"prisma_cloud\",\n    \"api_base_url\": \"{{prisma_api_base_url}}\",\n    \"access_key_id\": \"{{prisma_access_key_id}}\",\n    \"secret_key\": \"{{prisma_secret_key}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/prisma-cloud/configure",
+            "description": "Palo Alto Prisma Cloud CSPM: POST /login with access key (documented on pan.dev). api_base_url must match your tenant (e.g. api2.prismacloud.io)."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/prisma-cloud/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/prisma-cloud/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "prisma-cloud", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/prisma-cloud/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/prisma-cloud/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "prisma-cloud", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/prisma-cloud/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/prisma-cloud/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key prisma_cloud)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"prisma_cloud\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Prisma Cloud tenant — POST /login (direct API reference)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{prisma_access_key_id}}\",\n  \"password\": \"{{prisma_secret_key}}\"\n}"
+            },
+            "url": "{{prisma_api_base_url}}/login",
+            "description": "Official CSPM login (pan.dev). Response includes token for x-redlock-auth header on other calls."
+          }
+        },
+        {
+          "name": "Prisma Cloud tenant — GET /cloud (direct API reference)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-redlock-auth", "value": "<paste JWT from /login>" }
+            ],
+            "url": "{{prisma_api_base_url}}/cloud"
           }
         }
       ]

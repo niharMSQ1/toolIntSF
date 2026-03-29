@@ -16,6 +16,10 @@ from app.integrations.categories.cspm.snyk.routers import (
     configure_router as snyk_configure_router,
     evidence_router as snyk_evidence_router,
 )
+from app.integrations.categories.cspm.prisma_cloud.routers import (
+    configure_router as prisma_cloud_configure_router,
+    evidence_router as prisma_cloud_evidence_router,
+)
 from app.integrations.categories.cspm.wiz.routers import (
     configure_router as wiz_configure_router,
     evidence_router as wiz_evidence_router,
@@ -45,6 +49,8 @@ def mount_integration_routes(app: FastAPI) -> None:
     """Register all provider routers on the FastAPI application."""
     app.include_router(wiz_configure_router)
     app.include_router(wiz_evidence_router)
+    app.include_router(prisma_cloud_configure_router)
+    app.include_router(prisma_cloud_evidence_router)
     app.include_router(snyk_configure_router)
     app.include_router(snyk_evidence_router)
     app.include_router(aws_configure_router)
