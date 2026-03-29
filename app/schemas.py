@@ -594,6 +594,98 @@ class SentinelOneFlowResponse(BaseModel):
     next_step: str
 
 
+class TenableIoConfigureResponse(BaseModel):
+    """POST .../vulnerability/tenable-io/configure — Tenable.io access + secret keys."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if GET /assets succeeded with X-ApiKeys.")
+    ready_for_collection: bool = Field(description="True when access_key, secret_key, and api_base_url are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secret_key masked.")
+
+
+class TenableIoFlowResponse(BaseModel):
+    """Configure → collect flow for Tenable.io."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class QualysConfigureResponse(BaseModel):
+    """POST .../vulnerability/qualys/configure — Qualys user + password (Basic)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if host list API returned 200 with valid XML.")
+    ready_for_collection: bool = Field(description="True when username, password, and api_base_url are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with password masked.")
+
+
+class QualysFlowResponse(BaseModel):
+    """Configure → collect flow for Qualys."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class Rapid7InsightVmConfigureResponse(BaseModel):
+    """POST .../vulnerability/rapid7-insightvm/configure — Security Console Basic auth."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if GET /api/3/sites?size=1 succeeded.")
+    ready_for_collection: bool = Field(description="True when username, password, and api_base_url are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with password masked.")
+
+
+class Rapid7InsightVmFlowResponse(BaseModel):
+    """Configure → collect flow for Rapid7 InsightVM."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class TaniumConfigureResponse(BaseModel):
+    """POST .../endpoint/tanium/configure — API token in session header."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if GET /api/v2/session/info succeeded.")
+    ready_for_collection: bool = Field(description="True when api_token and api_base_url are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with api_token masked.")
+
+
+class TaniumFlowResponse(BaseModel):
+    """Configure → collect flow for Tanium."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
 class AwsConfigureResponse(BaseModel):
     """Returned by POST /api/v1/integrations/cloud/aws/configure (IAM role ARN for STS AssumeRole)."""
 

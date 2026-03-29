@@ -32,6 +32,22 @@ from app.integrations.categories.endpoint_security.sentinelone.routers import (
     configure_router as sentinelone_configure_router,
     evidence_router as sentinelone_evidence_router,
 )
+from app.integrations.categories.vulnerability_management.qualys.routers import (
+    configure_router as qualys_configure_router,
+    evidence_router as qualys_evidence_router,
+)
+from app.integrations.categories.vulnerability_management.rapid7_insightvm.routers import (
+    configure_router as rapid7_insightvm_configure_router,
+    evidence_router as rapid7_insightvm_evidence_router,
+)
+from app.integrations.categories.vulnerability_management.tanium.routers import (
+    configure_router as tanium_configure_router,
+    evidence_router as tanium_evidence_router,
+)
+from app.integrations.categories.vulnerability_management.tenable_io.routers import (
+    configure_router as tenable_io_configure_router,
+    evidence_router as tenable_io_evidence_router,
+)
 from app.integrations.categories.cspm.aqua_security.routers import (
     configure_router as aqua_security_configure_router,
     evidence_router as aqua_security_evidence_router,
@@ -101,6 +117,14 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(defender_for_endpoint_evidence_router)
     app.include_router(sentinelone_configure_router)
     app.include_router(sentinelone_evidence_router)
+    app.include_router(tenable_io_configure_router)
+    app.include_router(tenable_io_evidence_router)
+    app.include_router(qualys_configure_router)
+    app.include_router(qualys_evidence_router)
+    app.include_router(rapid7_insightvm_configure_router)
+    app.include_router(rapid7_insightvm_evidence_router)
+    app.include_router(tanium_configure_router)
+    app.include_router(tanium_evidence_router)
     app.include_router(aws_configure_router)
     app.include_router(aws_evidence_router)
     app.include_router(bitbucket_configure_router)

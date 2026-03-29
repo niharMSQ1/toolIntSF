@@ -22,6 +22,10 @@ This folder documents **implemented** GRC tool integrations mounted from [`app/i
 | **CrowdStrike Falcon** | EDR / VM | `crowdstrike_falcon` | `crowdstrike_falcon` | [0015 - crowdstrike-falcon.md](0015%20-%20crowdstrike-falcon.md) |
 | **Microsoft Defender for Endpoint** | EDR / VM | `defender_for_endpoint` | `defender_for_endpoint` | [0016 - defender-for-endpoint.md](0016%20-%20defender-for-endpoint.md) |
 | **SentinelOne** | EDR / VM | `sentinelone` | `sentinelone` | [0017 - sentinelone.md](0017%20-%20sentinelone.md) |
+| **Tenable.io** | VM | `tenable_io` | `tenable_io` | [0018 - tenable-io.md](0018%20-%20tenable-io.md) |
+| **Qualys VMDR / VM** | VM | `qualys` | `qualys` | [0019 - qualys.md](0019%20-%20qualys.md) |
+| **Rapid7 InsightVM** | VM | `rapid7_insightvm` | `rapid7_insightvm` | [0020 - rapid7-insightvm.md](0020%20-%20rapid7-insightvm.md) |
+| **Tanium** | EDR | `tanium` | `tanium` | [0021 - tanium.md](0021%20-%20tanium.md) |
 | **Jira Cloud** | ITSM | `jira_cloud` | `jira_cloud` | [0007 - jira_cloud_integration.md](0007%20-%20jira_cloud_integration.md) |
 | **Okta** | IAM / IDP | `iam` (shared IAM catalog; legacy `okta` possible) | `okta` | [0008 - okta_iam_integration.md](0008%20-%20okta_iam_integration.md) |
 

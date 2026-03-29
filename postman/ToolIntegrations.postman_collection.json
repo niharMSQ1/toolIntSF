@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "toolintsf-integrations-v2",
     "name": "Stakflo GRC — Tool Integrations",
-    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl`, `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id`, `aws_role_arn`, `aws_region`, `aws_sts_region`, `aws_external_id`, `aws_evidence_codes`, `prisma_api_base_url`, `prisma_access_key_id`, `prisma_secret_key`, `defender_tenant_id`, `defender_client_id`, `defender_client_secret`, `defender_subscription_id`, `orca_api_host`, `orca_api_token`, `lacework_account`, `lacework_key_id`, `lacework_secret`, `aqua_api_base_url`, `aqua_login_id`, `aqua_password`, `sysdig_api_base_url`, `sysdig_api_token`, `cs_falcon_api_base_url`, `cs_falcon_client_id`, `cs_falcon_client_secret`, `cs_falcon_member_cid`, `dfe_tenant_id`, `dfe_client_id`, `dfe_client_secret`, `dfe_api_base_url`, `s1_api_base_url`, `s1_api_token`.\n\n**Wiz:** service account — `graphql_url`, `client_id`, `client_secret`.\n\n**Prisma Cloud:** CSPM REST — `api_base_url` (tenant API URL per pan.dev), `access_key_id`, `secret_key`; JWT via POST /login. Seed evidence EV-701.. with `source=prisma_cloud` before collect.\n\n**Snyk:** API key / OAuth; `org_ids` or `group_id`.\n\n**AWS (Cloud):** `POST .../integrations/cloud/aws/configure` with `configuration_data.role_arn` (IAM role ARN — **no region in ARN**; account ID only). Server credentials must allow `sts:AssumeRole`. Optional: `region` (default `us-east-1`), `region: \"auto\"` (multi-region via EC2 DescribeRegions), `sts_region` (AssumeRole endpoint, default `us-east-1`), `external_id` (cross-account trust). Evidence: `POST .../evidence/aws/collect` — `evidence_codes` null collects all seeded Cloud EV codes; or pass e.g. `[\"EV-16\",\"EV-541\"]`. Seed `evidence_masters` for the tool domain (app upsert or `scripts/sql/seed_aws_evidence_masters_cloud_domain.sql`).\n\n**Okta:** `org_domain` + `api_token` (SSWS).\n\n**Defender for Cloud:** Azure AD app (`tenant_id`, `client_id`, `client_secret`) + `subscription_id`; OAuth2 client credentials for `https://management.azure.com/.default`. Seed EV-711.. `source=defender_cloud`.\n\n**Orca Security:** `api_token` + optional `api_host` (default `api.orcasecurity.io`); base URL `https://{host}/api`. Seed EV-721.. `source=orca_security`.\n\n**Lacework:** `lacework_account` (subdomain) + `lacework_key_id` + `lacework_secret`; API v2 at `https://{account}.lacework.net/api/v2`. Seed EV-731.. `source=lacework`.\n\n**Aqua Security (self-hosted CSP):** `aqua_api_base_url` (console origin, e.g. `https://aqua.example.com:8443`) + `login_id` + `password`; REST v1 under `/api/v1`. Seed EV-741.. `source=aqua_security`. Aqua SaaS uses a different sign-in flow — not covered by this integration.\n\n**Sysdig Secure:** `sysdig_api_base_url` (regional API host, e.g. `https://api.us1.sysdig.com`) + `sysdig_api_token`; `Authorization: Bearer`. Seed EV-751.. `source=sysdig_secure`.\n\n**CrowdStrike Falcon:** `cs_falcon_api_base_url` (e.g. `https://api.crowdstrike.com`) + `cs_falcon_client_id` + `cs_falcon_client_secret`; OAuth2 `POST /oauth2/token`. Optional `cs_falcon_member_cid` (MSSP). Seed EV-761.. `source=crowdstrike_falcon`.\n\n**Microsoft Defender for Endpoint:** `dfe_api_base_url` (e.g. `https://api.security.microsoft.com`) + `dfe_tenant_id` + `dfe_client_id` + `dfe_client_secret`; OAuth2 client credentials for Defender resource `https://api.securitycenter.microsoft.com` (see Microsoft Learn). Seed EV-771.. `source=defender_for_endpoint`.\n\n**SentinelOne:** `s1_api_base_url` (management console origin, e.g. `https://usea1.sentinelone.net`, or full `.../web/api/v2.1`) + `s1_api_token` (`Authorization: ApiToken`). Seed EV-781.. `source=sentinelone`.\n\n**Sync:** `provider_key` optional: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `prisma_cloud` | `defender_cloud` | `aqua_security` | `orca_security` | `lacework` | `sysdig_secure` | `crowdstrike_falcon` | `defender_for_endpoint` | `sentinelone` | `snyk` | `aws` | `jira_cloud` | `okta`.",
+    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl`, `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id`, `aws_role_arn`, `aws_region`, `aws_sts_region`, `aws_external_id`, `aws_evidence_codes`, `prisma_api_base_url`, `prisma_access_key_id`, `prisma_secret_key`, `defender_tenant_id`, `defender_client_id`, `defender_client_secret`, `defender_subscription_id`, `orca_api_host`, `orca_api_token`, `lacework_account`, `lacework_key_id`, `lacework_secret`, `aqua_api_base_url`, `aqua_login_id`, `aqua_password`, `sysdig_api_base_url`, `sysdig_api_token`, `cs_falcon_api_base_url`, `cs_falcon_client_id`, `cs_falcon_client_secret`, `cs_falcon_member_cid`, `dfe_tenant_id`, `dfe_client_id`, `dfe_client_secret`, `dfe_api_base_url`, `s1_api_base_url`, `s1_api_token`, `tio_access_key`, `tio_secret_key`, `tio_api_base_url`, `qualys_username`, `qualys_password`, `qualys_api_base_url`, `r7_api_base_url`, `r7_username`, `r7_password`, `tan_api_base_url`, `tan_api_token`.\n\n**Wiz:** service account — `graphql_url`, `client_id`, `client_secret`.\n\n**Prisma Cloud:** CSPM REST — `api_base_url` (tenant API URL per pan.dev), `access_key_id`, `secret_key`; JWT via POST /login. Seed evidence EV-701.. with `source=prisma_cloud` before collect.\n\n**Snyk:** API key / OAuth; `org_ids` or `group_id`.\n\n**AWS (Cloud):** `POST .../integrations/cloud/aws/configure` with `configuration_data.role_arn` (IAM role ARN — **no region in ARN**; account ID only). Server credentials must allow `sts:AssumeRole`. Optional: `region` (default `us-east-1`), `region: \"auto\"` (multi-region via EC2 DescribeRegions), `sts_region` (AssumeRole endpoint, default `us-east-1`), `external_id` (cross-account trust). Evidence: `POST .../evidence/aws/collect` — `evidence_codes` null collects all seeded Cloud EV codes; or pass e.g. `[\"EV-16\",\"EV-541\"]`. Seed `evidence_masters` for the tool domain (app upsert or `scripts/sql/seed_aws_evidence_masters_cloud_domain.sql`).\n\n**Okta:** `org_domain` + `api_token` (SSWS).\n\n**Defender for Cloud:** Azure AD app (`tenant_id`, `client_id`, `client_secret`) + `subscription_id`; OAuth2 client credentials for `https://management.azure.com/.default`. Seed EV-711.. `source=defender_cloud`.\n\n**Orca Security:** `api_token` + optional `api_host` (default `api.orcasecurity.io`); base URL `https://{host}/api`. Seed EV-721.. `source=orca_security`.\n\n**Lacework:** `lacework_account` (subdomain) + `lacework_key_id` + `lacework_secret`; API v2 at `https://{account}.lacework.net/api/v2`. Seed EV-731.. `source=lacework`.\n\n**Aqua Security (self-hosted CSP):** `aqua_api_base_url` (console origin, e.g. `https://aqua.example.com:8443`) + `login_id` + `password`; REST v1 under `/api/v1`. Seed EV-741.. `source=aqua_security`. Aqua SaaS uses a different sign-in flow — not covered by this integration.\n\n**Sysdig Secure:** `sysdig_api_base_url` (regional API host, e.g. `https://api.us1.sysdig.com`) + `sysdig_api_token`; `Authorization: Bearer`. Seed EV-751.. `source=sysdig_secure`.\n\n**CrowdStrike Falcon:** `cs_falcon_api_base_url` (e.g. `https://api.crowdstrike.com`) + `cs_falcon_client_id` + `cs_falcon_client_secret`; OAuth2 `POST /oauth2/token`. Optional `cs_falcon_member_cid` (MSSP). Seed EV-761.. `source=crowdstrike_falcon`.\n\n**Microsoft Defender for Endpoint:** `dfe_api_base_url` (e.g. `https://api.security.microsoft.com`) + `dfe_tenant_id` + `dfe_client_id` + `dfe_client_secret`; OAuth2 client credentials for Defender resource `https://api.securitycenter.microsoft.com` (see Microsoft Learn). Seed EV-771.. `source=defender_for_endpoint`.\n\n**SentinelOne:** `s1_api_base_url` (management console origin, e.g. `https://usea1.sentinelone.net`, or full `.../web/api/v2.1`) + `s1_api_token` (`Authorization: ApiToken`). Seed EV-781.. `source=sentinelone`.\n\n**Tenable.io:** `tio_api_base_url` (default `https://cloud.tenable.com`) + `tio_access_key` + `tio_secret_key` (`X-ApiKeys`). Seed EV-791.. `source=tenable_io`.\n\n**Qualys:** `qualys_api_base_url` (e.g. `https://qualysapi.qualys.com`) + `qualys_username` + `qualys_password` (Basic). Seed EV-801.. `source=qualys`.\n\n**Rapid7 InsightVM:** `r7_api_base_url` (e.g. `https://insightvm.example.com:3780`) + `r7_username` + `r7_password` (Basic to `/api/3`). Seed EV-811.. `source=rapid7_insightvm`.\n\n**Tanium:** `tan_api_base_url` (console origin; `/api/v2` appended if missing) + `tan_api_token` (`session` header). Seed EV-821.. `source=tanium`.\n\n**Sync:** `provider_key` optional: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `prisma_cloud` | `defender_cloud` | `aqua_security` | `orca_security` | `lacework` | `sysdig_secure` | `crowdstrike_falcon` | `defender_for_endpoint` | `sentinelone` | `tenable_io` | `qualys` | `rapid7_insightvm` | `tanium` | `snyk` | `aws` | `jira_cloud` | `okta`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -48,7 +48,18 @@
     { "key": "dfe_client_secret", "value": "" },
     { "key": "dfe_api_base_url", "value": "https://api.security.microsoft.com" },
     { "key": "s1_api_base_url", "value": "https://usea1.sentinelone.net" },
-    { "key": "s1_api_token", "value": "" }
+    { "key": "s1_api_token", "value": "" },
+    { "key": "tio_api_base_url", "value": "https://cloud.tenable.com" },
+    { "key": "tio_access_key", "value": "" },
+    { "key": "tio_secret_key", "value": "" },
+    { "key": "qualys_api_base_url", "value": "https://qualysapi.qualys.com" },
+    { "key": "qualys_username", "value": "" },
+    { "key": "qualys_password", "value": "" },
+    { "key": "r7_api_base_url", "value": "https://insightvm.example.com:3780" },
+    { "key": "r7_username", "value": "" },
+    { "key": "r7_password", "value": "" },
+    { "key": "tan_api_base_url", "value": "https://tanium.example.com" },
+    { "key": "tan_api_token", "value": "" }
   ],
   "item": [
     {
@@ -923,6 +934,185 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"sentinelone\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenable.io",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/vulnerability/tenable-io/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"tenable_io\",\n    \"api_base_url\": \"{{tio_api_base_url}}\",\n    \"access_key\": \"{{tio_access_key}}\",\n    \"secret_key\": \"{{tio_secret_key}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/vulnerability/tenable-io/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/vulnerability/tenable-io/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/vulnerability/tenable-io/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "vulnerability", "tenable-io", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/tenable-io/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/tenable-io/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key tenable_io)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"tenable_io\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Qualys VM",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/vulnerability/qualys/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"qualys\",\n    \"api_base_url\": \"{{qualys_api_base_url}}\",\n    \"username\": \"{{qualys_username}}\",\n    \"password\": \"{{qualys_password}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/vulnerability/qualys/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/qualys/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/qualys/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key qualys)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"qualys\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rapid7 InsightVM",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/vulnerability/rapid7-insightvm/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"rapid7_insightvm\",\n    \"api_base_url\": \"{{r7_api_base_url}}\",\n    \"username\": \"{{r7_username}}\",\n    \"password\": \"{{r7_password}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/vulnerability/rapid7-insightvm/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/rapid7-insightvm/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/rapid7-insightvm/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key rapid7_insightvm)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"rapid7_insightvm\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tanium",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/endpoint/tanium/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"tanium\",\n    \"api_base_url\": \"{{tan_api_base_url}}\",\n    \"api_token\": \"{{tan_api_token}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/endpoint/tanium/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/tanium/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/tanium/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key tanium)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"tanium\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/integrations/sync"
           }
