@@ -544,6 +544,31 @@ class CrowdStrikeFalconFlowResponse(BaseModel):
     next_step: str
 
 
+class DefenderForEndpointConfigureResponse(BaseModel):
+    """POST .../endpoint/defender-for-endpoint/configure — Entra app + secret."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if token acquisition and GET /api/machines?$top=1 succeeded (200 or 404).",
+    )
+    ready_for_collection: bool = Field(description="True when tenant_id, client_id, client_secret, and api_base_url are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with client_secret masked.")
+
+
+class DefenderForEndpointFlowResponse(BaseModel):
+    """Configure → collect flow for Microsoft Defender for Endpoint."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
 class AwsConfigureResponse(BaseModel):
     """Returned by POST /api/v1/integrations/cloud/aws/configure (IAM role ARN for STS AssumeRole)."""
 

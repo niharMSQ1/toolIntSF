@@ -20,6 +20,7 @@ This folder documents **implemented** GRC tool integrations mounted from [`app/i
 | **Aqua Security** (self-hosted CSP) | CSPM | `aqua_security` | `aqua_security` | [0013 - aqua-security.md](0013%20-%20aqua-security.md) |
 | **Sysdig Secure** | CSPM | `sysdig_secure` | `sysdig_secure` | [0014 - sysdig-secure.md](0014%20-%20sysdig-secure.md) |
 | **CrowdStrike Falcon** | EDR / VM | `crowdstrike_falcon` | `crowdstrike_falcon` | [0015 - crowdstrike-falcon.md](0015%20-%20crowdstrike-falcon.md) |
+| **Microsoft Defender for Endpoint** | EDR / VM | `defender_for_endpoint` | `defender_for_endpoint` | [0016 - defender-for-endpoint.md](0016%20-%20defender-for-endpoint.md) |
 | **Jira Cloud** | ITSM | `jira_cloud` | `jira_cloud` | [0007 - jira_cloud_integration.md](0007%20-%20jira_cloud_integration.md) |
 | **Okta** | IAM / IDP | `iam` (shared IAM catalog; legacy `okta` possible) | `okta` | [0008 - okta_iam_integration.md](0008%20-%20okta_iam_integration.md) |
 

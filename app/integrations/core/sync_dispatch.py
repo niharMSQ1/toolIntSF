@@ -17,6 +17,9 @@ from app.integrations.categories.cspm.sysdig_secure.collection_runner import run
 from app.integrations.categories.endpoint_security.crowdstrike_falcon.collection_runner import (
     run_crowdstrike_falcon_evidence_collection,
 )
+from app.integrations.categories.endpoint_security.defender_for_endpoint.collection_runner import (
+    run_defender_for_endpoint_evidence_collection,
+)
 from app.integrations.categories.cspm.aqua_security.collection_runner import run_aqua_security_evidence_collection
 from app.integrations.categories.cspm.defender_cloud.collection_runner import run_defender_cloud_evidence_collection
 from app.integrations.categories.cspm.lacework.collection_runner import run_lacework_evidence_collection
@@ -53,6 +56,7 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "lacework": "lacework",
     "sysdig_secure": "sysdig_secure",
     "crowdstrike_falcon": "crowdstrike_falcon",
+    "defender_for_endpoint": "defender_for_endpoint",
     "snyk": "snyk",
     "aws": "aws",
     "jira_cloud": "jira_cloud",
@@ -161,7 +165,7 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     if not provider_key:
         raise ValueError(
             "Could not determine integration provider. Ensure evidence_masters exist for this tool's domain (seed manually), "
-            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, prisma_cloud, defender_cloud, aqua_security, orca_security, lacework, sysdig_secure, crowdstrike_falcon, snyk, aws, jira_cloud, okta). "
+            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, prisma_cloud, defender_cloud, aqua_security, orca_security, lacework, sysdig_secure, crowdstrike_falcon, defender_for_endpoint, snyk, aws, jira_cloud, okta). "
             "For IAM evidence with source=iam, provider is inferred from configuration_data (Okta SSWS vs Entra OAuth)."
         )
 
@@ -274,6 +278,16 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
         )
     elif provider_key == "crowdstrike_falcon":
         inner = run_crowdstrike_falcon_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "defender_for_endpoint":
+        inner = run_defender_for_endpoint_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,
