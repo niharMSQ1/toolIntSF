@@ -20,6 +20,10 @@ from app.integrations.categories.cspm.sysdig_secure.routers import (
     configure_router as sysdig_secure_configure_router,
     evidence_router as sysdig_secure_evidence_router,
 )
+from app.integrations.categories.endpoint_security.crowdstrike_falcon.routers import (
+    configure_router as crowdstrike_falcon_configure_router,
+    evidence_router as crowdstrike_falcon_evidence_router,
+)
 from app.integrations.categories.cspm.aqua_security.routers import (
     configure_router as aqua_security_configure_router,
     evidence_router as aqua_security_evidence_router,
@@ -83,6 +87,8 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(snyk_evidence_router)
     app.include_router(sysdig_secure_configure_router)
     app.include_router(sysdig_secure_evidence_router)
+    app.include_router(crowdstrike_falcon_configure_router)
+    app.include_router(crowdstrike_falcon_evidence_router)
     app.include_router(aws_configure_router)
     app.include_router(aws_evidence_router)
     app.include_router(bitbucket_configure_router)

@@ -519,6 +519,31 @@ class SysdigSecureFlowResponse(BaseModel):
     next_step: str
 
 
+class CrowdStrikeFalconConfigureResponse(BaseModel):
+    """POST .../endpoint/crowdstrike-falcon/configure — OAuth2 API client + secret."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if POST /oauth2/token and GET /devices/queries/devices/v1?limit=1 succeeded.",
+    )
+    ready_for_collection: bool = Field(description="True when client_id, client_secret, and api_base_url are set.")
+    collection_started_in_background: bool = Field(default=True, description="Background evidence pull when ready.")
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with client_secret masked.")
+
+
+class CrowdStrikeFalconFlowResponse(BaseModel):
+    """Configure → collect flow for CrowdStrike Falcon."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
 class AwsConfigureResponse(BaseModel):
     """Returned by POST /api/v1/integrations/cloud/aws/configure (IAM role ARN for STS AssumeRole)."""
 
