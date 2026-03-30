@@ -439,6 +439,155 @@ class TeamCityFlowResponse(BaseModel):
     next_step: str
 
 
+class WorkdayConfigureResponse(BaseModel):
+    """Returned by POST .../hrms/workday/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if Workers API sample call succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class WorkdayFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    api_version: str = Field(description="REST API version segment (e.g. v1).")
+    next_step: str
+
+
+class WorkdayRefreshTokensBody(BaseModel):
+    org_id: str
+    tool_id: str
+    force: bool = Field(default=False, description="Reserved; refresh always attempts when refresh_token exists.")
+
+
+class WorkdayRefreshTokensResponse(BaseModel):
+    ok: bool
+    organization_id: str
+    tool_id: str
+    refreshed: bool
+    message: str
+    configuration_data: dict = Field(description="Saved config with secrets masked.")
+
+
+class SAPSuccessFactorsConfigureResponse(BaseModel):
+    """Returned by POST .../hrms/sap-successfactors/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if OData User sample call succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class SAPSuccessFactorsFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
+class AdpConfigureResponse(BaseModel):
+    """Returned by POST .../hrms/adp/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if ADP workers sample call succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class AdpFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
+class UkgConfigureResponse(BaseModel):
+    """Returned by POST .../hrms/ukg/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if UKG people API sample call succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class UkgFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
+class BambooHrConfigureResponse(BaseModel):
+    """Returned by POST .../hrms/bamboohr/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if BambooHR directory API call succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class BambooHrFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
+class PaycomConfigureResponse(BaseModel):
+    """Returned by POST .../hrms/paycom/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if Paycom employees sample call succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class PaycomFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
+class RipplingConfigureResponse(BaseModel):
+    """Returned by POST .../hrms/rippling/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if Rippling employees sample call succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class RipplingFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
 class BitbucketSelectWorkspacesBody(BaseModel):
     org_id: str
     tool_id: str

@@ -97,7 +97,24 @@
     { "key": "argocd_token", "value": "" },
     { "key": "teamcity_base_url", "value": "https://teamcity.example.com" },
     { "key": "teamcity_token", "value": "" },
-    { "key": "teamcity_build_id", "value": "" }
+    { "key": "teamcity_build_id", "value": "" },
+    { "key": "workday_hostname", "value": "https://impl-services1.workday.com" },
+    { "key": "workday_tenant", "value": "" },
+    { "key": "workday_client_id", "value": "" },
+    { "key": "workday_client_secret", "value": "" },
+    { "key": "workday_worker_id", "value": "" },
+    { "key": "sf_token_url", "value": "" },
+    { "key": "sf_odata_base_url", "value": "" },
+    { "key": "adp_client_id", "value": "" },
+    { "key": "adp_client_secret", "value": "" },
+    { "key": "ukg_token_url", "value": "" },
+    { "key": "ukg_api_base", "value": "" },
+    { "key": "bamboohr_subdomain", "value": "" },
+    { "key": "bamboohr_api_key", "value": "" },
+    { "key": "paycom_token_url", "value": "" },
+    { "key": "paycom_api_base", "value": "" },
+    { "key": "rippling_api_key", "value": "" },
+    { "key": "rippling_api_base", "value": "https://api.rippling.com" }
   ],
   "item": [
     {
@@ -1381,6 +1398,391 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"aws\",\n  \"evidence_codes\": {{aws_evidence_codes}},\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workday (HRMS)",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/hrms/workday/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"workday_hostname\": \"{{workday_hostname}}\",\n    \"workday_tenant\": \"{{workday_tenant}}\",\n    \"client_id\": \"{{workday_client_id}}\",\n    \"client_secret\": \"{{workday_client_secret}}\",\n    \"api_version\": \"v1\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/workday/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/hrms/workday/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/hrms/workday/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "hrms", "workday", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/hrms/workday/employees",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/hrms/workday/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "hrms", "workday", "employees"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/hrms/workday/employees/{worker_id}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/hrms/workday/employees/{{workday_worker_id}}?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "hrms", "workday", "employees", "{{workday_worker_id}}"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/hrms/workday/organizations",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/hrms/workday/organizations?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "hrms", "workday", "organizations"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/hrms/workday/refresh-tokens",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"force\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/workday/refresh-tokens"
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/workday/{org_id}/{tool_id}",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer <optional webhook_secret>" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/workday/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "SAP SuccessFactors (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/sap-successfactors/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"sf_token_url\": \"{{sf_token_url}}\",\n    \"sf_odata_base_url\": \"{{sf_odata_base_url}}\",\n    \"client_id\": \"\",\n    \"client_secret\": \"\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/sap-successfactors/configure"
+          }
+        },
+        {
+          "name": "GET .../sap-successfactors/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/sap-successfactors/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../sap-successfactors/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/sap-successfactors/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../sap-successfactors/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/sap-successfactors/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/sap-successfactors/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/sap-successfactors/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ADP (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/adp/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"client_id\": \"{{adp_client_id}}\",\n    \"client_secret\": \"{{adp_client_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/adp/configure"
+          }
+        },
+        {
+          "name": "GET .../adp/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/adp/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../adp/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/adp/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../adp/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/adp/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/adp/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/adp/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "UKG (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/ukg/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"ukg_token_url\": \"{{ukg_token_url}}\",\n    \"ukg_api_base\": \"{{ukg_api_base}}\",\n    \"client_id\": \"\",\n    \"client_secret\": \"\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/ukg/configure"
+          }
+        },
+        {
+          "name": "GET .../ukg/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/ukg/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../ukg/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/ukg/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../ukg/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/ukg/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/ukg/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/ukg/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BambooHR (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/bamboohr/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"bamboohr_subdomain\": \"{{bamboohr_subdomain}}\",\n    \"bamboohr_api_key\": \"{{bamboohr_api_key}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/bamboohr/configure"
+          }
+        },
+        {
+          "name": "GET .../bamboohr/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/bamboohr/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../bamboohr/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/bamboohr/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../bamboohr/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/bamboohr/employees?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "POST .../webhooks/bamboohr/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/bamboohr/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Paycom (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/paycom/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"paycom_token_url\": \"{{paycom_token_url}}\",\n    \"paycom_api_base\": \"{{paycom_api_base}}\",\n    \"paycom_employees_path\": \"/employees\",\n    \"client_id\": \"\",\n    \"client_secret\": \"\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/paycom/configure"
+          }
+        },
+        {
+          "name": "GET .../paycom/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/paycom/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../paycom/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/paycom/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../paycom/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/paycom/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/paycom/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/paycom/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rippling (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/rippling/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"rippling_api_base\": \"{{rippling_api_base}}\",\n    \"rippling_employees_path\": \"/platform/api/v1/employees\",\n    \"rippling_api_key\": \"{{rippling_api_key}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/rippling/configure"
+          }
+        },
+        {
+          "name": "GET .../rippling/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/rippling/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../rippling/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/rippling/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../rippling/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/rippling/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/rippling/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/rippling/{{org_id}}/{{tool_id}}"
           }
         }
       ]

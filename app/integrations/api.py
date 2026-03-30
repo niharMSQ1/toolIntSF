@@ -128,6 +128,42 @@ from app.integrations.categories.project_management.notion.routers import config
 from app.integrations.categories.project_management.notion.routers import data as notion_data
 from app.integrations.categories.project_management.linear.routers import configure as linear_configure
 from app.integrations.categories.project_management.linear.routers import data as linear_data
+from app.integrations.categories.hrms.workday.routers import (
+    configure_router as workday_configure_router,
+    data_router as workday_data_router,
+    refresh_router as workday_refresh_router,
+    webhook_router as workday_webhook_router,
+)
+from app.integrations.categories.hrms.sap_successfactors.routers import (
+    configure_router as sap_successfactors_configure_router,
+    data_router as sap_successfactors_data_router,
+    webhook_router as sap_successfactors_webhook_router,
+)
+from app.integrations.categories.hrms.adp.routers import (
+    configure_router as adp_configure_router,
+    data_router as adp_data_router,
+    webhook_router as adp_webhook_router,
+)
+from app.integrations.categories.hrms.ukg.routers import (
+    configure_router as ukg_configure_router,
+    data_router as ukg_data_router,
+    webhook_router as ukg_webhook_router,
+)
+from app.integrations.categories.hrms.bamboohr.routers import (
+    configure_router as bamboohr_configure_router,
+    data_router as bamboohr_data_router,
+    webhook_router as bamboohr_webhook_router,
+)
+from app.integrations.categories.hrms.paycom.routers import (
+    configure_router as paycom_configure_router,
+    data_router as paycom_data_router,
+    webhook_router as paycom_webhook_router,
+)
+from app.integrations.categories.hrms.rippling.routers import (
+    configure_router as rippling_configure_router,
+    data_router as rippling_data_router,
+    webhook_router as rippling_webhook_router,
+)
 from app.integrations.categories.hrms.zoho_people.routers import configure, evidence, oauth
 from app.integrations.categories.itsm.jira.routers import configure as jira_configure
 from app.integrations.categories.itsm.jira.routers import evidence as jira_evidence
@@ -225,6 +261,28 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(teamcity_configure_router)
     app.include_router(teamcity_data_router)
     app.include_router(teamcity_webhook_router)
+    app.include_router(workday_configure_router)
+    app.include_router(workday_data_router)
+    app.include_router(workday_refresh_router)
+    app.include_router(workday_webhook_router)
+    app.include_router(sap_successfactors_configure_router)
+    app.include_router(sap_successfactors_data_router)
+    app.include_router(sap_successfactors_webhook_router)
+    app.include_router(adp_configure_router)
+    app.include_router(adp_data_router)
+    app.include_router(adp_webhook_router)
+    app.include_router(ukg_configure_router)
+    app.include_router(ukg_data_router)
+    app.include_router(ukg_webhook_router)
+    app.include_router(bamboohr_configure_router)
+    app.include_router(bamboohr_data_router)
+    app.include_router(bamboohr_webhook_router)
+    app.include_router(paycom_configure_router)
+    app.include_router(paycom_data_router)
+    app.include_router(paycom_webhook_router)
+    app.include_router(rippling_configure_router)
+    app.include_router(rippling_data_router)
+    app.include_router(rippling_webhook_router)
     app.include_router(configure.router)
     app.include_router(configure.hrms_router)
     app.include_router(oauth.router)

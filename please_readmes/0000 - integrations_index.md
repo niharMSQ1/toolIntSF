@@ -9,6 +9,13 @@ This folder documents **implemented** GRC tool integrations mounted from [`app/i
 | Integration | Category | `evidence_masters.source` | `provider_key` (unified sync) | Primary doc |
 |-------------|----------|---------------------------|-------------------------------|-------------|
 | **Zoho People** | HRMS (HR / Employee Management) | `zoho_people` | `zoho_people` | [0002 - zoho_integration.md](0002%20-%20zoho_integration.md) |
+| **Workday** | HRMS | — (not on unified sync) | — | [0035 - workday.md](0035%20-%20workday.md) |
+| **SAP SuccessFactors** | HRMS | — | — | [0036 - sap-successfactors.md](0036%20-%20sap-successfactors.md) |
+| **ADP** | HRMS | — | — | [0037 - adp.md](0037%20-%20adp.md) |
+| **UKG** | HRMS | — | — | [0038 - ukg.md](0038%20-%20ukg.md) |
+| **BambooHR** | HRMS | — | — | [0039 - bamboohr.md](0039%20-%20bamboohr.md) |
+| **Paycom** | HRMS | — | — | [0040 - paycom.md](0040%20-%20paycom.md) |
+| **Rippling** | HRMS | — | — | [0041 - rippling.md](0041%20-%20rippling.md) |
 | **Microsoft Entra** (commercial) | IDP | `iam` (shared IAM catalog; legacy `microsoft_entra` possible) | `microsoft_entra` | [0004 - microsoft_entra_integration.md](0004%20-%20microsoft_entra_integration.md) |
 | **Microsoft Entra** (GCC High) | IDP | `iam` / legacy `microsoft_entra_gcc_high` | `microsoft_entra_gcc_high` | [0004 - microsoft_entra_integration.md](0004%20-%20microsoft_entra_integration.md) |
 | **Bitbucket Cloud** | DevTools | `bitbucket_cloud` | `bitbucket_cloud` | [0005 - bitbucket_integration.md](0005%20-%20bitbucket_integration.md) |
