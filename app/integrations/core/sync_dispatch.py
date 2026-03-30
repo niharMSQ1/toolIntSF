@@ -13,8 +13,40 @@ from sqlalchemy.orm import Session
 
 from app.integrations.categories.cloud.aws.collection_runner import run_aws_evidence_collection
 from app.integrations.categories.cspm.snyk.collection_runner import run_snyk_evidence_collection
+from app.integrations.categories.cspm.sysdig_secure.collection_runner import run_sysdig_secure_evidence_collection
+from app.integrations.categories.endpoint_security.crowdstrike_falcon.collection_runner import (
+    run_crowdstrike_falcon_evidence_collection,
+)
+from app.integrations.categories.endpoint_security.defender_for_endpoint.collection_runner import (
+    run_defender_for_endpoint_evidence_collection,
+)
+from app.integrations.categories.endpoint_security.sentinelone.collection_runner import run_sentinelone_evidence_collection
+from app.integrations.categories.vulnerability_management.qualys.collection_runner import run_qualys_evidence_collection
+from app.integrations.categories.vulnerability_management.rapid7_insightvm.collection_runner import (
+    run_rapid7_insightvm_evidence_collection,
+)
+from app.integrations.categories.vulnerability_management.tanium.collection_runner import run_tanium_evidence_collection
+from app.integrations.categories.vulnerability_management.tenable_io.collection_runner import run_tenable_io_evidence_collection
+from app.integrations.categories.cspm.aqua_security.collection_runner import run_aqua_security_evidence_collection
+from app.integrations.categories.cspm.defender_cloud.collection_runner import run_defender_cloud_evidence_collection
+from app.integrations.categories.cspm.lacework.collection_runner import run_lacework_evidence_collection
+from app.integrations.categories.cspm.orca_security.collection_runner import run_orca_security_evidence_collection
+from app.integrations.categories.cspm.prisma_cloud.collection_runner import run_prisma_cloud_evidence_collection
 from app.integrations.categories.cspm.wiz.collection_runner import run_wiz_evidence_collection
 from app.integrations.categories.idp.okta.collection_runner import run_okta_evidence_collection
+from app.integrations.categories.idp.ping_identity.collection_runner import run_ping_identity_evidence_collection
+from app.integrations.categories.idp.cyberark.collection_runner import run_cyberark_evidence_collection
+from app.integrations.categories.idp.cyberark.credentials import ready_for_collection as cyberark_ready_for_collection
+from app.integrations.categories.idp.forgerock.collection_runner import run_forgerock_evidence_collection
+from app.integrations.categories.idp.forgerock.credentials import ready_for_collection as forgerock_ready_for_collection
+from app.integrations.categories.idp.google_workspace.collection_runner import run_google_workspace_evidence_collection
+from app.integrations.categories.idp.google_workspace.credentials import ready_for_collection as google_workspace_ready_for_collection
+from app.integrations.categories.idp.jumpcloud.collection_runner import run_jumpcloud_evidence_collection
+from app.integrations.categories.idp.jumpcloud.credentials import ready_for_collection as jumpcloud_ready_for_collection
+from app.integrations.categories.idp.onelogin.collection_runner import run_onelogin_evidence_collection
+from app.integrations.categories.idp.onelogin.credentials import ready_for_collection as onelogin_ready_for_collection
+from app.integrations.categories.idp.sailpoint.collection_runner import run_sailpoint_evidence_collection
+from app.integrations.categories.idp.sailpoint.credentials import ready_for_collection as sailpoint_ready_for_collection
 from app.integrations.categories.devtools.bitbucket.collection_runner import run_bitbucket_evidence_collection
 from app.integrations.categories.hrms.bamboohr.collection_runner import run_bamboohr_evidence_collection
 from app.integrations.categories.hrms.zoho_people.collection_runner import run_evidence_collection
@@ -26,7 +58,8 @@ from app.integrations.categories.idp.microsoft_entra.credentials import (
     resolve_national_cloud,
 )
 from app.integrations.categories.idp.microsoft_entra.national_cloud import NationalCloud
-from app.integrations.categories.idp.okta.credentials import ready_for_collection
+from app.integrations.categories.idp.okta.credentials import ready_for_collection as okta_ready_for_collection
+from app.integrations.categories.idp.ping_identity.credentials import ready_for_collection as ping_ready_for_collection
 from app.integrations.core.persistence import tool_integration_service as persistence
 from app.models import EvidenceMaster
 from app.schemas import CollectEvidenceResponse, SyncIntegrationBody, SyncIntegrationResponse
@@ -40,14 +73,64 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "microsoft_entra_gcc_high": "microsoft_entra_gcc_high",
     "bitbucket_cloud": "bitbucket_cloud",
     "wiz": "wiz",
+    "prisma_cloud": "prisma_cloud",
+    "defender_cloud": "defender_cloud",
+    "aqua_security": "aqua_security",
+    "orca_security": "orca_security",
+    "lacework": "lacework",
+    "sysdig_secure": "sysdig_secure",
+    "crowdstrike_falcon": "crowdstrike_falcon",
+    "defender_for_endpoint": "defender_for_endpoint",
+    "sentinelone": "sentinelone",
+    "tenable_io": "tenable_io",
+    "qualys": "qualys",
+    "rapid7_insightvm": "rapid7_insightvm",
+    "tanium": "tanium",
     "snyk": "snyk",
     "aws": "aws",
     "jira_cloud": "jira_cloud",
     "linear": "linear",
     "okta": "okta",
+    "ping_identity": "ping_identity",
+    "cyberark_identity": "cyberark_identity",
+    "sailpoint_identitynow": "sailpoint_identitynow",
+    "google_workspace": "google_workspace",
+    "forgerock": "forgerock",
+    "onelogin": "onelogin",
+    "jumpcloud": "jumpcloud",
 }
 
 SYNC_PROVIDER_KEYS: frozenset[str] = frozenset(_SOURCE_TO_PROVIDER_KEY.values())
+
+_IAM_MASTER_SOURCES_ONLY: frozenset[str] = frozenset(
+    {"iam", "okta", "microsoft_entra", "microsoft_entra_gcc_high"}
+)
+
+
+def _looks_like_zoho_people_cfg(cfg: dict[str, Any]) -> bool:
+    """When evidence_masters.source is a generic HR catalog tag, infer Zoho from integration config."""
+    if not isinstance(cfg, dict):
+        return False
+    if cfg.get("people_base_url"):
+        return True
+    oc = cfg.get("oauth_clients")
+    if isinstance(oc, list) and oc:
+        return True
+    return bool(str(cfg.get("client_id", "")).strip())
+
+
+def infer_iam_provider_from_cfg(cfg: dict[str, Any]) -> str | None:
+    """When IAM evidence uses generic ``iam`` source, pick Okta vs Entra from ``configuration_data``."""
+    if not isinstance(cfg, dict):
+        return None
+    if ready_for_collection(cfg):
+        return "okta"
+    try:
+        resolve_active_oauth_entry(cfg)
+    except ValueError:
+        return None
+    cloud = resolve_national_cloud(cfg)
+    return "microsoft_entra_gcc_high" if cloud == NationalCloud.GCC_HIGH else "microsoft_entra"
 
 
 def detect_provider_key_from_db(session: Session, tool_id: str, cfg: dict[str, Any] | None = None) -> str | None:
@@ -118,8 +201,9 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     provider_key = resolved or detected
     if not provider_key:
         raise ValueError(
-            "Could not determine integration provider. Run POST .../configure to seed evidence_masters, "
-            "or pass provider_key (zoho_people, bamboohr, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, jira_cloud)."
+            "Could not determine integration provider. Ensure evidence_masters exist for this tool's domain (seed manually), "
+            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, snyk, aws, jira_cloud, okta). "
+            "For IAM evidence with source=iam, provider is inferred from configuration_data (Okta SSWS vs Entra OAuth)."
         )
 
     if provider_key not in SYNC_PROVIDER_KEYS:
@@ -169,8 +253,138 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
             date_from=body.date_from,
             date_to=body.date_to,
         )
+    elif provider_key == "prisma_cloud":
+        inner = run_prisma_cloud_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "defender_cloud":
+        inner = run_defender_cloud_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "aqua_security":
+        inner = run_aqua_security_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "lacework":
+        inner = run_lacework_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "orca_security":
+        inner = run_orca_security_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
     elif provider_key == "snyk":
         inner = run_snyk_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "sysdig_secure":
+        inner = run_sysdig_secure_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "crowdstrike_falcon":
+        inner = run_crowdstrike_falcon_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "defender_for_endpoint":
+        inner = run_defender_for_endpoint_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "sentinelone":
+        inner = run_sentinelone_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "tenable_io":
+        inner = run_tenable_io_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "qualys":
+        inner = run_qualys_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "rapid7_insightvm":
+        inner = run_rapid7_insightvm_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "tanium":
+        inner = run_tanium_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,
@@ -211,6 +425,76 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
         )
     elif provider_key == "okta":
         inner = run_okta_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "ping_identity":
+        inner = run_ping_identity_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "cyberark_identity":
+        inner = run_cyberark_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "sailpoint_identitynow":
+        inner = run_sailpoint_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "google_workspace":
+        inner = run_google_workspace_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "forgerock":
+        inner = run_forgerock_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "onelogin":
+        inner = run_onelogin_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "jumpcloud":
+        inner = run_jumpcloud_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,

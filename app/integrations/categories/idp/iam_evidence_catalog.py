@@ -13,7 +13,18 @@ from __future__ import annotations
 IAM_MASTER_SOURCE = "iam"
 
 # DB rows created before ``iam`` may still use these; collection lists all of them.
-IAM_LEGACY_MASTER_SOURCES: tuple[str, ...] = ("okta", "microsoft_entra", "microsoft_entra_gcc_high")
+IAM_LEGACY_MASTER_SOURCES: tuple[str, ...] = (
+    "okta",
+    "microsoft_entra",
+    "microsoft_entra_gcc_high",
+    "ping_identity",
+    "cyberark_identity",
+    "sailpoint_identitynow",
+    "google_workspace",
+    "forgerock",
+    "onelogin",
+    "jumpcloud",
+)
 
 
 def iam_evidence_master_filter_sources() -> tuple[str, ...]:

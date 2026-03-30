@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "toolintsf-integrations-v2",
     "name": "Stakflo GRC — Tool Integrations",
-    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl`, `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id`, `aws_role_arn`, `aws_region`, `aws_sts_region`, `aws_external_id`, `aws_evidence_codes`.\n\n**Wiz:** service account — `graphql_url`, `client_id`, `client_secret`.\n\n**Snyk:** API key / OAuth; `org_ids` or `group_id`.\n\n**AWS (Cloud):** `POST .../integrations/cloud/aws/configure` with `configuration_data.role_arn` (IAM role ARN — **no region in ARN**; account ID only). Server credentials must allow `sts:AssumeRole`. Optional: `region` (default `us-east-1`), `region: \"auto\"` (multi-region via EC2 DescribeRegions), `sts_region` (AssumeRole endpoint, default `us-east-1`), `external_id` (cross-account trust). Evidence: `POST .../evidence/aws/collect` — `evidence_codes` null collects all seeded Cloud EV codes; or pass e.g. `[\"EV-16\",\"EV-541\"]`. Seed `evidence_masters` for the tool domain (app upsert or `scripts/sql/seed_aws_evidence_masters_cloud_domain.sql`).\n\n**Okta:** `org_domain` + `api_token` (SSWS).\n\n**Sync:** `provider_key` optional: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `snyk` | `aws` | `jira_cloud` | `okta`.",
+    "description": "All routes from `app.integrations.api.mount_integration_routes`.\n\n**Variables:** `baseUrl`, `org_id`, `tool_id`, `user_id`, `oauth_code`, `oauth_state`, `snyk_api_token`, `snyk_org_id`, `aws_role_arn`, `aws_region`, `aws_sts_region`, `aws_external_id`, `aws_evidence_codes`, `prisma_api_base_url`, `prisma_access_key_id`, `prisma_secret_key`, `defender_tenant_id`, `defender_client_id`, `defender_client_secret`, `defender_subscription_id`, `orca_api_host`, `orca_api_token`, `lacework_account`, `lacework_key_id`, `lacework_secret`, `aqua_api_base_url`, `aqua_login_id`, `aqua_password`, `sysdig_api_base_url`, `sysdig_api_token`, `cs_falcon_api_base_url`, `cs_falcon_client_id`, `cs_falcon_client_secret`, `cs_falcon_member_cid`, `dfe_tenant_id`, `dfe_client_id`, `dfe_client_secret`, `dfe_api_base_url`, `s1_api_base_url`, `s1_api_token`, `tio_access_key`, `tio_secret_key`, `tio_api_base_url`, `qualys_username`, `qualys_password`, `qualys_api_base_url`, `r7_api_base_url`, `r7_username`, `r7_password`, `tan_api_base_url`, `tan_api_token`.\n\n**Wiz:** service account — `graphql_url`, `client_id`, `client_secret`.\n\n**Prisma Cloud:** CSPM REST — `api_base_url` (tenant API URL per pan.dev), `access_key_id`, `secret_key`; JWT via POST /login. Seed evidence EV-701.. with `source=prisma_cloud` before collect.\n\n**Snyk:** API key / OAuth; `org_ids` or `group_id`.\n\n**AWS (Cloud):** `POST .../integrations/cloud/aws/configure` with `configuration_data.role_arn` (IAM role ARN — **no region in ARN**; account ID only). Server credentials must allow `sts:AssumeRole`. Optional: `region` (default `us-east-1`), `region: \"auto\"` (multi-region via EC2 DescribeRegions), `sts_region` (AssumeRole endpoint, default `us-east-1`), `external_id` (cross-account trust). Evidence: `POST .../evidence/aws/collect` — `evidence_codes` null collects all seeded Cloud EV codes; or pass e.g. `[\"EV-16\",\"EV-541\"]`. Seed `evidence_masters` for the tool domain (app upsert or `scripts/sql/seed_aws_evidence_masters_cloud_domain.sql`).\n\n**Okta:** `org_domain` + `api_token` (SSWS).\n\n**Defender for Cloud:** Azure AD app (`tenant_id`, `client_id`, `client_secret`) + `subscription_id`; OAuth2 client credentials for `https://management.azure.com/.default`. Seed EV-711.. `source=defender_cloud`.\n\n**Orca Security:** `api_token` + optional `api_host` (default `api.orcasecurity.io`); base URL `https://{host}/api`. Seed EV-721.. `source=orca_security`.\n\n**Lacework:** `lacework_account` (subdomain) + `lacework_key_id` + `lacework_secret`; API v2 at `https://{account}.lacework.net/api/v2`. Seed EV-731.. `source=lacework`.\n\n**Aqua Security (self-hosted CSP):** `aqua_api_base_url` (console origin, e.g. `https://aqua.example.com:8443`) + `login_id` + `password`; REST v1 under `/api/v1`. Seed EV-741.. `source=aqua_security`. Aqua SaaS uses a different sign-in flow — not covered by this integration.\n\n**Sysdig Secure:** `sysdig_api_base_url` (regional API host, e.g. `https://api.us1.sysdig.com`) + `sysdig_api_token`; `Authorization: Bearer`. Seed EV-751.. `source=sysdig_secure`.\n\n**CrowdStrike Falcon:** `cs_falcon_api_base_url` (e.g. `https://api.crowdstrike.com`) + `cs_falcon_client_id` + `cs_falcon_client_secret`; OAuth2 `POST /oauth2/token`. Optional `cs_falcon_member_cid` (MSSP). Seed EV-761.. `source=crowdstrike_falcon`.\n\n**Microsoft Defender for Endpoint:** `dfe_api_base_url` (e.g. `https://api.security.microsoft.com`) + `dfe_tenant_id` + `dfe_client_id` + `dfe_client_secret`; OAuth2 client credentials for Defender resource `https://api.securitycenter.microsoft.com` (see Microsoft Learn). Seed EV-771.. `source=defender_for_endpoint`.\n\n**SentinelOne:** `s1_api_base_url` (management console origin, e.g. `https://usea1.sentinelone.net`, or full `.../web/api/v2.1`) + `s1_api_token` (`Authorization: ApiToken`). Seed EV-781.. `source=sentinelone`.\n\n**Tenable.io:** `tio_api_base_url` (default `https://cloud.tenable.com`) + `tio_access_key` + `tio_secret_key` (`X-ApiKeys`). Seed EV-791.. `source=tenable_io`.\n\n**Qualys:** `qualys_api_base_url` (e.g. `https://qualysapi.qualys.com`) + `qualys_username` + `qualys_password` (Basic). Seed EV-801.. `source=qualys`.\n\n**Rapid7 InsightVM:** `r7_api_base_url` (e.g. `https://insightvm.example.com:3780`) + `r7_username` + `r7_password` (Basic to `/api/3`). Seed EV-811.. `source=rapid7_insightvm`.\n\n**Tanium:** `tan_api_base_url` (console origin; `/api/v2` appended if missing) + `tan_api_token` (`session` header). Seed EV-821.. `source=tanium`.\n\n**Sync:** `provider_key` optional: `zoho_people` | `microsoft_entra` | `microsoft_entra_gcc_high` | `bitbucket_cloud` | `wiz` | `prisma_cloud` | `defender_cloud` | `aqua_security` | `orca_security` | `lacework` | `sysdig_secure` | `crowdstrike_falcon` | `defender_for_endpoint` | `sentinelone` | `tenable_io` | `qualys` | `rapid7_insightvm` | `tanium` | `snyk` | `aws` | `jira_cloud` | `okta`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -21,7 +21,104 @@
     {
       "key": "aws_evidence_codes",
       "value": "[\"EV-16\", \"EV-541\", \"EV-390\"]"
-    }
+    },
+    { "key": "prisma_api_base_url", "value": "https://api.prismacloud.io" },
+    { "key": "prisma_access_key_id", "value": "" },
+    { "key": "prisma_secret_key", "value": "" },
+    { "key": "defender_tenant_id", "value": "" },
+    { "key": "defender_client_id", "value": "" },
+    { "key": "defender_client_secret", "value": "" },
+    { "key": "defender_subscription_id", "value": "" },
+    { "key": "orca_api_host", "value": "api.orcasecurity.io" },
+    { "key": "orca_api_token", "value": "" },
+    { "key": "lacework_account", "value": "" },
+    { "key": "lacework_key_id", "value": "" },
+    { "key": "lacework_secret", "value": "" },
+    { "key": "aqua_api_base_url", "value": "https://aqua.example.com:8443" },
+    { "key": "aqua_login_id", "value": "" },
+    { "key": "aqua_password", "value": "" },
+    { "key": "sysdig_api_base_url", "value": "https://api.us1.sysdig.com" },
+    { "key": "sysdig_api_token", "value": "" },
+    { "key": "cs_falcon_api_base_url", "value": "https://api.crowdstrike.com" },
+    { "key": "cs_falcon_client_id", "value": "" },
+    { "key": "cs_falcon_client_secret", "value": "" },
+    { "key": "cs_falcon_member_cid", "value": "" },
+    { "key": "dfe_tenant_id", "value": "" },
+    { "key": "dfe_client_id", "value": "" },
+    { "key": "dfe_client_secret", "value": "" },
+    { "key": "dfe_api_base_url", "value": "https://api.security.microsoft.com" },
+    { "key": "s1_api_base_url", "value": "https://usea1.sentinelone.net" },
+    { "key": "s1_api_token", "value": "" },
+    { "key": "tio_api_base_url", "value": "https://cloud.tenable.com" },
+    { "key": "tio_access_key", "value": "" },
+    { "key": "tio_secret_key", "value": "" },
+    { "key": "qualys_api_base_url", "value": "https://qualysapi.qualys.com" },
+    { "key": "qualys_username", "value": "" },
+    { "key": "qualys_password", "value": "" },
+    { "key": "r7_api_base_url", "value": "https://insightvm.example.com:3780" },
+    { "key": "r7_username", "value": "" },
+    { "key": "r7_password", "value": "" },
+    { "key": "tan_api_base_url", "value": "https://tanium.example.com" },
+    { "key": "tan_api_token", "value": "" },
+    { "key": "asana_pat", "value": "" },
+    { "key": "asana_workspace_gid", "value": "" },
+    { "key": "asana_project_gid", "value": "" },
+    { "key": "asana_task_gid", "value": "" },
+    { "key": "asana_webhook_target_url", "value": "https://example.com/api/v1/webhooks/asana/{{org_id}}/{{tool_id}}" },
+    { "key": "monday_api_token", "value": "" },
+    { "key": "ms_tenant_id", "value": "" },
+    { "key": "ms_client_id", "value": "" },
+    { "key": "ms_client_secret", "value": "" },
+    { "key": "ms_group_id", "value": "" },
+    { "key": "ms_plan_id", "value": "" },
+    { "key": "smartsheet_token", "value": "" },
+    { "key": "smartsheet_sheet_id", "value": "" },
+    { "key": "clickup_token", "value": "" },
+    { "key": "clickup_list_id", "value": "" },
+    { "key": "notion_secret", "value": "" },
+    { "key": "notion_page_id", "value": "" },
+    { "key": "linear_api_key", "value": "" },
+    { "key": "github_pat", "value": "" },
+    { "key": "github_owner", "value": "" },
+    { "key": "github_repo", "value": "" },
+    { "key": "github_run_id", "value": "" },
+    { "key": "github_webhook_secret", "value": "" },
+    { "key": "ado_pat", "value": "" },
+    { "key": "ado_organization", "value": "" },
+    { "key": "ado_project", "value": "" },
+    { "key": "ado_build_id", "value": "" },
+    { "key": "jenkins_base_url", "value": "http://localhost:8080" },
+    { "key": "jenkins_user", "value": "" },
+    { "key": "jenkins_token", "value": "" },
+    { "key": "jenkins_job", "value": "" },
+    { "key": "circleci_token", "value": "" },
+    { "key": "circleci_project_slug", "value": "gh/myorg/myrepo" },
+    { "key": "argocd_base_url", "value": "https://argocd.example.com" },
+    { "key": "argocd_token", "value": "" },
+    { "key": "teamcity_base_url", "value": "https://teamcity.example.com" },
+    { "key": "teamcity_token", "value": "" },
+    { "key": "teamcity_build_id", "value": "" },
+    { "key": "workday_hostname", "value": "https://impl-services1.workday.com" },
+    { "key": "workday_tenant", "value": "" },
+    { "key": "workday_client_id", "value": "" },
+    { "key": "workday_client_secret", "value": "" },
+    { "key": "workday_worker_id", "value": "" },
+    { "key": "sf_token_url", "value": "" },
+    { "key": "sf_odata_base_url", "value": "" },
+    { "key": "adp_client_id", "value": "" },
+    { "key": "adp_client_secret", "value": "" },
+    { "key": "ukg_token_url", "value": "" },
+    { "key": "ukg_api_base", "value": "" },
+    { "key": "bamboohr_subdomain", "value": "" },
+    { "key": "bamboohr_api_key", "value": "" },
+    { "key": "paycom_token_url", "value": "" },
+    { "key": "paycom_api_base", "value": "" },
+    { "key": "rippling_api_key", "value": "" },
+    { "key": "rippling_api_base", "value": "https://api.rippling.com" },
+    { "key": "pingone_environment_id", "value": "" },
+    { "key": "pingone_client_id", "value": "" },
+    { "key": "pingone_client_secret", "value": "" },
+    { "key": "pingone_region_tld", "value": "com" }
   ],
   "item": [
     {
@@ -121,6 +218,962 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/evidence/wiz/collect"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prisma Cloud CSPM",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/prisma-cloud/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"prisma_cloud\",\n    \"api_base_url\": \"{{prisma_api_base_url}}\",\n    \"access_key_id\": \"{{prisma_access_key_id}}\",\n    \"secret_key\": \"{{prisma_secret_key}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/prisma-cloud/configure",
+            "description": "Palo Alto Prisma Cloud CSPM: POST /login with access key (documented on pan.dev). api_base_url must match your tenant (e.g. api2.prismacloud.io)."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/prisma-cloud/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/prisma-cloud/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "prisma-cloud", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/prisma-cloud/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/prisma-cloud/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "prisma-cloud", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/prisma-cloud/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/prisma-cloud/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key prisma_cloud)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"prisma_cloud\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Prisma Cloud tenant — POST /login (direct API reference)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{prisma_access_key_id}}\",\n  \"password\": \"{{prisma_secret_key}}\"\n}"
+            },
+            "url": "{{prisma_api_base_url}}/login",
+            "description": "Official CSPM login (pan.dev). Response includes token for x-redlock-auth header on other calls."
+          }
+        },
+        {
+          "name": "Prisma Cloud tenant — GET /cloud (direct API reference)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-redlock-auth", "value": "<paste JWT from /login>" }
+            ],
+            "url": "{{prisma_api_base_url}}/cloud"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Microsoft Defender for Cloud",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/defender-cloud/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"defender_cloud\",\n    \"tenant_id\": \"{{defender_tenant_id}}\",\n    \"client_id\": \"{{defender_client_id}}\",\n    \"client_secret\": \"{{defender_client_secret}}\",\n    \"subscription_id\": \"{{defender_subscription_id}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/defender-cloud/configure",
+            "description": "App registration needs Microsoft.Security API permissions (e.g. read) on the subscription. See Microsoft Learn."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/defender-cloud/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/defender-cloud/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "defender-cloud", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/defender-cloud/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/defender-cloud/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "defender-cloud", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/defender-cloud/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/defender-cloud/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key defender_cloud)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"defender_cloud\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Azure AD — OAuth2 token (client credentials) reference",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "client_id", "value": "{{defender_client_id}}" },
+                { "key": "client_secret", "value": "{{defender_client_secret}}" },
+                { "key": "scope", "value": "https://management.azure.com/.default" },
+                { "key": "grant_type", "value": "client_credentials" }
+              ]
+            },
+            "url": "https://login.microsoftonline.com/{{defender_tenant_id}}/oauth2/v2.0/token",
+            "description": "Microsoft identity platform client credentials flow (Learn). Use access_token as Bearer for management.azure.com."
+          }
+        },
+        {
+          "name": "ARM — GET secureScores (direct reference)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer <access_token from token request>" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "https://management.azure.com/subscriptions/{{defender_subscription_id}}/providers/Microsoft.Security/secureScores?api-version=2020-01-01"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orca Security",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/orca-security/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"orca_security\",\n    \"api_token\": \"{{orca_api_token}}\",\n    \"api_host\": \"{{orca_api_host}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/orca-security/configure",
+            "description": "Authorization: Token <api_token> to https://{api_host}/api — see Cortex XSOAR Orca pack / Demisto content."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/orca-security/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/orca-security/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "orca-security", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/orca-security/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/orca-security/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "orca-security", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/orca-security/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/orca-security/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key orca_security)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"orca_security\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Orca — POST automations/query/alerts (direct reference)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{orca_api_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"limit\": 1,\n  \"page\": 1\n}"
+            },
+            "url": "https://{{orca_api_host}}/api/automations/query/alerts"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lacework",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/lacework/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"lacework\",\n    \"account\": \"{{lacework_account}}\",\n    \"key_id\": \"{{lacework_key_id}}\",\n    \"secret\": \"{{lacework_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/lacework/configure",
+            "description": "Lacework API v2: POST /access/tokens with X-LW-UAKS; see lacework/go-sdk and docs.lacework.net."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/lacework/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/lacework/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "lacework", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/lacework/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/lacework/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "lacework", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/lacework/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/lacework/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key lacework)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"lacework\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Lacework — POST access/tokens (direct reference)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-LW-UAKS", "value": "{{lacework_secret}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyId\": \"{{lacework_key_id}}\",\n  \"expiryTime\": 3600\n}"
+            },
+            "url": "https://{{lacework_account}}.lacework.net/api/v2/access/tokens"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Aqua Security",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/aqua-security/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"aqua_security\",\n    \"api_base_url\": \"{{aqua_api_base_url}}\",\n    \"login_id\": \"{{aqua_login_id}}\",\n    \"password\": \"{{aqua_password}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/aqua-security/configure",
+            "description": "Self-hosted Aqua CSP: POST /api/v1/login per aquasecurity/terraform-provider-aquasec."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/aqua-security/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/aqua-security/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "aqua-security", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/aqua-security/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/aqua-security/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "aqua-security", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/aqua-security/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/aqua-security/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key aqua_security)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"aqua_security\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Aqua — POST login (direct reference)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{aqua_login_id}}\",\n  \"password\": \"{{aqua_password}}\"\n}"
+            },
+            "url": "{{aqua_api_base_url}}/api/v1/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sysdig Secure",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/cspm/sysdig-secure/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"sysdig_secure\",\n    \"api_base_url\": \"{{sysdig_api_base_url}}\",\n    \"api_token\": \"{{sysdig_api_token}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/cspm/sysdig-secure/configure",
+            "description": "Bearer token; regional host per Sysdig API docs (api.us1.sysdig.com, etc.)."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/sysdig-secure/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/sysdig-secure/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "sysdig-secure", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/cspm/sysdig-secure/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/cspm/sysdig-secure/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "cspm", "sysdig-secure", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/sysdig-secure/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/sysdig-secure/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key sysdig_secure)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"sysdig_secure\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "Sysdig — GET user/me (direct reference)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{sysdig_api_token}}" }
+            ],
+            "url": "{{sysdig_api_base_url}}/api/user/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrowdStrike Falcon",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/endpoint/crowdstrike-falcon/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"crowdstrike_falcon\",\n    \"api_base_url\": \"{{cs_falcon_api_base_url}}\",\n    \"client_id\": \"{{cs_falcon_client_id}}\",\n    \"client_secret\": \"{{cs_falcon_client_secret}}\",\n    \"member_cid\": \"{{cs_falcon_member_cid}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/endpoint/crowdstrike-falcon/configure",
+            "description": "OAuth2 POST /oauth2/token (see CrowdStrike Developer Center OpenAPI)."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/endpoint/crowdstrike-falcon/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/endpoint/crowdstrike-falcon/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "endpoint", "crowdstrike-falcon", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/endpoint/crowdstrike-falcon/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/endpoint/crowdstrike-falcon/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "endpoint", "crowdstrike-falcon", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/crowdstrike-falcon/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/crowdstrike-falcon/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key crowdstrike_falcon)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"crowdstrike_falcon\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        },
+        {
+          "name": "CrowdStrike — POST oauth2/token (direct reference)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "client_id", "value": "{{cs_falcon_client_id}}" },
+                { "key": "client_secret", "value": "{{cs_falcon_client_secret}}" },
+                { "key": "grant_type", "value": "client_credentials" }
+              ]
+            },
+            "url": "{{cs_falcon_api_base_url}}/oauth2/token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Microsoft Defender for Endpoint",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/endpoint/defender-for-endpoint/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"defender_for_endpoint\",\n    \"tenant_id\": \"{{dfe_tenant_id}}\",\n    \"client_id\": \"{{dfe_client_id}}\",\n    \"client_secret\": \"{{dfe_client_secret}}\",\n    \"api_base_url\": \"{{dfe_api_base_url}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/endpoint/defender-for-endpoint/configure",
+            "description": "Entra OAuth2 token then GET /api/machines (Microsoft Defender for Endpoint API Hello World)."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/endpoint/defender-for-endpoint/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/endpoint/defender-for-endpoint/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "endpoint", "defender-for-endpoint", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/endpoint/defender-for-endpoint/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/endpoint/defender-for-endpoint/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "endpoint", "defender-for-endpoint", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/defender-for-endpoint/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/defender-for-endpoint/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key defender_for_endpoint)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"defender_for_endpoint\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "SentinelOne",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/endpoint/sentinelone/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"sentinelone\",\n    \"api_base_url\": \"{{s1_api_base_url}}\",\n    \"api_token\": \"{{s1_api_token}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/endpoint/sentinelone/configure",
+            "description": "GET /web/api/v2.1/agents?limit=1 with Authorization: ApiToken."
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/endpoint/sentinelone/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/endpoint/sentinelone/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "endpoint", "sentinelone", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/endpoint/sentinelone/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/endpoint/sentinelone/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "endpoint", "sentinelone", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/sentinelone/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/sentinelone/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key sentinelone)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"sentinelone\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenable.io",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/vulnerability/tenable-io/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"tenable_io\",\n    \"api_base_url\": \"{{tio_api_base_url}}\",\n    \"access_key\": \"{{tio_access_key}}\",\n    \"secret_key\": \"{{tio_secret_key}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/vulnerability/tenable-io/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/vulnerability/tenable-io/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/vulnerability/tenable-io/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "vulnerability", "tenable-io", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/tenable-io/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/tenable-io/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key tenable_io)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"tenable_io\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Qualys VM",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/vulnerability/qualys/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"qualys\",\n    \"api_base_url\": \"{{qualys_api_base_url}}\",\n    \"username\": \"{{qualys_username}}\",\n    \"password\": \"{{qualys_password}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/vulnerability/qualys/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/qualys/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/qualys/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key qualys)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"qualys\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rapid7 InsightVM",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/vulnerability/rapid7-insightvm/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"rapid7_insightvm\",\n    \"api_base_url\": \"{{r7_api_base_url}}\",\n    \"username\": \"{{r7_username}}\",\n    \"password\": \"{{r7_password}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/vulnerability/rapid7-insightvm/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/rapid7-insightvm/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/rapid7-insightvm/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key rapid7_insightvm)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"rapid7_insightvm\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tanium",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/endpoint/tanium/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"provider_key\": \"tanium\",\n    \"api_base_url\": \"{{tan_api_base_url}}\",\n    \"api_token\": \"{{tan_api_token}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/endpoint/tanium/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/tanium/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/tanium/collect"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/sync (provider_key tanium)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"tanium\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/sync"
           }
         }
       ]
@@ -349,6 +1402,391 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"provider_key\": \"aws\",\n  \"evidence_codes\": {{aws_evidence_codes}},\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/integrations/sync"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workday (HRMS)",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/hrms/workday/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"workday_hostname\": \"{{workday_hostname}}\",\n    \"workday_tenant\": \"{{workday_tenant}}\",\n    \"client_id\": \"{{workday_client_id}}\",\n    \"client_secret\": \"{{workday_client_secret}}\",\n    \"api_version\": \"v1\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/workday/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/hrms/workday/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/hrms/workday/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "hrms", "workday", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/hrms/workday/employees",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/hrms/workday/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "hrms", "workday", "employees"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/hrms/workday/employees/{worker_id}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/hrms/workday/employees/{{workday_worker_id}}?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "hrms", "workday", "employees", "{{workday_worker_id}}"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/hrms/workday/organizations",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/hrms/workday/organizations?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "hrms", "workday", "organizations"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/hrms/workday/refresh-tokens",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"force\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/workday/refresh-tokens"
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/workday/{org_id}/{tool_id}",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer <optional webhook_secret>" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/workday/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "SAP SuccessFactors (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/sap-successfactors/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"sf_token_url\": \"{{sf_token_url}}\",\n    \"sf_odata_base_url\": \"{{sf_odata_base_url}}\",\n    \"client_id\": \"\",\n    \"client_secret\": \"\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/sap-successfactors/configure"
+          }
+        },
+        {
+          "name": "GET .../sap-successfactors/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/sap-successfactors/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../sap-successfactors/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/sap-successfactors/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../sap-successfactors/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/sap-successfactors/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/sap-successfactors/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/sap-successfactors/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ADP (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/adp/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"client_id\": \"{{adp_client_id}}\",\n    \"client_secret\": \"{{adp_client_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/adp/configure"
+          }
+        },
+        {
+          "name": "GET .../adp/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/adp/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../adp/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/adp/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../adp/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/adp/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/adp/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/adp/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "UKG (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/ukg/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"ukg_token_url\": \"{{ukg_token_url}}\",\n    \"ukg_api_base\": \"{{ukg_api_base}}\",\n    \"client_id\": \"\",\n    \"client_secret\": \"\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/ukg/configure"
+          }
+        },
+        {
+          "name": "GET .../ukg/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/ukg/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../ukg/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/ukg/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../ukg/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/ukg/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/ukg/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/ukg/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BambooHR (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/bamboohr/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"bamboohr_subdomain\": \"{{bamboohr_subdomain}}\",\n    \"bamboohr_api_key\": \"{{bamboohr_api_key}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/bamboohr/configure"
+          }
+        },
+        {
+          "name": "GET .../bamboohr/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/bamboohr/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../bamboohr/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/bamboohr/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../bamboohr/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/bamboohr/employees?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "POST .../webhooks/bamboohr/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/bamboohr/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Paycom (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/paycom/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"paycom_token_url\": \"{{paycom_token_url}}\",\n    \"paycom_api_base\": \"{{paycom_api_base}}\",\n    \"paycom_employees_path\": \"/employees\",\n    \"client_id\": \"\",\n    \"client_secret\": \"\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/paycom/configure"
+          }
+        },
+        {
+          "name": "GET .../paycom/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/paycom/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../paycom/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/paycom/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../paycom/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/paycom/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/paycom/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/paycom/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rippling (HRMS)",
+      "item": [
+        {
+          "name": "POST .../hrms/rippling/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"rippling_api_base\": \"{{rippling_api_base}}\",\n    \"rippling_employees_path\": \"/platform/api/v1/employees\",\n    \"rippling_api_key\": \"{{rippling_api_key}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/rippling/configure"
+          }
+        },
+        {
+          "name": "GET .../rippling/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/rippling/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../rippling/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/rippling/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET .../rippling/employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/hrms/rippling/employees?org_id={{org_id}}&tool_id={{tool_id}}&limit=20"
+          }
+        },
+        {
+          "name": "POST .../webhooks/rippling/{org}/{tool}",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/rippling/{{org_id}}/{{tool_id}}"
           }
         }
       ]
@@ -590,6 +2028,69 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/evidence/jira/collect"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ping Identity — PingOne (IAM)",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/ping-identity/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"pingone_environment_id\": \"{{pingone_environment_id}}\",\n    \"pingone_region_tld\": \"{{pingone_region_tld}}\",\n    \"client_id\": \"{{pingone_client_id}}\",\n    \"client_secret\": \"{{pingone_client_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/ping-identity/configure",
+            "description": "Worker app OAuth2 client_credentials; token URL POST https://auth.pingone.{tld}/{envId}/as/token (PingOne docs)."
+          }
+        },
+        {
+          "name": "POST /idp/ping-identity/integrations (alias)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"pingone_environment_id\": \"{{pingone_environment_id}}\",\n    \"pingone_region_tld\": \"{{pingone_region_tld}}\",\n    \"client_id\": \"{{pingone_client_id}}\",\n    \"client_secret\": \"{{pingone_client_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/idp/ping-identity/integrations"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/ping-identity/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/ping-identity/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/ping-identity/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/ping-identity/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/ping-identity/users",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/ping-identity/users?org_id={{org_id}}&tool_id={{tool_id}}&limit=25"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/ping-identity/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/ping-identity/collect"
           }
         }
       ]
@@ -887,6 +2388,763 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/evidence/entra-gcc-high/collect"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Asana",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/project-management/asana/configure (PAT)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"personal_access_token\": \"{{asana_pat}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/asana/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/project-management/asana/configure (OAuth app)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"client_id\": \"<asana-app-client-id>\",\n    \"client_secret\": \"<asana-app-client-secret>\",\n    \"redirect_uri\": \"http://localhost:8000/project-management/asana/callback\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/asana/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/project-management/asana/refresh-tokens",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"force\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/asana/refresh-tokens"
+          }
+        },
+        {
+          "name": "GET /api/v1/oauth/asana/authorize",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/oauth/asana/authorize?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "oauth", "asana", "authorize"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /project-management/asana/callback (OAuth)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/project-management/asana/callback?code={{oauth_code}}&state={{oauth_state}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["project-management", "asana", "callback"],
+              "query": [
+                { "key": "code", "value": "{{oauth_code}}" },
+                { "key": "state", "value": "{{oauth_state}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/workspaces",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/workspaces?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "workspaces"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/projects",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/projects?org_id={{org_id}}&tool_id={{tool_id}}&workspace_gid={{asana_workspace_gid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "projects"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "workspace_gid", "value": "{{asana_workspace_gid}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/tasks?org_id={{org_id}}&tool_id={{tool_id}}&project_gid={{asana_project_gid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "tasks"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "project_gid", "value": "{{asana_project_gid}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/tasks/{task_gid}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/tasks/{{asana_task_gid}}?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "tasks", "{{asana_task_gid}}"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/tasks/{task_gid}/stories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/tasks/{{asana_task_gid}}/stories?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "tasks", "{{asana_task_gid}}", "stories"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/project-management/asana/webhooks/register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resource_gid\": \"{{asana_project_gid}}\",\n  \"target_url\": \"{{asana_webhook_target_url}}\",\n  \"filters\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/webhooks/register?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "webhooks", "register"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/asana/{org_id}/{tool_id} (manual test)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Hook-Secret", "value": "test-handshake-secret" }
+            ],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/webhooks/asana/{{org_id}}/{{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "webhooks", "asana", "{{org_id}}", "{{tool_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Project management (Mon–Linear)",
+      "item": [
+        {
+          "name": "Monday — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"api_token\": \"{{monday_api_token}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/monday/configure"
+          }
+        },
+        {
+          "name": "Monday — GET /me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/monday/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "monday", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Microsoft Planner — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"tenant_id\": \"{{ms_tenant_id}}\",\n    \"client_id\": \"{{ms_client_id}}\",\n    \"client_secret\": \"{{ms_client_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/microsoft-planner/configure"
+          }
+        },
+        {
+          "name": "Microsoft Planner — GET /me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/microsoft-planner/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "microsoft-planner", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Microsoft Planner — GET /groups/{group_id}/plans",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/microsoft-planner/groups/{{ms_group_id}}/plans?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "microsoft-planner", "groups", "{{ms_group_id}}", "plans"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Smartsheet — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"api_token\": \"{{smartsheet_token}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/smartsheet/configure"
+          }
+        },
+        {
+          "name": "Smartsheet — GET /sheets",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/smartsheet/sheets?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "smartsheet", "sheets"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "ClickUp — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"api_token\": \"{{clickup_token}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/clickup/configure"
+          }
+        },
+        {
+          "name": "ClickUp — GET /lists/{list_id}/tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/clickup/lists/{{clickup_list_id}}/tasks?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "clickup", "lists", "{{clickup_list_id}}", "tasks"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Notion — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"integration_secret\": \"{{notion_secret}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/notion/configure"
+          }
+        },
+        {
+          "name": "Notion — GET /search",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/notion/search?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "notion", "search"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Linear — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"api_key\": \"{{linear_api_key}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/linear/configure"
+          }
+        },
+        {
+          "name": "Linear — GET /issues",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/linear/issues?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "linear", "issues"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "GitHub",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/devtools/github/configure (PAT)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"personal_access_token\": \"{{github_pat}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/devtools/github/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/devtools/github/configure (OAuth app)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"client_id\": \"<github-oauth-app-client-id>\",\n    \"client_secret\": \"<github-oauth-app-secret>\",\n    \"redirect_uri\": \"http://localhost:8000/api/v1/integrations/devtools/github/oauth/callback\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/devtools/github/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/oauth/github/authorize",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/oauth/github/authorize?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "oauth", "github", "authorize"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/oauth/callback",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/oauth/callback?code={{oauth_code}}&state={{oauth_state}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "oauth", "callback"],
+              "query": [
+                { "key": "code", "value": "{{oauth_code}}" },
+                { "key": "state", "value": "{{oauth_state}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/repos/{owner}/{repo}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/repos/{{github_owner}}/{{github_repo}}?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "repos", "{{github_owner}}", "{{github_repo}}"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET .../commits",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/repos/{{github_owner}}/{{github_repo}}/commits?org_id={{org_id}}&tool_id={{tool_id}}&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "repos", "{{github_owner}}", "{{github_repo}}", "commits"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET .../actions/runs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/repos/{{github_owner}}/{{github_repo}}/actions/runs?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "repos", "{{github_owner}}", "{{github_repo}}", "actions", "runs"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET .../actions/runs/{run_id}/jobs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/repos/{{github_owner}}/{{github_repo}}/actions/runs/{{github_run_id}}/jobs?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "repos", "{{github_owner}}", "{{github_repo}}", "actions", "runs", "{{github_run_id}}", "jobs"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/github/{org_id}/{tool_id} (signature required)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-GitHub-Event", "value": "ping" },
+              { "key": "X-Hub-Signature-256", "value": "sha256=<compute per GitHub docs>" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/api/v1/webhooks/github/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Azure DevOps",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/devtools/azure-devops/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"personal_access_token\": \"{{ado_pat}}\",\n    \"organization\": \"{{ado_organization}}\",\n    \"project\": \"{{ado_project}}\",\n    \"api_version\": \"7.1\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/azure-devops/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "azure-devops", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/azure-devops/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "azure-devops", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/azure-devops/repos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/repos?org_id={{org_id}}&tool_id={{tool_id}}&project={{ado_project}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "azure-devops", "repos"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "project", "value": "{{ado_project}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/azure-devops/builds",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/builds?org_id={{org_id}}&tool_id={{tool_id}}&project={{ado_project}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "azure-devops", "builds"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "project", "value": "{{ado_project}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/azure-devops/{org_id}/{tool_id}",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer <optional webhook_secret>" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/azure-devops/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jenkins",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/devtools/jenkins/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"jenkins_url\": \"{{jenkins_base_url}}\",\n    \"username\": \"{{jenkins_user}}\",\n    \"api_token\": \"{{jenkins_token}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/devtools/jenkins/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/jenkins/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/jenkins/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "jenkins", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/jenkins/jobs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/jenkins/jobs?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "jenkins", "jobs"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET .../jobs/{job_path}/builds",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/jenkins/jobs/{{jenkins_job}}/builds?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "jenkins", "jobs", "{{jenkins_job}}", "builds"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/jenkins/{org_id}/{tool_id}",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Jenkins-Secret", "value": "<optional webhook_secret>" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/jenkins/{{org_id}}/{{tool_id}}"
           }
         }
       ]
