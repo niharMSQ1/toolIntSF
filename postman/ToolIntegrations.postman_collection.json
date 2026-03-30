@@ -59,7 +59,25 @@
     { "key": "r7_username", "value": "" },
     { "key": "r7_password", "value": "" },
     { "key": "tan_api_base_url", "value": "https://tanium.example.com" },
-    { "key": "tan_api_token", "value": "" }
+    { "key": "tan_api_token", "value": "" },
+    { "key": "asana_pat", "value": "" },
+    { "key": "asana_workspace_gid", "value": "" },
+    { "key": "asana_project_gid", "value": "" },
+    { "key": "asana_task_gid", "value": "" },
+    { "key": "asana_webhook_target_url", "value": "https://example.com/api/v1/webhooks/asana/{{org_id}}/{{tool_id}}" },
+    { "key": "monday_api_token", "value": "" },
+    { "key": "ms_tenant_id", "value": "" },
+    { "key": "ms_client_id", "value": "" },
+    { "key": "ms_client_secret", "value": "" },
+    { "key": "ms_group_id", "value": "" },
+    { "key": "ms_plan_id", "value": "" },
+    { "key": "smartsheet_token", "value": "" },
+    { "key": "smartsheet_sheet_id", "value": "" },
+    { "key": "clickup_token", "value": "" },
+    { "key": "clickup_list_id", "value": "" },
+    { "key": "notion_secret", "value": "" },
+    { "key": "notion_page_id", "value": "" },
+    { "key": "linear_api_key", "value": "" }
   ],
   "item": [
     {
@@ -1881,6 +1899,417 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/evidence/entra-gcc-high/collect"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Asana",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/project-management/asana/configure (PAT)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"personal_access_token\": \"{{asana_pat}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/asana/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/project-management/asana/configure (OAuth app)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"client_id\": \"<asana-app-client-id>\",\n    \"client_secret\": \"<asana-app-client-secret>\",\n    \"redirect_uri\": \"http://localhost:8000/project-management/asana/callback\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/asana/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/project-management/asana/refresh-tokens",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"force\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/asana/refresh-tokens"
+          }
+        },
+        {
+          "name": "GET /api/v1/oauth/asana/authorize",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/oauth/asana/authorize?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "oauth", "asana", "authorize"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /project-management/asana/callback (OAuth)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/project-management/asana/callback?code={{oauth_code}}&state={{oauth_state}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["project-management", "asana", "callback"],
+              "query": [
+                { "key": "code", "value": "{{oauth_code}}" },
+                { "key": "state", "value": "{{oauth_state}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/workspaces",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/workspaces?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "workspaces"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/projects",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/projects?org_id={{org_id}}&tool_id={{tool_id}}&workspace_gid={{asana_workspace_gid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "projects"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "workspace_gid", "value": "{{asana_workspace_gid}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/tasks?org_id={{org_id}}&tool_id={{tool_id}}&project_gid={{asana_project_gid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "tasks"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "project_gid", "value": "{{asana_project_gid}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/tasks/{task_gid}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/tasks/{{asana_task_gid}}?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "tasks", "{{asana_task_gid}}"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/project-management/asana/tasks/{task_gid}/stories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/tasks/{{asana_task_gid}}/stories?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "tasks", "{{asana_task_gid}}", "stories"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/project-management/asana/webhooks/register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resource_gid\": \"{{asana_project_gid}}\",\n  \"target_url\": \"{{asana_webhook_target_url}}\",\n  \"filters\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/asana/webhooks/register?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "asana", "webhooks", "register"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/asana/{org_id}/{tool_id} (manual test)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Hook-Secret", "value": "test-handshake-secret" }
+            ],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/webhooks/asana/{{org_id}}/{{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "webhooks", "asana", "{{org_id}}", "{{tool_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Project management (Mon–Linear)",
+      "item": [
+        {
+          "name": "Monday — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"api_token\": \"{{monday_api_token}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/monday/configure"
+          }
+        },
+        {
+          "name": "Monday — GET /me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/monday/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "monday", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Microsoft Planner — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"tenant_id\": \"{{ms_tenant_id}}\",\n    \"client_id\": \"{{ms_client_id}}\",\n    \"client_secret\": \"{{ms_client_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/microsoft-planner/configure"
+          }
+        },
+        {
+          "name": "Microsoft Planner — GET /me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/microsoft-planner/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "microsoft-planner", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Microsoft Planner — GET /groups/{group_id}/plans",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/microsoft-planner/groups/{{ms_group_id}}/plans?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "microsoft-planner", "groups", "{{ms_group_id}}", "plans"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Smartsheet — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"api_token\": \"{{smartsheet_token}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/smartsheet/configure"
+          }
+        },
+        {
+          "name": "Smartsheet — GET /sheets",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/smartsheet/sheets?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "smartsheet", "sheets"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "ClickUp — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"api_token\": \"{{clickup_token}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/clickup/configure"
+          }
+        },
+        {
+          "name": "ClickUp — GET /lists/{list_id}/tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/clickup/lists/{{clickup_list_id}}/tasks?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "clickup", "lists", "{{clickup_list_id}}", "tasks"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Notion — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"integration_secret\": \"{{notion_secret}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/notion/configure"
+          }
+        },
+        {
+          "name": "Notion — GET /search",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/notion/search?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "notion", "search"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Linear — POST configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": { \"api_key\": \"{{linear_api_key}}\" }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/project-management/linear/configure"
+          }
+        },
+        {
+          "name": "Linear — GET /issues",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/project-management/linear/issues?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "project-management", "linear", "issues"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
           }
         }
       ]

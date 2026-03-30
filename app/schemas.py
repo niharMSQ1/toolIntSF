@@ -753,3 +753,134 @@ class OktaFlowResponse(BaseModel):
     credentials_valid: bool
     ready_for_collection: bool
     next_step: str
+
+
+class AsanaConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/project-management/asana/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool = Field(
+        description="True when a bearer token is available (PAT or OAuth access_token).",
+    )
+    auth_method: str | None = Field(
+        default=None,
+        description="pat | oauth when inferable from configuration_data.",
+    )
+    authorization_url: str | None = None
+    state: str | None = None
+    next_step: str
+    configuration_data: dict
+
+
+class AsanaFlowResponse(BaseModel):
+    """Where you are in configure → OAuth → API for Asana."""
+
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool
+    auth_method: str | None = None
+    redirect_uri: str | None = None
+    next_step: str
+    authorization_url: str | None = None
+    state: str | None = None
+
+
+class AsanaRefreshTokensBody(BaseModel):
+    org_id: str
+    tool_id: str
+    force: bool = Field(
+        default=False,
+        description="If true, always call Asana token endpoint even when access_token is still valid.",
+    )
+
+
+class AsanaRefreshTokensResponse(BaseModel):
+    ok: bool
+    organization_id: str
+    tool_id: str
+    refreshed: bool = Field(description="True if Asana oauth_token API was called.")
+    message: str
+    configuration_data: dict = Field(description="Saved config with secrets masked.")
+
+
+class AsanaOAuthCallbackResponse(BaseModel):
+    """Returned by GET /project-management/asana/callback after a successful code exchange."""
+
+    ok: bool
+    organization_id: str
+    tool_id: str
+    message: str
+    collection_started: bool = Field(
+        default=False,
+        description="Reserved; Asana does not run GRC evidence collection from this callback.",
+    )
+    next_step: str
+
+
+class MondayConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/project-management/monday/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    token_configured: bool = Field(description="True when a Monday personal API token is stored.")
+    next_step: str
+    configuration_data: dict
+
+
+class MondayFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    token_configured: bool
+    next_step: str
+
+
+class MicrosoftPlannerConfigureResponse(BaseModel):
+    id: str
+    organization_id: str
+    tool_id: str
+    auth_configured: bool = Field(description="True when access_token or client credentials are present.")
+    next_step: str
+    configuration_data: dict
+
+
+class MicrosoftPlannerFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    auth_configured: bool
+    next_step: str
+
+
+class MicrosoftPlannerRefreshTokensBody(BaseModel):
+    org_id: str
+    tool_id: str
+    force: bool = False
+
+
+class MicrosoftPlannerRefreshTokensResponse(BaseModel):
+    ok: bool
+    organization_id: str
+    tool_id: str
+    refreshed: bool
+    message: str
+    configuration_data: dict
+
+
+class PmTokenConfigureResponse(BaseModel):
+    """Shared shape for API-token PM tools (Smartsheet, ClickUp, Notion, Linear)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    token_configured: bool
+    next_step: str
+    configuration_data: dict
+
+
+class PmTokenFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    token_configured: bool
+    next_step: str

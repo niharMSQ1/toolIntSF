@@ -79,6 +79,23 @@ from app.integrations.categories.devtools.bitbucket.routers import (
     oauth_authorize_router as bitbucket_oauth_authorize_router,
     workspaces_router as bitbucket_workspaces_router,
 )
+from app.integrations.categories.project_management.asana.routers import configure as asana_configure
+from app.integrations.categories.project_management.asana.routers import data as asana_data
+from app.integrations.categories.project_management.asana.routers import oauth as asana_oauth
+from app.integrations.categories.project_management.asana.routers import webhook as asana_webhook
+from app.integrations.categories.project_management.monday.routers import configure as monday_configure
+from app.integrations.categories.project_management.monday.routers import data as monday_data
+from app.integrations.categories.project_management.monday.routers import webhook as monday_webhook
+from app.integrations.categories.project_management.microsoft_planner.routers import configure as ms_planner_configure
+from app.integrations.categories.project_management.microsoft_planner.routers import data as ms_planner_data
+from app.integrations.categories.project_management.smartsheet.routers import configure as smartsheet_configure
+from app.integrations.categories.project_management.smartsheet.routers import data as smartsheet_data
+from app.integrations.categories.project_management.clickup.routers import configure as clickup_configure
+from app.integrations.categories.project_management.clickup.routers import data as clickup_data
+from app.integrations.categories.project_management.notion.routers import configure as notion_configure
+from app.integrations.categories.project_management.notion.routers import data as notion_data
+from app.integrations.categories.project_management.linear.routers import configure as linear_configure
+from app.integrations.categories.project_management.linear.routers import data as linear_data
 from app.integrations.categories.hrms.zoho_people.routers import configure, evidence, oauth
 from app.integrations.categories.itsm.jira.routers import configure as jira_configure
 from app.integrations.categories.itsm.jira.routers import evidence as jira_evidence
@@ -127,6 +144,30 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(tanium_evidence_router)
     app.include_router(aws_configure_router)
     app.include_router(aws_evidence_router)
+    app.include_router(asana_configure.router)
+    app.include_router(asana_configure.pm_router)
+    app.include_router(asana_oauth.router)
+    app.include_router(asana_data.router)
+    app.include_router(asana_webhook.router)
+    app.include_router(monday_configure.router)
+    app.include_router(monday_configure.pm_router)
+    app.include_router(monday_data.router)
+    app.include_router(monday_webhook.router)
+    app.include_router(ms_planner_configure.router)
+    app.include_router(ms_planner_configure.pm_router)
+    app.include_router(ms_planner_data.router)
+    app.include_router(smartsheet_configure.router)
+    app.include_router(smartsheet_configure.pm_router)
+    app.include_router(smartsheet_data.router)
+    app.include_router(clickup_configure.router)
+    app.include_router(clickup_configure.pm_router)
+    app.include_router(clickup_data.router)
+    app.include_router(notion_configure.router)
+    app.include_router(notion_configure.pm_router)
+    app.include_router(notion_data.router)
+    app.include_router(linear_configure.router)
+    app.include_router(linear_configure.pm_router)
+    app.include_router(linear_data.router)
     app.include_router(bitbucket_configure_router)
     app.include_router(bitbucket_workspaces_router)
     app.include_router(bitbucket_oauth_authorize_router)

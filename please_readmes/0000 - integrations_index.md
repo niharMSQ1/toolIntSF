@@ -26,6 +26,13 @@ This folder documents **implemented** GRC tool integrations mounted from [`app/i
 | **Qualys VMDR / VM** | VM | `qualys` | `qualys` | [0019 - qualys.md](0019%20-%20qualys.md) |
 | **Rapid7 InsightVM** | VM | `rapid7_insightvm` | `rapid7_insightvm` | [0020 - rapid7-insightvm.md](0020%20-%20rapid7-insightvm.md) |
 | **Tanium** | EDR | `tanium` | `tanium` | [0021 - tanium.md](0021%20-%20tanium.md) |
+| **Asana** | Project management | — (not on unified sync) | — | [0022 - asana.md](0022%20-%20asana.md) |
+| **Monday.com** | Project management | — | — | [0023 - monday.md](0023%20-%20monday.md) |
+| **Microsoft Planner** (Graph) | Project management | — | — | [0024 - microsoft-planner.md](0024%20-%20microsoft-planner.md) |
+| **Smartsheet** | Project management | — | — | [0025 - smartsheet.md](0025%20-%20smartsheet.md) |
+| **ClickUp** | Project management | — | — | [0026 - clickup.md](0026%20-%20clickup.md) |
+| **Notion** | Project management | — | — | [0027 - notion.md](0027%20-%20notion.md) |
+| **Linear** | Project management | — | — | [0028 - linear.md](0028%20-%20linear.md) |
 | **Jira Cloud** | ITSM | `jira_cloud` | `jira_cloud` | [0007 - jira_cloud_integration.md](0007%20-%20jira_cloud_integration.md) |
 | **Okta** | IAM / IDP | `iam` (shared IAM catalog; legacy `okta` possible) | `okta` | [0008 - okta_iam_integration.md](0008%20-%20okta_iam_integration.md) |
 
