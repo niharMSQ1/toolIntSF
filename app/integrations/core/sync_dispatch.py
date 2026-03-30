@@ -12,6 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.integrations.categories.cloud.aws.collection_runner import run_aws_evidence_collection
+from app.integrations.categories.cloud.gcp.collection_runner import run_gcp_evidence_collection
 from app.integrations.categories.cspm.snyk.collection_runner import run_snyk_evidence_collection
 from app.integrations.categories.cspm.sysdig_secure.collection_runner import run_sysdig_secure_evidence_collection
 from app.integrations.categories.endpoint_security.crowdstrike_falcon.collection_runner import (
@@ -49,6 +50,7 @@ from app.integrations.categories.idp.sailpoint.collection_runner import run_sail
 from app.integrations.categories.idp.sailpoint.credentials import ready_for_collection as sailpoint_ready_for_collection
 from app.integrations.categories.devtools.bitbucket.collection_runner import run_bitbucket_evidence_collection
 from app.integrations.categories.hrms.zoho_people.collection_runner import run_evidence_collection
+from app.integrations.categories.hrms.bamboohr.collection_runner import run_evidence_collection as run_bamboohr_evidence_collection
 from app.integrations.categories.itsm.jira.collection_runner import run_jira_evidence_collection
 from app.integrations.categories.idp.microsoft_entra.collection_runner import run_entra_evidence_collection
 from app.integrations.categories.idp.microsoft_entra.credentials import (
@@ -85,6 +87,7 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "tanium": "tanium",
     "snyk": "snyk",
     "aws": "aws",
+    "gcp": "gcp",
     "jira_cloud": "jira_cloud",
     "okta": "okta",
     "ping_identity": "ping_identity",
@@ -96,7 +99,7 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "jumpcloud": "jumpcloud",
 }
 
-SYNC_PROVIDER_KEYS: frozenset[str] = frozenset(_SOURCE_TO_PROVIDER_KEY.values())
+SYNC_PROVIDER_KEYS: frozenset[str] = frozenset(set(_SOURCE_TO_PROVIDER_KEY.values()) | {"bamboohr"})
 
 _IAM_MASTER_SOURCES_ONLY: frozenset[str] = frozenset(
     {
@@ -125,6 +128,16 @@ def _looks_like_zoho_people_cfg(cfg: dict[str, Any]) -> bool:
     if isinstance(oc, list) and oc:
         return True
     return bool(str(cfg.get("client_id", "")).strip())
+
+
+def _looks_like_bamboohr_cfg(cfg: dict[str, Any]) -> bool:
+    """Infer BambooHR when evidence_masters.source is a generic HR catalog tag."""
+    if not isinstance(cfg, dict):
+        return False
+    return bool(
+        str(cfg.get("bamboohr_subdomain") or cfg.get("subdomain") or "").strip()
+        and str(cfg.get("bamboohr_api_key") or cfg.get("api_key") or "").strip()
+    )
 
 
 def _is_ping_identity_cfg(cfg: dict[str, Any]) -> bool:
@@ -206,6 +219,8 @@ def detect_provider_key_from_db(session: Session, tool_id: str, cfg: dict[str, A
             return infer_iam_provider_from_cfg(cfg) if cfg is not None else None
         if only == "hrms_catalog" and cfg is not None and _looks_like_zoho_people_cfg(cfg):
             return "zoho_people"
+        if only == "hrms_catalog" and cfg is not None and _looks_like_bamboohr_cfg(cfg):
+            return "bamboohr"
         return _SOURCE_TO_PROVIDER_KEY.get(only)
     # Multiple sources: disambiguate Entra commercial vs GCC High when both exist for the domain.
     if cfg is not None and set(srcs).issubset({"microsoft_entra", "microsoft_entra_gcc_high"}):
@@ -260,7 +275,7 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     if not provider_key:
         raise ValueError(
             "Could not determine integration provider. Ensure evidence_masters exist for this tool's domain (seed manually), "
-            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, prisma_cloud, defender_cloud, aqua_security, orca_security, lacework, sysdig_secure, crowdstrike_falcon, defender_for_endpoint, sentinelone, tenable_io, qualys, rapid7_insightvm, tanium, snyk, aws, jira_cloud, okta, ping_identity, cyberark_identity, sailpoint_identitynow, google_workspace, forgerock, onelogin, jumpcloud). "
+            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, prisma_cloud, defender_cloud, aqua_security, orca_security, lacework, sysdig_secure, crowdstrike_falcon, defender_for_endpoint, sentinelone, tenable_io, qualys, rapid7_insightvm, tanium, snyk, aws, gcp, jira_cloud, okta, ping_identity, cyberark_identity, sailpoint_identitynow, google_workspace, forgerock, onelogin, jumpcloud). "
             "For IAM evidence with source=iam, provider is inferred from configuration_data (PingOne vs Okta vs Entra)."
         )
 
@@ -273,6 +288,16 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     inner: CollectEvidenceResponse
     if provider_key == "zoho_people":
         inner = run_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "bamboohr":
+        inner = run_bamboohr_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,
@@ -443,6 +468,16 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
         )
     elif provider_key == "aws":
         inner = run_aws_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "gcp":
+        inner = run_gcp_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,

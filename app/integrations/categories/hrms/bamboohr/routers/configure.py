@@ -3,16 +3,19 @@
 from __future__ import annotations
 
 import logging
+from uuid import UUID
 
 import httpx
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.integrations.categories.hrms._shared_routes import mask_configuration_data, tool_integration_response
 from app.integrations.categories.hrms.bamboohr import api_client
+from app.integrations.categories.hrms.bamboohr.collection_runner import run_evidence_collection_after_config_background
 from app.integrations.categories.hrms.bamboohr.credentials import ready_for_api_calls, resolve_api_key, resolve_subdomain
 from app.integrations.core.persistence import tool_integration_service as persistence
+from app.models import Tools
 from app.schemas import BambooHrConfigureResponse, BambooHrFlowResponse, ToolIntegrationPayload, ToolIntegrationResponse
 
 logger = logging.getLogger("app.integrations.bamboohr")
@@ -22,8 +25,29 @@ router = APIRouter(prefix="/api/v1/integrations/hrms/bamboohr", tags=["integrati
 _SECRET_KEYS = ("bamboohr_api_key", "api_key", "webhook_secret")
 
 
+def _assert_bamboohr_tool(session: Session, tool_id: str) -> None:
+    try:
+        tid = UUID(str(tool_id))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail="Invalid tool_id.") from e
+    tool = session.get(Tools, tid)
+    if tool is None:
+        raise HTTPException(status_code=404, detail="Tool not found.")
+    name = str(getattr(tool, "name", "") or "").strip().lower()
+    if "bamboo" not in name:
+        raise HTTPException(
+            status_code=400,
+            detail=f"tool_id does not belong to BambooHR (found tool name: {getattr(tool, 'name', None)!r}).",
+        )
+
+
 @router.post("/configure", response_model=BambooHrConfigureResponse)
-def configure(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> BambooHrConfigureResponse:
+def configure(
+    payload: ToolIntegrationPayload,
+    background_tasks: BackgroundTasks,
+    session: Session = Depends(get_db),
+) -> BambooHrConfigureResponse:
+    _assert_bamboohr_tool(session, payload.tool_id)
     data = dict(payload.configuration_data)
     try:
         row = persistence.upsert_tool_integration(
@@ -57,13 +81,25 @@ def configure(payload: ToolIntegrationPayload, session: Session = Depends(get_db
 
     masked = mask_configuration_data(cfg, _SECRET_KEYS)
 
+    if ok:
+        # Like Zoho: once credentials are verified, immediately kick off evidence collection.
+        background_tasks.add_task(
+            run_evidence_collection_after_config_background,
+            payload.org_id,
+            payload.tool_id,
+            payload.user_id,
+        )
+        next_step = "BambooHR configured. Evidence collection has been started in the background."
+    else:
+        next_step = "GET .../hrms/bamboohr/employees when credentials_valid is true."
+
     return BambooHrConfigureResponse(
         id=str(row["id"]),
         organization_id=oid,
         tool_id=tid,
         credentials_valid=ok,
         ready_for_collection=ok,
-        next_step="GET .../hrms/bamboohr/employees when credentials_valid is true.",
+        next_step=next_step,
         configuration_data=masked,
     )
 
