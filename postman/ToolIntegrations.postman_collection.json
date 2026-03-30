@@ -77,7 +77,12 @@
     { "key": "clickup_list_id", "value": "" },
     { "key": "notion_secret", "value": "" },
     { "key": "notion_page_id", "value": "" },
-    { "key": "linear_api_key", "value": "" }
+    { "key": "linear_api_key", "value": "" },
+    { "key": "github_pat", "value": "" },
+    { "key": "github_owner", "value": "" },
+    { "key": "github_repo", "value": "" },
+    { "key": "github_run_id", "value": "" },
+    { "key": "github_webhook_secret", "value": "" }
   ],
   "item": [
     {
@@ -2310,6 +2315,187 @@
                 { "key": "tool_id", "value": "{{tool_id}}" }
               ]
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "GitHub",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/devtools/github/configure (PAT)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"personal_access_token\": \"{{github_pat}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/devtools/github/configure"
+          }
+        },
+        {
+          "name": "POST /api/v1/integrations/devtools/github/configure (OAuth app)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"client_id\": \"<github-oauth-app-client-id>\",\n    \"client_secret\": \"<github-oauth-app-secret>\",\n    \"redirect_uri\": \"http://localhost:8000/api/v1/integrations/devtools/github/oauth/callback\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/devtools/github/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/status?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "status"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/oauth/github/authorize",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/oauth/github/authorize?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "oauth", "github", "authorize"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/oauth/callback",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/oauth/callback?code={{oauth_code}}&state={{oauth_state}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "oauth", "callback"],
+              "query": [
+                { "key": "code", "value": "{{oauth_code}}" },
+                { "key": "state", "value": "{{oauth_state}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/github/repos/{owner}/{repo}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/repos/{{github_owner}}/{{github_repo}}?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "repos", "{{github_owner}}", "{{github_repo}}"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET .../commits",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/repos/{{github_owner}}/{{github_repo}}/commits?org_id={{org_id}}&tool_id={{tool_id}}&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "repos", "{{github_owner}}", "{{github_repo}}", "commits"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET .../actions/runs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/repos/{{github_owner}}/{{github_repo}}/actions/runs?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "repos", "{{github_owner}}", "{{github_repo}}", "actions", "runs"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET .../actions/runs/{run_id}/jobs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/github/repos/{{github_owner}}/{{github_repo}}/actions/runs/{{github_run_id}}/jobs?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "github", "repos", "{{github_owner}}", "{{github_repo}}", "actions", "runs", "{{github_run_id}}", "jobs"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/github/{org_id}/{tool_id} (signature required)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-GitHub-Event", "value": "ping" },
+              { "key": "X-Hub-Signature-256", "value": "sha256=<compute per GitHub docs>" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/api/v1/webhooks/github/{{org_id}}/{{tool_id}}"
           }
         }
       ]

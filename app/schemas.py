@@ -311,6 +311,39 @@ class BitbucketOAuthCallbackResponse(BaseModel):
     next_step: str
 
 
+class GitHubConfigureResponse(BaseModel):
+    """Returned by POST .../devtools/github/configure (PAT or OAuth app)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool = Field(description="True when a bearer token is stored (PAT or OAuth access_token).")
+    ready_for_collection: bool = Field(description="True when REST calls can be made (same as oauth_complete for GitHub).")
+    authorization_url: str | None = None
+    state: str | None = None
+    next_step: str
+    configuration_data: dict
+
+
+class GitHubFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    oauth_complete: bool
+    ready_for_collection: bool
+    redirect_uri: str | None = None
+    next_step: str
+    authorization_url: str | None = None
+    state: str | None = None
+
+
+class GitHubOAuthCallbackResponse(BaseModel):
+    ok: bool
+    organization_id: str
+    tool_id: str
+    message: str
+    next_step: str
+
+
 class BitbucketSelectWorkspacesBody(BaseModel):
     org_id: str
     tool_id: str

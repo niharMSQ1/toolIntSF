@@ -79,6 +79,13 @@ from app.integrations.categories.devtools.bitbucket.routers import (
     oauth_authorize_router as bitbucket_oauth_authorize_router,
     workspaces_router as bitbucket_workspaces_router,
 )
+from app.integrations.categories.devtools.github.routers import (
+    callback_router as github_callback_router,
+    configure_router as github_configure_router,
+    data_router as github_data_router,
+    oauth_authorize_router as github_oauth_authorize_router,
+    webhook_router as github_webhook_router,
+)
 from app.integrations.categories.project_management.asana.routers import configure as asana_configure
 from app.integrations.categories.project_management.asana.routers import data as asana_data
 from app.integrations.categories.project_management.asana.routers import oauth as asana_oauth
@@ -173,6 +180,11 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(bitbucket_oauth_authorize_router)
     app.include_router(bitbucket_callback_router)
     app.include_router(bitbucket_evidence_router)
+    app.include_router(github_configure_router)
+    app.include_router(github_data_router)
+    app.include_router(github_oauth_authorize_router)
+    app.include_router(github_callback_router)
+    app.include_router(github_webhook_router)
     app.include_router(configure.router)
     app.include_router(configure.hrms_router)
     app.include_router(oauth.router)

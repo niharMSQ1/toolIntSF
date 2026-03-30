@@ -12,6 +12,7 @@ This folder documents **implemented** GRC tool integrations mounted from [`app/i
 | **Microsoft Entra** (commercial) | IDP | `iam` (shared IAM catalog; legacy `microsoft_entra` possible) | `microsoft_entra` | [0004 - microsoft_entra_integration.md](0004%20-%20microsoft_entra_integration.md) |
 | **Microsoft Entra** (GCC High) | IDP | `iam` / legacy `microsoft_entra_gcc_high` | `microsoft_entra_gcc_high` | [0004 - microsoft_entra_integration.md](0004%20-%20microsoft_entra_integration.md) |
 | **Bitbucket Cloud** | DevTools | `bitbucket_cloud` | `bitbucket_cloud` | [0005 - bitbucket_integration.md](0005%20-%20bitbucket_integration.md) |
+| **GitHub** | DevTools | — (data + webhooks; not on unified sync) | — | [0029 - github.md](0029%20-%20github.md) |
 | **Wiz CSPM** | CSPM | `wiz` | `wiz` | [0006 - wiz_cspm_integration.md](0006%20-%20wiz_cspm_integration.md) |
 | **Prisma Cloud** | CSPM | `prisma_cloud` | `prisma_cloud` | [0009 - prisma-cloud.md](0009%20-%20prisma-cloud.md) |
 | **Microsoft Defender for Cloud** | CSPM | `defender_cloud` | `defender_cloud` | [0010 - defender-cloud.md](0010%20-%20defender-cloud.md) |
