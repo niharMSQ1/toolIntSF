@@ -12,6 +12,21 @@ class ToolIntegrationPayload(BaseModel):
     configuration_data: dict[str, Any]
 
 
+class ToolIntegrationRequestBody(BaseModel):
+    """
+    Client POST body for configure endpoints. When GRC auth is configured (grc_auth_validate_url),
+    omit org_id and send Authorization: Bearer; otherwise include org_id (legacy).
+    """
+
+    org_id: str | None = Field(
+        default=None,
+        description="Required when GRC auth is not configured; ignored when using bearer validation.",
+    )
+    user_id: str
+    tool_id: str
+    configuration_data: dict[str, Any]
+
+
 class ToolIntegrationResponse(BaseModel):
     id: str
     organization_id: str

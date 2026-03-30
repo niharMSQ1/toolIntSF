@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -122,7 +124,7 @@ def _configure_response(
 
 
 @router.post("/configure", response_model=BitbucketConfigureResponse)
-def configure_bitbucket(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> BitbucketConfigureResponse:
+def configure_bitbucket(payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)], session: Session = Depends(get_db)) -> BitbucketConfigureResponse:
     return _configure_response(payload, session)
 
 

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -117,13 +119,13 @@ def _configure_asana_response(payload: ToolIntegrationPayload, session: Session)
 
 
 @router.post("/configure", response_model=AsanaConfigureResponse)
-def configure_asana(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> AsanaConfigureResponse:
+def configure_asana(payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)], session: Session = Depends(get_db)) -> AsanaConfigureResponse:
     return _configure_asana_response(payload, session)
 
 
 @pm_router.post("/integrations", response_model=AsanaConfigureResponse)
 def configure_asana_alias(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     session: Session = Depends(get_db),
 ) -> AsanaConfigureResponse:
     return _configure_asana_response(payload, session)

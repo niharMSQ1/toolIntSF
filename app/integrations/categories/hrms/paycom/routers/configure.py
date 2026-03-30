@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+from typing import Annotated
+
 import httpx
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -27,7 +31,7 @@ _SECRET_KEYS = ("access_token", "refresh_token", "client_secret", "paycom_client
 
 
 @router.post("/configure", response_model=PaycomConfigureResponse)
-def configure(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> PaycomConfigureResponse:
+def configure(payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)], session: Session = Depends(get_db)) -> PaycomConfigureResponse:
     data = dict(payload.configuration_data)
     try:
         row = persistence.upsert_tool_integration(

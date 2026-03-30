@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+from typing import Annotated
+
 import logging
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -23,7 +27,7 @@ _SECRET_KEYS = ("bamboohr_api_key", "api_key", "webhook_secret")
 
 
 @router.post("/configure", response_model=BambooHrConfigureResponse)
-def configure(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> BambooHrConfigureResponse:
+def configure(payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)], session: Session = Depends(get_db)) -> BambooHrConfigureResponse:
     data = dict(payload.configuration_data)
     try:
         row = persistence.upsert_tool_integration(

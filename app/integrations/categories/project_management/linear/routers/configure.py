@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -49,12 +51,12 @@ def _cfg(payload: ToolIntegrationPayload, session: Session) -> PmTokenConfigureR
 
 
 @router.post("/configure", response_model=PmTokenConfigureResponse)
-def configure(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> PmTokenConfigureResponse:
+def configure(payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)], session: Session = Depends(get_db)) -> PmTokenConfigureResponse:
     return _cfg(payload, session)
 
 
 @pm_router.post("/integrations", response_model=PmTokenConfigureResponse)
-def configure_a(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> PmTokenConfigureResponse:
+def configure_a(payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)], session: Session = Depends(get_db)) -> PmTokenConfigureResponse:
     return _cfg(payload, session)
 
 

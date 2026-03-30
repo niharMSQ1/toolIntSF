@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -118,7 +120,7 @@ def _configure_okta_response(
 
 @router.post("/configure", response_model=OktaConfigureResponse)
 def configure_okta(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_db),
 ) -> OktaConfigureResponse:
@@ -127,7 +129,7 @@ def configure_okta(
 
 @idp_router.post("/integrations", response_model=OktaConfigureResponse)
 def configure_okta_idp_alias(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_db),
 ) -> OktaConfigureResponse:

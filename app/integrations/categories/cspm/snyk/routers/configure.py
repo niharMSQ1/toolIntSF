@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -73,7 +75,7 @@ def _maybe_exchange_oauth(session: Session, row: dict[str, Any], cfg: dict[str, 
 
 @router.post("/configure", response_model=SnykConfigureResponse)
 def configure_snyk(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_db),
 ) -> SnykConfigureResponse:

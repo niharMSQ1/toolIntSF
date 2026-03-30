@@ -59,6 +59,11 @@ class Settings(BaseSettings):
     wiz_auth_url: str | None = None
     wiz_audience: str | None = None
 
+    # GRC auth API — when set, POST /configure bodies omit org_id; Bearer token is validated
+    # and organization_id is taken from the auth response (data.user.organization_id).
+    grc_auth_validate_url: str | None = None
+    grc_auth_validate_timeout_seconds: float = 15.0
+
     @property
     def effective_db_name(self) -> str | None:
         """Prefer TOOLS_INTEGRATIONS_DB_NAME when set so this app writes where you expect."""

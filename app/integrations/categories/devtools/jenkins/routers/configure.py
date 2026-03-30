@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -48,7 +50,7 @@ def _tool_integration_response(
 
 
 @router.post("/configure", response_model=JenkinsConfigureResponse)
-def configure_jenkins(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> JenkinsConfigureResponse:
+def configure_jenkins(payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)], session: Session = Depends(get_db)) -> JenkinsConfigureResponse:
     data = dict(payload.configuration_data)
     try:
         row = persistence.upsert_tool_integration(

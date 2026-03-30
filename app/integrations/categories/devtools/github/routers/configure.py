@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -105,7 +107,7 @@ def _configure_response(payload: ToolIntegrationPayload, session: Any) -> GitHub
 
 
 @router.post("/configure", response_model=GitHubConfigureResponse)
-def configure_github(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> GitHubConfigureResponse:
+def configure_github(payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)], session: Session = Depends(get_db)) -> GitHubConfigureResponse:
     return _configure_response(payload, session)
 
 
