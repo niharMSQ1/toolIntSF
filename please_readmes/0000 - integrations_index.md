@@ -48,6 +48,13 @@ This folder documents **implemented** GRC tool integrations mounted from [`app/i
 | **Linear** | Project management | — | — | [0028 - linear.md](0028%20-%20linear.md) |
 | **Jira Cloud** | ITSM | `jira_cloud` | `jira_cloud` | [0007 - jira_cloud_integration.md](0007%20-%20jira_cloud_integration.md) |
 | **Okta** | IAM / IDP | `iam` (shared IAM catalog; legacy `okta` possible) | `okta` | [0008 - okta_iam_integration.md](0008%20-%20okta_iam_integration.md) |
+| **Ping Identity (PingOne)** | IAM / IDP | `iam` / `ping_identity` | `ping_identity` | [0042 - ping-identity.md](0042%20-%20ping-identity.md) |
+| **CyberArk Identity** | IAM / IDP | `iam` / legacy `cyberark_identity` | `cyberark_identity` | [0043 - cyberark-identity.md](0043%20-%20cyberark-identity.md) |
+| **SailPoint IdentityNow** | IAM / IDP | `iam` / legacy `sailpoint_identitynow` | `sailpoint_identitynow` | [0044 - sailpoint-identity.md](0044%20-%20sailpoint-identity.md) |
+| **Google Workspace** | IAM / IDP | `iam` / legacy `google_workspace` | `google_workspace` | [0045 - google-workspace.md](0045%20-%20google-workspace.md) |
+| **ForgeRock** | IAM / IDP | `iam` / legacy `forgerock` | `forgerock` | [0046 - forgerock.md](0046%20-%20forgerock.md) |
+| **OneLogin** | IAM / IDP | `iam` / legacy `onelogin` | `onelogin` | [0047 - onelogin.md](0047%20-%20onelogin.md) |
+| **JumpCloud** | IAM / IDP | `iam` / legacy `jumpcloud` | `jumpcloud` | [0048 - jumpcloud.md](0048%20-%20jumpcloud.md) |
 
 **Zoho-only note:** [0003 - zoho_people_bottlenecks.md](0003%20-%20zoho_people_bottlenecks.md) — performance and API caveats.
 
@@ -63,7 +70,7 @@ One endpoint runs the same collection logic as each provider’s **collect** rou
 
 **Body** (`SyncIntegrationBody`): `org_id`, `user_id`, `tool_id`, optional `provider_key`, optional `evidence_codes`, optional `date_from` / `date_to`.
 
-- If **`provider_key` is omitted**, it is inferred from **`evidence_masters.source`** for that tool’s **`domain_id`**, and for generic IAM (`iam`) from **`configuration_data`** (Okta vs Entra) when needed (see [`sync_dispatch.py`](../app/integrations/core/sync_dispatch.py)).
+- If **`provider_key` is omitted**, it is inferred from **`evidence_masters.source`** for that tool’s **`domain_id`**, and for generic IAM (`iam`) from **`configuration_data`** when needed (PingOne, CyberArk, SailPoint, Google Workspace, ForgeRock, JumpCloud, OneLogin, Okta, Microsoft Entra—see [`sync_dispatch.py`](../app/integrations/core/sync_dispatch.py)).
 - If ambiguous, pass the matching **`provider_key`** explicitly.
 
 ---

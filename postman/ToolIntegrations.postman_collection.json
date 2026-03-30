@@ -114,7 +114,11 @@
     { "key": "paycom_token_url", "value": "" },
     { "key": "paycom_api_base", "value": "" },
     { "key": "rippling_api_key", "value": "" },
-    { "key": "rippling_api_base", "value": "https://api.rippling.com" }
+    { "key": "rippling_api_base", "value": "https://api.rippling.com" },
+    { "key": "pingone_environment_id", "value": "" },
+    { "key": "pingone_client_id", "value": "" },
+    { "key": "pingone_client_secret", "value": "" },
+    { "key": "pingone_region_tld", "value": "com" }
   ],
   "item": [
     {
@@ -2024,6 +2028,69 @@
               "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
             },
             "url": "{{baseUrl}}/api/v1/evidence/jira/collect"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ping Identity — PingOne (IAM)",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/ping-identity/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"pingone_environment_id\": \"{{pingone_environment_id}}\",\n    \"pingone_region_tld\": \"{{pingone_region_tld}}\",\n    \"client_id\": \"{{pingone_client_id}}\",\n    \"client_secret\": \"{{pingone_client_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/ping-identity/configure",
+            "description": "Worker app OAuth2 client_credentials; token URL POST https://auth.pingone.{tld}/{envId}/as/token (PingOne docs)."
+          }
+        },
+        {
+          "name": "POST /idp/ping-identity/integrations (alias)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"pingone_environment_id\": \"{{pingone_environment_id}}\",\n    \"pingone_region_tld\": \"{{pingone_region_tld}}\",\n    \"client_id\": \"{{pingone_client_id}}\",\n    \"client_secret\": \"{{pingone_client_secret}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/idp/ping-identity/integrations"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/ping-identity/flow",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/ping-identity/flow?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/ping-identity/status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/ping-identity/status?org_id={{org_id}}&tool_id={{tool_id}}"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/ping-identity/users",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/integrations/ping-identity/users?org_id={{org_id}}&tool_id={{tool_id}}&limit=25"
+          }
+        },
+        {
+          "name": "POST /api/v1/evidence/ping-identity/collect",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"evidence_codes\": null,\n  \"date_from\": null,\n  \"date_to\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/evidence/ping-identity/collect"
           }
         }
       ]

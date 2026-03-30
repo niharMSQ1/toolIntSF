@@ -175,6 +175,48 @@ from app.integrations.categories.idp.microsoft_entra.routers import (
 )
 from app.integrations.categories.idp.okta.routers import configure as okta_configure
 from app.integrations.categories.idp.okta.routers import evidence as okta_evidence
+from app.integrations.categories.idp.ping_identity.routers import (
+    ping_identity_configure_router,
+    ping_identity_data_router,
+    ping_identity_evidence_router,
+    ping_identity_idp_router,
+)
+from app.integrations.categories.idp.cyberark.routers import (
+    cyberark_configure_router,
+    cyberark_data_router,
+    cyberark_evidence_router,
+    cyberark_idp_router,
+)
+from app.integrations.categories.idp.forgerock.routers import (
+    forgerock_configure_router,
+    forgerock_data_router,
+    forgerock_evidence_router,
+    forgerock_idp_router,
+)
+from app.integrations.categories.idp.google_workspace.routers import (
+    google_workspace_configure_router,
+    google_workspace_data_router,
+    google_workspace_evidence_router,
+    google_workspace_idp_router,
+)
+from app.integrations.categories.idp.jumpcloud.routers import (
+    jumpcloud_configure_router,
+    jumpcloud_data_router,
+    jumpcloud_evidence_router,
+    jumpcloud_idp_router,
+)
+from app.integrations.categories.idp.onelogin.routers import (
+    onelogin_configure_router,
+    onelogin_data_router,
+    onelogin_evidence_router,
+    onelogin_idp_router,
+)
+from app.integrations.categories.idp.sailpoint.routers import (
+    sailpoint_configure_router,
+    sailpoint_data_router,
+    sailpoint_evidence_router,
+    sailpoint_idp_router,
+)
 from app.integrations.routers import integration_sync
 
 
@@ -300,4 +342,32 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(okta_configure.router)
     app.include_router(okta_configure.idp_router)
     app.include_router(okta_evidence.router)
+    app.include_router(ping_identity_configure_router)
+    app.include_router(ping_identity_idp_router)
+    app.include_router(ping_identity_data_router)
+    app.include_router(ping_identity_evidence_router)
+    app.include_router(cyberark_configure_router)
+    app.include_router(cyberark_idp_router)
+    app.include_router(cyberark_data_router)
+    app.include_router(cyberark_evidence_router)
+    app.include_router(sailpoint_configure_router)
+    app.include_router(sailpoint_idp_router)
+    app.include_router(sailpoint_data_router)
+    app.include_router(sailpoint_evidence_router)
+    app.include_router(google_workspace_configure_router)
+    app.include_router(google_workspace_idp_router)
+    app.include_router(google_workspace_data_router)
+    app.include_router(google_workspace_evidence_router)
+    app.include_router(forgerock_configure_router)
+    app.include_router(forgerock_idp_router)
+    app.include_router(forgerock_data_router)
+    app.include_router(forgerock_evidence_router)
+    app.include_router(onelogin_configure_router)
+    app.include_router(onelogin_idp_router)
+    app.include_router(onelogin_data_router)
+    app.include_router(onelogin_evidence_router)
+    app.include_router(jumpcloud_configure_router)
+    app.include_router(jumpcloud_idp_router)
+    app.include_router(jumpcloud_data_router)
+    app.include_router(jumpcloud_evidence_router)
     app.include_router(integration_sync.router)

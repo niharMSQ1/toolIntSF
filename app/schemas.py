@@ -1032,6 +1032,158 @@ class OktaFlowResponse(BaseModel):
     next_step: str
 
 
+class PingIdentityConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/ping-identity/configure (PingOne Worker + Management API)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if GET .../environments/{envID}/users succeeded with the access token.",
+    )
+    ready_for_collection: bool = Field(description="True when PingOne OAuth and environment ID are valid.")
+    collection_started_in_background: bool = Field(
+        default=True,
+        description="When true, IAM evidence collection runs after successful configure.",
+    )
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secrets masked.")
+
+
+class PingIdentityFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class CyberArkConfigureResponse(BaseModel):
+    """POST .../integrations/cyberark-identity/configure — CyberArk Identity SCIM + OAuth."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if SCIM Users sample succeeded.")
+    ready_for_collection: bool
+    collection_started_in_background: bool = Field(default=True)
+    next_step: str
+    configuration_data: dict
+
+
+class CyberArkFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class SailPointConfigureResponse(BaseModel):
+    """POST .../integrations/sailpoint-identity/configure — IdentityNow OAuth + public identities."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if public identities sample succeeded.")
+    ready_for_collection: bool
+    collection_started_in_background: bool = Field(default=True)
+    next_step: str
+    configuration_data: dict
+
+
+class SailPointFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class GoogleWorkspaceConfigureResponse(BaseModel):
+    """POST .../integrations/google-workspace/configure — Admin SDK Directory API."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if users.list succeeded.")
+    ready_for_collection: bool
+    collection_started_in_background: bool = Field(default=True)
+    next_step: str
+    configuration_data: dict
+
+
+class GoogleWorkspaceFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class ForgeRockConfigureResponse(BaseModel):
+    """POST .../integrations/forgerock/configure — OAuth 2.0 + REST user query."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    collection_started_in_background: bool = Field(default=True)
+    next_step: str
+    configuration_data: dict
+
+
+class ForgeRockFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class OneLoginConfigureResponse(BaseModel):
+    """POST .../integrations/onelogin/configure — OAuth 2.0 + Users API."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    collection_started_in_background: bool = Field(default=True)
+    next_step: str
+    configuration_data: dict
+
+
+class OneLoginFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
+class JumpCloudConfigureResponse(BaseModel):
+    """POST .../integrations/jumpcloud/configure — API key + system users."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    collection_started_in_background: bool = Field(default=True)
+    next_step: str
+    configuration_data: dict
+
+
+class JumpCloudFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
 class AsanaConfigureResponse(BaseModel):
     """Returned by POST /api/v1/integrations/project-management/asana/configure."""
 

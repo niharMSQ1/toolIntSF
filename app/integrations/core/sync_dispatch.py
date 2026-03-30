@@ -34,6 +34,19 @@ from app.integrations.categories.cspm.orca_security.collection_runner import run
 from app.integrations.categories.cspm.prisma_cloud.collection_runner import run_prisma_cloud_evidence_collection
 from app.integrations.categories.cspm.wiz.collection_runner import run_wiz_evidence_collection
 from app.integrations.categories.idp.okta.collection_runner import run_okta_evidence_collection
+from app.integrations.categories.idp.ping_identity.collection_runner import run_ping_identity_evidence_collection
+from app.integrations.categories.idp.cyberark.collection_runner import run_cyberark_evidence_collection
+from app.integrations.categories.idp.cyberark.credentials import ready_for_collection as cyberark_ready_for_collection
+from app.integrations.categories.idp.forgerock.collection_runner import run_forgerock_evidence_collection
+from app.integrations.categories.idp.forgerock.credentials import ready_for_collection as forgerock_ready_for_collection
+from app.integrations.categories.idp.google_workspace.collection_runner import run_google_workspace_evidence_collection
+from app.integrations.categories.idp.google_workspace.credentials import ready_for_collection as google_workspace_ready_for_collection
+from app.integrations.categories.idp.jumpcloud.collection_runner import run_jumpcloud_evidence_collection
+from app.integrations.categories.idp.jumpcloud.credentials import ready_for_collection as jumpcloud_ready_for_collection
+from app.integrations.categories.idp.onelogin.collection_runner import run_onelogin_evidence_collection
+from app.integrations.categories.idp.onelogin.credentials import ready_for_collection as onelogin_ready_for_collection
+from app.integrations.categories.idp.sailpoint.collection_runner import run_sailpoint_evidence_collection
+from app.integrations.categories.idp.sailpoint.credentials import ready_for_collection as sailpoint_ready_for_collection
 from app.integrations.categories.devtools.bitbucket.collection_runner import run_bitbucket_evidence_collection
 from app.integrations.categories.hrms.zoho_people.collection_runner import run_evidence_collection
 from app.integrations.categories.itsm.jira.collection_runner import run_jira_evidence_collection
@@ -43,7 +56,8 @@ from app.integrations.categories.idp.microsoft_entra.credentials import (
     resolve_national_cloud,
 )
 from app.integrations.categories.idp.microsoft_entra.national_cloud import NationalCloud
-from app.integrations.categories.idp.okta.credentials import ready_for_collection
+from app.integrations.categories.idp.okta.credentials import ready_for_collection as okta_ready_for_collection
+from app.integrations.categories.idp.ping_identity.credentials import ready_for_collection as ping_ready_for_collection
 from app.integrations.core.persistence import tool_integration_service as persistence
 from app.models import EvidenceMaster
 from app.schemas import CollectEvidenceResponse, SyncIntegrationBody, SyncIntegrationResponse
@@ -73,12 +87,31 @@ _SOURCE_TO_PROVIDER_KEY: dict[str, str] = {
     "aws": "aws",
     "jira_cloud": "jira_cloud",
     "okta": "okta",
+    "ping_identity": "ping_identity",
+    "cyberark_identity": "cyberark_identity",
+    "sailpoint_identitynow": "sailpoint_identitynow",
+    "google_workspace": "google_workspace",
+    "forgerock": "forgerock",
+    "onelogin": "onelogin",
+    "jumpcloud": "jumpcloud",
 }
 
 SYNC_PROVIDER_KEYS: frozenset[str] = frozenset(_SOURCE_TO_PROVIDER_KEY.values())
 
 _IAM_MASTER_SOURCES_ONLY: frozenset[str] = frozenset(
-    {"iam", "okta", "microsoft_entra", "microsoft_entra_gcc_high"}
+    {
+        "iam",
+        "okta",
+        "microsoft_entra",
+        "microsoft_entra_gcc_high",
+        "ping_identity",
+        "cyberark_identity",
+        "sailpoint_identitynow",
+        "google_workspace",
+        "forgerock",
+        "onelogin",
+        "jumpcloud",
+    }
 )
 
 
@@ -94,11 +127,61 @@ def _looks_like_zoho_people_cfg(cfg: dict[str, Any]) -> bool:
     return bool(str(cfg.get("client_id", "")).strip())
 
 
+def _is_ping_identity_cfg(cfg: dict[str, Any]) -> bool:
+    return bool(isinstance(cfg, dict) and str(cfg.get("pingone_environment_id") or "").strip())
+
+
+def _is_cyberark_identity_cfg(cfg: dict[str, Any]) -> bool:
+    return bool(isinstance(cfg, dict) and str(cfg.get("cyberark_identity_base_url") or "").strip())
+
+
+def _is_sailpoint_cfg(cfg: dict[str, Any]) -> bool:
+    return bool(isinstance(cfg, dict) and str(cfg.get("sailpoint_base_url") or cfg.get("identitynow_base_url") or "").strip())
+
+
+def _is_google_workspace_cfg(cfg: dict[str, Any]) -> bool:
+    return bool(
+        isinstance(cfg, dict) and str(cfg.get("google_workspace_domain") or cfg.get("primary_domain") or "").strip(),
+    )
+
+
+def _is_forgerock_cfg(cfg: dict[str, Any]) -> bool:
+    if not isinstance(cfg, dict):
+        return False
+    return bool(str(cfg.get("forgerock_token_url") or "").strip() and str(cfg.get("forgerock_api_base") or "").strip())
+
+
+def _is_jumpcloud_cfg(cfg: dict[str, Any]) -> bool:
+    return bool(isinstance(cfg, dict) and str(cfg.get("jumpcloud_api_key") or "").strip())
+
+
+def _is_onelogin_cfg(cfg: dict[str, Any]) -> bool:
+    if not isinstance(cfg, dict):
+        return False
+    if str(cfg.get("onelogin_client_id") or "").strip():
+        return True
+    return "onelogin_region" in cfg and bool(str(cfg.get("onelogin_region") or "").strip())
+
+
 def infer_iam_provider_from_cfg(cfg: dict[str, Any]) -> str | None:
-    """When IAM evidence uses generic ``iam`` source, pick Okta vs Entra from ``configuration_data``."""
+    """When IAM evidence uses generic ``iam`` source, pick IDP from configuration_data."""
     if not isinstance(cfg, dict):
         return None
-    if ready_for_collection(cfg):
+    if _is_ping_identity_cfg(cfg) and ping_ready_for_collection(cfg):
+        return "ping_identity"
+    if _is_cyberark_identity_cfg(cfg) and cyberark_ready_for_collection(cfg):
+        return "cyberark_identity"
+    if _is_sailpoint_cfg(cfg) and sailpoint_ready_for_collection(cfg):
+        return "sailpoint_identitynow"
+    if _is_google_workspace_cfg(cfg) and google_workspace_ready_for_collection(cfg):
+        return "google_workspace"
+    if _is_forgerock_cfg(cfg) and forgerock_ready_for_collection(cfg):
+        return "forgerock"
+    if _is_jumpcloud_cfg(cfg) and jumpcloud_ready_for_collection(cfg):
+        return "jumpcloud"
+    if _is_onelogin_cfg(cfg) and onelogin_ready_for_collection(cfg):
+        return "onelogin"
+    if okta_ready_for_collection(cfg):
         return "okta"
     try:
         resolve_active_oauth_entry(cfg)
@@ -177,8 +260,8 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
     if not provider_key:
         raise ValueError(
             "Could not determine integration provider. Ensure evidence_masters exist for this tool's domain (seed manually), "
-            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, prisma_cloud, defender_cloud, aqua_security, orca_security, lacework, sysdig_secure, crowdstrike_falcon, defender_for_endpoint, sentinelone, tenable_io, qualys, rapid7_insightvm, tanium, snyk, aws, jira_cloud, okta). "
-            "For IAM evidence with source=iam, provider is inferred from configuration_data (Okta SSWS vs Entra OAuth)."
+            "or pass provider_key (zoho_people, microsoft_entra, microsoft_entra_gcc_high, bitbucket_cloud, wiz, prisma_cloud, defender_cloud, aqua_security, orca_security, lacework, sysdig_secure, crowdstrike_falcon, defender_for_endpoint, sentinelone, tenable_io, qualys, rapid7_insightvm, tanium, snyk, aws, jira_cloud, okta, ping_identity, cyberark_identity, sailpoint_identitynow, google_workspace, forgerock, onelogin, jumpcloud). "
+            "For IAM evidence with source=iam, provider is inferred from configuration_data (PingOne vs Okta vs Entra)."
         )
 
     if provider_key not in SYNC_PROVIDER_KEYS:
@@ -380,6 +463,76 @@ def run_integration_sync(session: Session, body: SyncIntegrationBody) -> SyncInt
         )
     elif provider_key == "okta":
         inner = run_okta_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "ping_identity":
+        inner = run_ping_identity_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "cyberark_identity":
+        inner = run_cyberark_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "sailpoint_identitynow":
+        inner = run_sailpoint_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "google_workspace":
+        inner = run_google_workspace_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "forgerock":
+        inner = run_forgerock_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "onelogin":
+        inner = run_onelogin_evidence_collection(
+            session,
+            org_id=body.org_id,
+            tool_id=body.tool_id,
+            user_id=body.user_id,
+            evidence_codes=body.evidence_codes,
+            date_from=body.date_from,
+            date_to=body.date_to,
+        )
+    elif provider_key == "jumpcloud":
+        inner = run_jumpcloud_evidence_collection(
             session,
             org_id=body.org_id,
             tool_id=body.tool_id,
