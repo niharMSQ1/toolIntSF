@@ -82,7 +82,22 @@
     { "key": "github_owner", "value": "" },
     { "key": "github_repo", "value": "" },
     { "key": "github_run_id", "value": "" },
-    { "key": "github_webhook_secret", "value": "" }
+    { "key": "github_webhook_secret", "value": "" },
+    { "key": "ado_pat", "value": "" },
+    { "key": "ado_organization", "value": "" },
+    { "key": "ado_project", "value": "" },
+    { "key": "ado_build_id", "value": "" },
+    { "key": "jenkins_base_url", "value": "http://localhost:8080" },
+    { "key": "jenkins_user", "value": "" },
+    { "key": "jenkins_token", "value": "" },
+    { "key": "jenkins_job", "value": "" },
+    { "key": "circleci_token", "value": "" },
+    { "key": "circleci_project_slug", "value": "gh/myorg/myrepo" },
+    { "key": "argocd_base_url", "value": "https://argocd.example.com" },
+    { "key": "argocd_token", "value": "" },
+    { "key": "teamcity_base_url", "value": "https://teamcity.example.com" },
+    { "key": "teamcity_token", "value": "" },
+    { "key": "teamcity_build_id", "value": "" }
   ],
   "item": [
     {
@@ -2496,6 +2511,171 @@
               "raw": "{}"
             },
             "url": "{{baseUrl}}/api/v1/webhooks/github/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Azure DevOps",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/devtools/azure-devops/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"personal_access_token\": \"{{ado_pat}}\",\n    \"organization\": \"{{ado_organization}}\",\n    \"project\": \"{{ado_project}}\",\n    \"api_version\": \"7.1\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/azure-devops/flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/flow?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "azure-devops", "flow"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/azure-devops/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "azure-devops", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/azure-devops/repos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/repos?org_id={{org_id}}&tool_id={{tool_id}}&project={{ado_project}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "azure-devops", "repos"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "project", "value": "{{ado_project}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/azure-devops/builds",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/azure-devops/builds?org_id={{org_id}}&tool_id={{tool_id}}&project={{ado_project}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "azure-devops", "builds"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" },
+                { "key": "project", "value": "{{ado_project}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/azure-devops/{org_id}/{tool_id}",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer <optional webhook_secret>" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/azure-devops/{{org_id}}/{{tool_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jenkins",
+      "item": [
+        {
+          "name": "POST /api/v1/integrations/devtools/jenkins/configure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"org_id\": \"{{org_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"tool_id\": \"{{tool_id}}\",\n  \"configuration_data\": {\n    \"jenkins_url\": \"{{jenkins_base_url}}\",\n    \"username\": \"{{jenkins_user}}\",\n    \"api_token\": \"{{jenkins_token}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/integrations/devtools/jenkins/configure"
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/jenkins/me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/jenkins/me?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "jenkins", "me"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/integrations/devtools/jenkins/jobs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/jenkins/jobs?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "jenkins", "jobs"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET .../jobs/{job_path}/builds",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/integrations/devtools/jenkins/jobs/{{jenkins_job}}/builds?org_id={{org_id}}&tool_id={{tool_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "integrations", "devtools", "jenkins", "jobs", "{{jenkins_job}}", "builds"],
+              "query": [
+                { "key": "org_id", "value": "{{org_id}}" },
+                { "key": "tool_id", "value": "{{tool_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/webhooks/jenkins/{org_id}/{tool_id}",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Jenkins-Secret", "value": "<optional webhook_secret>" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/v1/webhooks/jenkins/{{org_id}}/{{tool_id}}"
           }
         }
       ]

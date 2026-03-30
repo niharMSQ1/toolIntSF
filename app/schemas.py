@@ -344,6 +344,101 @@ class GitHubOAuthCallbackResponse(BaseModel):
     next_step: str
 
 
+class AzureDevOpsConfigureResponse(BaseModel):
+    """Returned by POST .../devtools/azure-devops/configure (PAT + organization)."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if a sample Projects API call succeeded.")
+    ready_for_collection: bool = Field(description="Same as credentials_valid for this integration.")
+    next_step: str
+    configuration_data: dict
+
+
+class AzureDevOpsFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
+class JenkinsConfigureResponse(BaseModel):
+    """Returned by POST .../devtools/jenkins/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if GET /api/json on Jenkins succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class JenkinsFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
+class CircleCIConfigureResponse(BaseModel):
+    """Returned by POST .../devtools/circleci/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if GET /api/v2/me succeeded.")
+    ready_for_collection: bool = Field(description="True when token and project_slug are set and token is valid.")
+    next_step: str
+    configuration_data: dict
+
+
+class CircleCIFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
+class ArgoCDConfigureResponse(BaseModel):
+    """Returned by POST .../devtools/argocd/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if GET /api/v1/version succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class ArgoCDFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
+class TeamCityConfigureResponse(BaseModel):
+    """Returned by POST .../devtools/teamcity/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(description="True if GET /app/rest/server succeeded.")
+    ready_for_collection: bool
+    next_step: str
+    configuration_data: dict
+
+
+class TeamCityFlowResponse(BaseModel):
+    organization_id: str
+    tool_id: str
+    ready_for_collection: bool
+    next_step: str
+
+
 class BitbucketSelectWorkspacesBody(BaseModel):
     org_id: str
     tool_id: str

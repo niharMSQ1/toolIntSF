@@ -13,6 +13,11 @@ This folder documents **implemented** GRC tool integrations mounted from [`app/i
 | **Microsoft Entra** (GCC High) | IDP | `iam` / legacy `microsoft_entra_gcc_high` | `microsoft_entra_gcc_high` | [0004 - microsoft_entra_integration.md](0004%20-%20microsoft_entra_integration.md) |
 | **Bitbucket Cloud** | DevTools | `bitbucket_cloud` | `bitbucket_cloud` | [0005 - bitbucket_integration.md](0005%20-%20bitbucket_integration.md) |
 | **GitHub** | DevTools | — (data + webhooks; not on unified sync) | — | [0029 - github.md](0029%20-%20github.md) |
+| **Azure DevOps** | DevTools | — | — | [0030 - azure-devops.md](0030%20-%20azure-devops.md) |
+| **Jenkins** | DevTools | — | — | [0031 - jenkins.md](0031%20-%20jenkins.md) |
+| **CircleCI** | DevTools | — | — | [0032 - circleci.md](0032%20-%20circleci.md) |
+| **Argo CD** | DevTools | — | — | [0033 - argocd.md](0033%20-%20argocd.md) |
+| **TeamCity** | DevTools | — | — | [0034 - teamcity.md](0034%20-%20teamcity.md) |
 | **Wiz CSPM** | CSPM | `wiz` | `wiz` | [0006 - wiz_cspm_integration.md](0006%20-%20wiz_cspm_integration.md) |
 | **Prisma Cloud** | CSPM | `prisma_cloud` | `prisma_cloud` | [0009 - prisma-cloud.md](0009%20-%20prisma-cloud.md) |
 | **Microsoft Defender for Cloud** | CSPM | `defender_cloud` | `defender_cloud` | [0010 - defender-cloud.md](0010%20-%20defender-cloud.md) |

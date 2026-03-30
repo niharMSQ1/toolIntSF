@@ -79,6 +79,31 @@ from app.integrations.categories.devtools.bitbucket.routers import (
     oauth_authorize_router as bitbucket_oauth_authorize_router,
     workspaces_router as bitbucket_workspaces_router,
 )
+from app.integrations.categories.devtools.azure_devops.routers import (
+    configure_router as azure_devops_configure_router,
+    data_router as azure_devops_data_router,
+    webhook_router as azure_devops_webhook_router,
+)
+from app.integrations.categories.devtools.jenkins.routers import (
+    configure_router as jenkins_configure_router,
+    data_router as jenkins_data_router,
+    webhook_router as jenkins_webhook_router,
+)
+from app.integrations.categories.devtools.circleci.routers import (
+    configure_router as circleci_configure_router,
+    data_router as circleci_data_router,
+    webhook_router as circleci_webhook_router,
+)
+from app.integrations.categories.devtools.argocd.routers import (
+    configure_router as argocd_configure_router,
+    data_router as argocd_data_router,
+    webhook_router as argocd_webhook_router,
+)
+from app.integrations.categories.devtools.teamcity.routers import (
+    configure_router as teamcity_configure_router,
+    data_router as teamcity_data_router,
+    webhook_router as teamcity_webhook_router,
+)
 from app.integrations.categories.devtools.github.routers import (
     callback_router as github_callback_router,
     configure_router as github_configure_router,
@@ -185,6 +210,21 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(github_oauth_authorize_router)
     app.include_router(github_callback_router)
     app.include_router(github_webhook_router)
+    app.include_router(azure_devops_configure_router)
+    app.include_router(azure_devops_data_router)
+    app.include_router(azure_devops_webhook_router)
+    app.include_router(jenkins_configure_router)
+    app.include_router(jenkins_data_router)
+    app.include_router(jenkins_webhook_router)
+    app.include_router(circleci_configure_router)
+    app.include_router(circleci_data_router)
+    app.include_router(circleci_webhook_router)
+    app.include_router(argocd_configure_router)
+    app.include_router(argocd_data_router)
+    app.include_router(argocd_webhook_router)
+    app.include_router(teamcity_configure_router)
+    app.include_router(teamcity_data_router)
+    app.include_router(teamcity_webhook_router)
     app.include_router(configure.router)
     app.include_router(configure.hrms_router)
     app.include_router(oauth.router)
