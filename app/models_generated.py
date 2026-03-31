@@ -242,13 +242,17 @@ class Domains(Base):
     __tablename__ = 'domains'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='domains_pkey'),
-        UniqueConstraint('name', name='domains_name_key')
+        UniqueConstraint('name', 'evidence_sources', name='domains_name_evidence_sources_key')
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime, server_default=text('now()'))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime, server_default=text('now()'))
+    evidence_sources: Mapped[Optional[str]] = mapped_column(Text)
+    primary_evidence: Mapped[Optional[str]] = mapped_column(Text)
+    secondary_evidence: Mapped[Optional[str]] = mapped_column(Text)
+    common_tools: Mapped[Optional[str]] = mapped_column(Text)
 
     evidence_masters: Mapped[list['EvidenceMasters']] = relationship('EvidenceMasters', back_populates='domain_')
     tools: Mapped[list['Tools']] = relationship('Tools', back_populates='domain')
@@ -2122,7 +2126,6 @@ class Evidence(Base):
 
     organization: Mapped['Organizations'] = relationship('Organizations', back_populates='evidence')
     tool: Mapped[Optional['Tools']] = relationship('Tools', back_populates='evidence')
-    evidence_collection: Mapped[list['EvidenceCollection']] = relationship('EvidenceCollection', back_populates='evidence')
     evidence_collections: Mapped[list['EvidenceCollections']] = relationship('EvidenceCollections', back_populates='evidence')
     evidence_mappeds: Mapped[list['EvidenceMappeds']] = relationship('EvidenceMappeds', back_populates='evidence')
 
@@ -2472,31 +2475,6 @@ class Vendors(Base):
     vendor_page_data: Mapped[list['VendorPageData']] = relationship('VendorPageData', back_populates='vendor')
     vendor_trust_centers: Mapped[list['VendorTrustCenters']] = relationship('VendorTrustCenters', back_populates='vendor')
     vendor_evidence: Mapped[list['VendorEvidence']] = relationship('VendorEvidence', back_populates='vendor')
-
-
-class EvidenceCollection(Base):
-    __tablename__ = 'evidence_collection'
-    __table_args__ = (
-        ForeignKeyConstraint(['evidence_id'], ['evidence.id'], ondelete='CASCADE', name='evidence_collection_evidence_id_fkey'),
-        PrimaryKeyConstraint('id', name='evidence_collection_pkey'),
-        Index('ix_evidence_collection_evidence_id', 'evidence_id'),
-        Index('ix_evidence_collection_organization_id', 'organization_id'),
-        Index('ix_evidence_collection_tool_id', 'tool_id'),
-        Index('ix_evidence_collection_user_id', 'user_id')
-    )
-
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    organization_id: Mapped[str] = mapped_column(String(36), nullable=False)
-    user_id: Mapped[str] = mapped_column(String(36), nullable=False)
-    tool_id: Mapped[str] = mapped_column(String(36), nullable=False)
-    status: Mapped[str] = mapped_column(String(32), nullable=False)
-    evidence_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
-    detail: Mapped[Optional[dict]] = mapped_column(JSON)
-    error_message: Mapped[Optional[str]] = mapped_column(Text)
-    started_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
-    completed_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
-
-    evidence: Mapped[Optional['Evidence']] = relationship('Evidence', back_populates='evidence_collection')
 
 
 class EvidenceCollections(Base):
