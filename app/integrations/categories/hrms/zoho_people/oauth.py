@@ -9,7 +9,7 @@ from typing import Any
 
 import httpx
 
-from app.integrations.categories.hrms.zoho_people.credentials import OAUTH_CLIENTS_KEY
+from app.integrations.categories.hrms.zoho_people.credentials import OAUTH_CLIENTS_KEY, zoho_people_server_redirect_uri
 from app.integrations.categories.hrms.zoho_people.regions import accounts_base_url, normalize_region, people_base_url
 
 
@@ -129,7 +129,7 @@ def merge_token_response_into_config(
                 {
                     "client_id": str(cid),
                     "client_secret": str(sec),
-                    "redirect_uri": str(new_cfg.get("redirect_uri", "")),
+                    "redirect_uri": zoho_people_server_redirect_uri(),
                     "region": normalize_region(str(new_cfg.get("region", region))),
                 }
             ]

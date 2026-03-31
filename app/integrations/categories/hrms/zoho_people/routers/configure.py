@@ -18,6 +18,7 @@ from app.integrations.categories.hrms.zoho_people.credentials import (
     resolve_oauth_credentials,
     resolve_redirect_uri,
     resolve_region,
+    zoho_people_server_redirect_uri,
 )
 from app.integrations.categories.hrms.zoho_people.oauth import build_authorization_url, build_state
 from app.integrations.categories.hrms.zoho_people.token_refresh import refresh_zoho_access_tokens
@@ -74,6 +75,7 @@ def _configure_zoho_response(
     background_tasks: BackgroundTasks,
 ) -> ZohoConfigureResponse:
     data = dict(payload.configuration_data)
+    data["redirect_uri"] = zoho_people_server_redirect_uri()
     try:
         row = persistence.upsert_tool_integration(
             session,

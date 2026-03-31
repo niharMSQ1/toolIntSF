@@ -27,9 +27,25 @@ from app.integrations.core.persistence import (
     normalize_evidence_master_description,
     tool_integration_service as persistence,
 )
+from app.models import EvidenceMaster
 from app.schemas import CollectEvidenceResponse, CollectionItemResult
 
 logger = logging.getLogger(__name__)
+
+
+def _evidence_description_same_as_master(session: Session, master: dict[str, Any]) -> str | None:
+    """Set ``evidence.description`` to the same value as ``evidence_masters.description`` (lookup by id)."""
+    raw = master.get("id")
+    if raw is not None:
+        try:
+            eid = raw if isinstance(raw, uuid.UUID) else uuid.UUID(str(raw))
+        except ValueError:
+            eid = None
+        if eid is not None:
+            row = session.get(EvidenceMaster, eid)
+            if row is not None:
+                return row.description
+    return normalize_evidence_master_description(master)
 
 
 def _catalog_domain_id_from_cfg(cfg: Any) -> str | None:
@@ -144,7 +160,7 @@ def run_evidence_collection(
                 title=master["name"],
                 tool_id=tool_id,
                 evidence_code=master["code"],
-                evidence_description=normalize_evidence_master_description(master),
+                evidence_description=_evidence_description_same_as_master(session, master),
             )
             mapped = persistence.remap_evidence_to_controls(
                 session,
