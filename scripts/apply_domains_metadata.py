@@ -8,7 +8,7 @@ from sqlalchemy import text
 
 from app.database import engine
 
-# (uuid, name, evidence_sources, primary_evidence, secondary_evidence, common_tools)
+# (uuid, domain_group, evidence_sources, primary_evidence, secondary_evidence, common_tools)
 ROWS: list[tuple[str, str, str, str, str, str]] = [
     (
         "1721b991-e491-4953-b2bb-ca35d815024f",
@@ -103,7 +103,7 @@ def main() -> None:
     upd = text(
         """
         UPDATE domains SET
-            name = :name,
+            domain_group = :domain_group,
             evidence_sources = :evidence_sources,
             primary_evidence = :primary_evidence,
             secondary_evidence = :secondary_evidence,
@@ -120,7 +120,7 @@ def main() -> None:
                 upd,
                 {
                     "id": row[0],
-                    "name": row[1],
+                    "domain_group": row[1],
                     "evidence_sources": row[2],
                     "primary_evidence": row[3],
                     "secondary_evidence": row[4],

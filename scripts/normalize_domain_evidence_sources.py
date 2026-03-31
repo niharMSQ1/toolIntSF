@@ -2,8 +2,8 @@
 Split `domains.evidence_sources` so each row holds a single comma-delimited entity.
 
 - Preserves the original row id for the first segment (so evidence_masters / tools FKs stay valid).
-- Inserts new UUID rows for remaining segments with the same name and metadata.
-- Replaces UNIQUE(name) with UNIQUE(name, evidence_sources).
+- Inserts new UUID rows for remaining segments with the same domain_group and metadata.
+- Ensures UNIQUE(domain_group, evidence_sources).
 
 Run from project root: python scripts/normalize_domain_evidence_sources.py
 """
@@ -32,29 +32,29 @@ def normalize() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM pg_constraint WHERE conname = 'domains_name_evidence_sources_key'
+                SELECT 1 FROM pg_constraint WHERE conname = 'domains_domain_group_evidence_sources_key'
             ) THEN
-                ALTER TABLE domains ADD CONSTRAINT domains_name_evidence_sources_key
-                    UNIQUE (name, evidence_sources);
+                ALTER TABLE domains ADD CONSTRAINT domains_domain_group_evidence_sources_key
+                    UNIQUE (domain_group, evidence_sources);
             END IF;
         END $$;
         """
     )
     select_all = text(
         """
-        SELECT id, name, created_at, updated_at, evidence_sources,
+        SELECT id, domain_group, created_at, updated_at, evidence_sources,
                primary_evidence, secondary_evidence, common_tools
         FROM domains
-        ORDER BY name, evidence_sources
+        ORDER BY domain_group, evidence_sources
         """
     )
     insert_row = text(
         """
         INSERT INTO domains (
-            id, name, created_at, updated_at,
+            id, domain_group, created_at, updated_at,
             evidence_sources, primary_evidence, secondary_evidence, common_tools
         ) VALUES (
-            CAST(:id AS uuid), :name, :created_at, :updated_at,
+            CAST(:id AS uuid), :domain_group, :created_at, :updated_at,
             :evidence_sources, :primary_evidence, :secondary_evidence, :common_tools
         )
         """
@@ -93,13 +93,12 @@ def normalize() -> None:
             updated += 1
 
             ca = r["created_at"]
-            ua = r["updated_at"]
             for seg in rest:
                 conn.execute(
                     insert_row,
                     {
                         "id": str(uuid.uuid4()),
-                        "name": r["name"],
+                        "domain_group": r["domain_group"],
                         "created_at": ca,
                         "updated_at": now,
                         "evidence_sources": seg,

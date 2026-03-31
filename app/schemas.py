@@ -1328,3 +1328,16 @@ class PmTokenFlowResponse(BaseModel):
     tool_id: str
     token_configured: bool
     next_step: str
+
+
+class DomainCatalogRow(BaseModel):
+    """GRC catalog row: one evidence source per row; `evidence_sources` is the primary display label."""
+
+    id: str
+    domain_group: str = Field(description="Logical grouping (e.g. IT Service Management).")
+    evidence_sources: str | None = Field(description="Single evidence-source entity for this row.")
+    primary_evidence: str | None = None
+    secondary_evidence: str | None = None
+    common_tools: str | None = None
+    created_at: str | None = None
+    updated_at: str | None = None

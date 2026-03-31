@@ -1,1 +1,1 @@
-# routers
+"""Top-level FastAPI routers (catalog, health extensions, etc.)."""

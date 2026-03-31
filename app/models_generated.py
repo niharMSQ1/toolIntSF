@@ -242,11 +242,11 @@ class Domains(Base):
     __tablename__ = 'domains'
     __table_args__ = (
         PrimaryKeyConstraint('id', name='domains_pkey'),
-        UniqueConstraint('name', 'evidence_sources', name='domains_name_evidence_sources_key')
+        UniqueConstraint('domain_group', 'evidence_sources', name='domains_domain_group_evidence_sources_key'),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
-    name: Mapped[str] = mapped_column(String, nullable=False)
+    domain_group: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime, server_default=text('now()'))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime, server_default=text('now()'))
     evidence_sources: Mapped[Optional[str]] = mapped_column(Text)
