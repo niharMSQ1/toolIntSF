@@ -1006,6 +1006,34 @@ class AwsFlowResponse(BaseModel):
     next_step: str
 
 
+class GcpConfigureResponse(BaseModel):
+    """Returned by POST /api/v1/integrations/cloud/gcp/configure."""
+
+    id: str
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool = Field(
+        description="True if project_id/service_account_json are valid and GCP project lookup succeeded."
+    )
+    ready_for_collection: bool = Field(description="True when credentials are valid and collection can run.")
+    collection_started_in_background: bool = Field(
+        default=True,
+        description="When true, a background job is pulling GCP evidence (same as POST .../evidence/gcp/collect).",
+    )
+    next_step: str
+    configuration_data: dict = Field(description="Saved config with secrets masked (same as GET /status).")
+
+
+class GcpFlowResponse(BaseModel):
+    """Where you are in configure → collect for GCP."""
+
+    organization_id: str
+    tool_id: str
+    credentials_valid: bool
+    ready_for_collection: bool
+    next_step: str
+
+
 class WizFlowResponse(BaseModel):
     organization_id: str
     tool_id: str

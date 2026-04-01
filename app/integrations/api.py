@@ -12,6 +12,10 @@ from app.integrations.categories.cloud.aws.routers import (
     configure_router as aws_configure_router,
     evidence_router as aws_evidence_router,
 )
+from app.integrations.categories.cloud.gcp.routers import (
+    configure_router as gcp_configure_router,
+    evidence_router as gcp_evidence_router,
+)
 from app.integrations.categories.cspm.snyk.routers import (
     configure_router as snyk_configure_router,
     evidence_router as snyk_evidence_router,
@@ -128,6 +132,7 @@ from app.integrations.categories.project_management.notion.routers import config
 from app.integrations.categories.project_management.notion.routers import data as notion_data
 from app.integrations.categories.project_management.linear.routers import configure as linear_configure
 from app.integrations.categories.project_management.linear.routers import data as linear_data
+from app.integrations.categories.project_management.linear.routers import evidence as linear_evidence
 from app.integrations.categories.hrms.workday.routers import (
     configure_router as workday_configure_router,
     data_router as workday_data_router,
@@ -151,6 +156,7 @@ from app.integrations.categories.hrms.ukg.routers import (
 )
 from app.integrations.categories.hrms.bamboohr.routers import (
     configure_router as bamboohr_configure_router,
+    evidence_router as bamboohr_evidence_router,
     data_router as bamboohr_data_router,
     webhook_router as bamboohr_webhook_router,
 )
@@ -255,6 +261,8 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(tanium_evidence_router)
     app.include_router(aws_configure_router)
     app.include_router(aws_evidence_router)
+    app.include_router(gcp_configure_router)
+    app.include_router(gcp_evidence_router)
     app.include_router(asana_configure.router)
     app.include_router(asana_configure.pm_router)
     app.include_router(asana_oauth.router)
@@ -279,6 +287,7 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(linear_configure.router)
     app.include_router(linear_configure.pm_router)
     app.include_router(linear_data.router)
+    app.include_router(linear_evidence.router)
     app.include_router(bitbucket_configure_router)
     app.include_router(bitbucket_workspaces_router)
     app.include_router(bitbucket_oauth_authorize_router)
@@ -318,6 +327,7 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(ukg_data_router)
     app.include_router(ukg_webhook_router)
     app.include_router(bamboohr_configure_router)
+    app.include_router(bamboohr_evidence_router)
     app.include_router(bamboohr_data_router)
     app.include_router(bamboohr_webhook_router)
     app.include_router(paycom_configure_router)
