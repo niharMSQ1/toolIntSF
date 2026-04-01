@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -108,7 +110,7 @@ def _configure_response(
 
 @router.post("/configure", response_model=JumpCloudConfigureResponse)
 def configure_jumpcloud(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     session: Session = Depends(get_db),
     background_tasks: BackgroundTasks = BackgroundTasks(),
 ) -> JumpCloudConfigureResponse:
@@ -117,7 +119,7 @@ def configure_jumpcloud(
 
 @idp_router.post("/integrations", response_model=JumpCloudConfigureResponse)
 def configure_jumpcloud_idp(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     session: Session = Depends(get_db),
     background_tasks: BackgroundTasks = BackgroundTasks(),
 ) -> JumpCloudConfigureResponse:

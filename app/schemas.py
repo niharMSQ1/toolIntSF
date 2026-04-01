@@ -12,6 +12,21 @@ class ToolIntegrationPayload(BaseModel):
     configuration_data: dict[str, Any]
 
 
+class ToolIntegrationRequestBody(BaseModel):
+    """
+    Client POST body for configure endpoints. When GRC auth is configured (grc_auth_validate_url),
+    omit org_id and send Authorization: Bearer; otherwise include org_id (legacy).
+    """
+
+    org_id: str | None = Field(
+        default=None,
+        description="Required when GRC auth is not configured; ignored when using bearer validation.",
+    )
+    user_id: str
+    tool_id: str
+    configuration_data: dict[str, Any]
+
+
 class ToolIntegrationResponse(BaseModel):
     id: str
     organization_id: str
@@ -1341,3 +1356,16 @@ class PmTokenFlowResponse(BaseModel):
     tool_id: str
     token_configured: bool
     next_step: str
+
+
+class DomainCatalogRow(BaseModel):
+    """GRC catalog row: one evidence source per row; `evidence_sources` is the primary display label."""
+
+    id: str
+    domain_group: str = Field(description="Logical grouping (e.g. IT Service Management).")
+    evidence_sources: str | None = Field(description="Single evidence-source entity for this row.")
+    primary_evidence: str | None = None
+    secondary_evidence: str | None = None
+    common_tools: str | None = None
+    created_at: str | None = None
+    updated_at: str | None = None

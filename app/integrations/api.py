@@ -224,6 +224,7 @@ from app.integrations.categories.idp.sailpoint.routers import (
     sailpoint_idp_router,
 )
 from app.integrations.routers import integration_sync
+from app.routers.domains import router as domains_catalog_router
 
 
 def mount_integration_routes(app: FastAPI) -> None:
@@ -380,4 +381,5 @@ def mount_integration_routes(app: FastAPI) -> None:
     app.include_router(jumpcloud_idp_router)
     app.include_router(jumpcloud_data_router)
     app.include_router(jumpcloud_evidence_router)
+    app.include_router(domains_catalog_router)
     app.include_router(integration_sync.router)

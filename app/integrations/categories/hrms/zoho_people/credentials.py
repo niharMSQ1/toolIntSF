@@ -4,9 +4,15 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.config import get_settings
 from app.integrations.categories.hrms.zoho_people.regions import normalize_region
 
 OAUTH_CLIENTS_KEY = "oauth_clients"
+
+
+def zoho_people_server_redirect_uri() -> str:
+    """OAuth redirect registered with Zoho; server-controlled (not from frontend)."""
+    return (get_settings().zoho_people_oauth_redirect_uri or "").strip()
 
 
 def resolve_active_oauth_entry(cfg: dict[str, Any]) -> dict[str, Any]:
@@ -20,7 +26,7 @@ def resolve_active_oauth_entry(cfg: dict[str, Any]) -> dict[str, Any]:
         return {
             "client_id": str(cid),
             "client_secret": str(sec),
-            "redirect_uri": str(cfg.get("redirect_uri", "")),
+            "redirect_uri": zoho_people_server_redirect_uri(),
             "region": normalize_region(str(cfg.get("region", "com"))),
         }
     raise ValueError("Missing oauth_clients or client credentials in configuration_data")
@@ -32,11 +38,8 @@ def resolve_oauth_credentials(cfg: dict[str, Any]) -> tuple[str, str]:
 
 
 def resolve_redirect_uri(cfg: dict[str, Any]) -> str:
-    e = resolve_active_oauth_entry(cfg)
-    u = e.get("redirect_uri")
-    if not u:
-        raise ValueError("Missing redirect_uri on active oauth_clients entry")
-    return str(u)
+    """Always the server-configured Zoho redirect (ignore client-supplied redirect_uri)."""
+    return zoho_people_server_redirect_uri()
 
 
 def resolve_region(cfg: dict[str, Any]) -> str:

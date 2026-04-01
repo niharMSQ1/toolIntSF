@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     # After Zoho OAuth completes in the browser, redirect here (GRC UI). Set empty to return JSON instead.
     post_oauth_success_redirect_url: str = "http://192.168.6.4/evidence/all-evidence"
 
+    # Zoho People OAuth redirect_uri — must match Zoho API Console; not taken from configure JSON.
+    zoho_people_oauth_redirect_uri: str = "http://localhost:8002/zoho/callback"
+
     # Microsoft Entra (commercial / worldwide) — Vanta-style: app registration credentials on the server.
     # Optional if you pass client_id/client_secret in tool_integrations.configuration_data (BYO app).
     entra_client_id: str | None = None
@@ -58,6 +61,11 @@ class Settings(BaseSettings):
     # Wiz CSPM (optional defaults; usually set per integration in configuration_data)
     wiz_auth_url: str | None = None
     wiz_audience: str | None = None
+
+    # GRC auth API — when set, POST /configure bodies omit org_id; Bearer token is validated
+    # and organization_id is taken from the auth response (data.user.organization_id).
+    grc_auth_validate_url: str | None = None
+    grc_auth_validate_timeout_seconds: float = 15.0
 
     @property
     def effective_db_name(self) -> str | None:

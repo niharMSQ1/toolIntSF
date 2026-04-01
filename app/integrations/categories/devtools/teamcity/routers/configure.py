@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -38,7 +40,7 @@ def _tool_integration_response(
 
 
 @router.post("/configure", response_model=TeamCityConfigureResponse)
-def configure_teamcity(payload: ToolIntegrationPayload, session: Session = Depends(get_db)) -> TeamCityConfigureResponse:
+def configure_teamcity(payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)], session: Session = Depends(get_db)) -> TeamCityConfigureResponse:
     data = dict(payload.configuration_data)
     try:
         row = persistence.upsert_tool_integration(

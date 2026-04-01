@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -59,7 +61,7 @@ def _validate_pat(base_url: str, organization: str, pat: str, api_version: str) 
 
 @router.post("/configure", response_model=AzureDevOpsConfigureResponse)
 def configure_azure_devops(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     session: Session = Depends(get_db),
 ) -> AzureDevOpsConfigureResponse:
     data = dict(payload.configuration_data)

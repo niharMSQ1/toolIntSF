@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -16,6 +18,7 @@ from app.integrations.categories.hrms.zoho_people.credentials import (
     resolve_oauth_credentials,
     resolve_redirect_uri,
     resolve_region,
+    zoho_people_server_redirect_uri,
 )
 from app.integrations.categories.hrms.zoho_people.oauth import build_authorization_url, build_state
 from app.integrations.categories.hrms.zoho_people.token_refresh import refresh_zoho_access_tokens
@@ -72,6 +75,7 @@ def _configure_zoho_response(
     background_tasks: BackgroundTasks,
 ) -> ZohoConfigureResponse:
     data = dict(payload.configuration_data)
+    data["redirect_uri"] = zoho_people_server_redirect_uri()
     try:
         row = persistence.upsert_tool_integration(
             session,
@@ -167,7 +171,7 @@ def zoho_refresh_tokens(payload: ZohoRefreshTokensBody, session: Session = Depen
 
 @router.post("/configure", response_model=ZohoConfigureResponse)
 def configure_zoho(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_db),
 ) -> ZohoConfigureResponse:
@@ -176,7 +180,7 @@ def configure_zoho(
 
 @hrms_router.post("/integrations", response_model=ZohoConfigureResponse)
 def configure_zoho_hrms_alias(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_db),
 ) -> ZohoConfigureResponse:

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.config import Settings, get_settings
@@ -320,7 +322,7 @@ commercial_idp_router = APIRouter(prefix="/idp/entra", tags=["integrations", "id
 
 @commercial_router.post("/configure", response_model=EntraConfigureResponse)
 def configure_entra_commercial(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
@@ -332,7 +334,7 @@ def configure_entra_commercial(
 
 @commercial_idp_router.post("/integrations", response_model=EntraConfigureResponse)
 def configure_entra_commercial_alias(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
@@ -355,7 +357,7 @@ gcc_high_idp_router = APIRouter(
 
 @gcc_high_router.post("/configure", response_model=EntraConfigureResponse)
 def configure_entra_gcc_high(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
@@ -367,7 +369,7 @@ def configure_entra_gcc_high(
 
 @gcc_high_idp_router.post("/integrations", response_model=EntraConfigureResponse)
 def configure_entra_gcc_high_alias(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),

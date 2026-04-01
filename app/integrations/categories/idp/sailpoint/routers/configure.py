@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 import httpx
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+
+from app.auth.dependencies import get_tool_integration_payload
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -128,7 +130,7 @@ def _configure(
 
 @router.post("/configure", response_model=SailPointConfigureResponse)
 def configure_sailpoint(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     session: Session = Depends(get_db),
     background_tasks: BackgroundTasks = BackgroundTasks(),
 ) -> SailPointConfigureResponse:
@@ -137,7 +139,7 @@ def configure_sailpoint(
 
 @idp_router.post("/integrations", response_model=SailPointConfigureResponse)
 def configure_sailpoint_idp(
-    payload: ToolIntegrationPayload,
+    payload: Annotated[ToolIntegrationPayload, Depends(get_tool_integration_payload)],
     session: Session = Depends(get_db),
     background_tasks: BackgroundTasks = BackgroundTasks(),
 ) -> SailPointConfigureResponse:

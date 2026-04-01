@@ -26,7 +26,7 @@ from app.integrations.categories.hrms.zoho_people.oauth import (
     merge_token_response_into_config,
     parse_state,
 )
-from app.integrations.categories.hrms.zoho_people.regions import accounts_base_url
+from app.integrations.categories.hrms.zoho_people.regions import accounts_base_url, normalize_region
 from app.integrations.core.persistence import tool_integration_service as persistence
 from app.schemas import AuthorizeResponse, ZohoOAuthCallbackResponse
 
@@ -140,6 +140,9 @@ def _zoho_oauth_callback_impl(
         if ui_base:
             return _ui_redirect(ui_base, oauth_error="config_error", detail=str(e)[:200])
         raise HTTPException(status_code=400, detail=str(e)) from e
+    # Zoho appends `location` / `accounts-server` for the DC used at sign-in; prefer them over stale config.region.
+    if location:
+        reg = normalize_region(location)
     acc_server = accounts_server or accounts_base_url(reg)
 
     try:
@@ -192,6 +195,28 @@ def _zoho_oauth_callback_impl(
         tool_id=tool_id,
         collection_started=collection_started,
         next_step=next_msg,
+    )
+
+
+@router.get("/zoho/callback")
+def zoho_oauth_callback_short_path(
+    code: str,
+    state: str,
+    background_tasks: BackgroundTasks,
+    session: Session = Depends(get_db),
+    location: str | None = None,
+    accounts_server: Annotated[str | None, Query(alias="accounts-server")] = None,
+    error: str | None = None,
+) -> ZohoOAuthCallbackResponse:
+    """Alias for Zoho Console redirect URIs registered as /zoho/callback (same behavior as /hrms/zoho/callback)."""
+    return _zoho_oauth_callback_impl(
+        code,
+        state,
+        session,
+        background_tasks,
+        location=location,
+        accounts_server=accounts_server,
+        error=error,
     )
 
 
