@@ -11,6 +11,7 @@ import httpx
 from app.integrations.categories.project_management.linear.constants import LINEAR_API_URL
 
 _MAX = 6
+_LIST_CAP = 100
 
 
 def graphql(api_key: str, query: str, *, variables: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -64,7 +65,7 @@ def list_issues(api_key: str, *, first: int = 50) -> list[dict[str, Any]]:
       }
     }
     """
-    data = graphql_data(api_key, q, variables={"first": min(first, 100)})
+    data = graphql_data(api_key, q, variables={"first": min(first, _LIST_CAP)})
     issues = (data or {}).get("issues") if data else None
     if isinstance(issues, dict):
         nodes = issues.get("nodes")
@@ -85,10 +86,79 @@ def list_projects(api_key: str, *, first: int = 50) -> list[dict[str, Any]]:
       }
     }
     """
-    data = graphql_data(api_key, q, variables={"first": min(first, 100)})
+    data = graphql_data(api_key, q, variables={"first": min(first, _LIST_CAP)})
     proj = (data or {}).get("projects") if data else None
     if isinstance(proj, dict):
         nodes = proj.get("nodes")
+        if isinstance(nodes, list):
+            return [x for x in nodes if isinstance(x, dict)]
+    return []
+
+
+def list_users(api_key: str, *, first: int = 50) -> list[dict[str, Any]]:
+    q = """
+    query ($first: Int!) {
+      users(first: $first) {
+        nodes {
+          id
+          name
+          email
+          active
+          admin
+        }
+      }
+    }
+    """
+    data = graphql_data(api_key, q, variables={"first": min(first, _LIST_CAP)})
+    users = (data or {}).get("users") if data else None
+    if isinstance(users, dict):
+        nodes = users.get("nodes")
+        if isinstance(nodes, list):
+            return [x for x in nodes if isinstance(x, dict)]
+    return []
+
+
+def list_teams(api_key: str, *, first: int = 50) -> list[dict[str, Any]]:
+    q = """
+    query ($first: Int!) {
+      teams(first: $first) {
+        nodes {
+          id
+          name
+          key
+        }
+      }
+    }
+    """
+    data = graphql_data(api_key, q, variables={"first": min(first, _LIST_CAP)})
+    teams = (data or {}).get("teams") if data else None
+    if isinstance(teams, dict):
+        nodes = teams.get("nodes")
+        if isinstance(nodes, list):
+            return [x for x in nodes if isinstance(x, dict)]
+    return []
+
+
+def list_workflow_states(api_key: str, *, first: int = 50) -> list[dict[str, Any]]:
+    q = """
+    query ($first: Int!) {
+      workflowStates(first: $first) {
+        nodes {
+          id
+          name
+          type
+          team {
+            id
+            name
+          }
+        }
+      }
+    }
+    """
+    data = graphql_data(api_key, q, variables={"first": min(first, _LIST_CAP)})
+    states = (data or {}).get("workflowStates") if data else None
+    if isinstance(states, dict):
+        nodes = states.get("nodes")
         if isinstance(nodes, list):
             return [x for x in nodes if isinstance(x, dict)]
     return []

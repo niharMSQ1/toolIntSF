@@ -4,11 +4,17 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
+from typing import Any
 
 from sqlalchemy.orm import Session
 
 from app.integrations.categories.project_management.linear import api_client
 from app.integrations.categories.project_management.linear.credentials import resolve_api_key
+from app.integrations.categories.project_management.linear.evidence_map import (
+    GRAPHQL_QUERY_DOC,
+    REQUIRED_FIELDS,
+    resolve_strategy,
+)
 from app.integrations.core.persistence import (
     insert_evidence_collection_after_failed_collect,
     list_evidence_masters,
@@ -20,6 +26,90 @@ from app.integrations.core.persistence import (
 from app.schemas import CollectEvidenceResponse, CollectionItemResult
 
 logger = logging.getLogger(__name__)
+
+
+def _read_path(item: dict[str, Any], dotted: str) -> Any:
+    cur: Any = item
+    for part in dotted.split("."):
+        if not isinstance(cur, dict) or part not in cur:
+            return None
+        cur = cur.get(part)
+    return cur
+
+
+def _validate_rows(rows: list[dict[str, Any]], required_fields: tuple[str, ...], *, allow_empty: bool = False) -> None:
+    if not rows and not allow_empty:
+        raise ValueError("No records returned by Linear query.")
+    for idx, row in enumerate(rows):
+        missing = [field for field in required_fields if _read_path(row, field) in (None, "")]
+        if missing:
+            raise ValueError(f"Linear record #{idx} missing required fields: {', '.join(missing)}")
+
+
+def _collect_for_master(api_key: str, master: dict[str, Any]) -> dict[str, Any]:
+    strategy = resolve_strategy(master.get("code", ""))
+    required_fields = REQUIRED_FIELDS[strategy]
+
+    if strategy == "identity_viewer":
+        viewer = api_client.get_viewer(api_key) or {}
+        _validate_rows([viewer], required_fields)
+        return {
+            "strategy": strategy,
+            "query": GRAPHQL_QUERY_DOC[strategy],
+            "required_fields": list(required_fields),
+            "record_count": 1,
+            "records": [viewer],
+        }
+    if strategy == "users_register":
+        users = api_client.list_users(api_key, first=100)
+        _validate_rows(users, required_fields)
+        return {
+            "strategy": strategy,
+            "query": GRAPHQL_QUERY_DOC[strategy],
+            "required_fields": list(required_fields),
+            "record_count": len(users),
+            "records": users,
+        }
+    if strategy == "projects_register":
+        projects = api_client.list_projects(api_key, first=100)
+        _validate_rows(projects, required_fields)
+        return {
+            "strategy": strategy,
+            "query": GRAPHQL_QUERY_DOC[strategy],
+            "required_fields": list(required_fields),
+            "record_count": len(projects),
+            "records": projects,
+        }
+    if strategy == "teams_register":
+        teams = api_client.list_teams(api_key, first=100)
+        _validate_rows(teams, required_fields)
+        return {
+            "strategy": strategy,
+            "query": GRAPHQL_QUERY_DOC[strategy],
+            "required_fields": list(required_fields),
+            "record_count": len(teams),
+            "records": teams,
+        }
+    if strategy == "workflow_states_register":
+        states = api_client.list_workflow_states(api_key, first=100)
+        _validate_rows(states, required_fields)
+        return {
+            "strategy": strategy,
+            "query": GRAPHQL_QUERY_DOC[strategy],
+            "required_fields": list(required_fields),
+            "record_count": len(states),
+            "records": states,
+        }
+
+    issues = api_client.list_issues(api_key, first=100)
+    _validate_rows(issues, required_fields)
+    return {
+        "strategy": strategy,
+        "query": GRAPHQL_QUERY_DOC[strategy],
+        "required_fields": list(required_fields),
+        "record_count": len(issues),
+        "records": issues,
+    }
 
 
 def run_evidence_collection(
@@ -47,20 +137,6 @@ def run_evidence_collection(
     if not api_key:
         raise ValueError("Missing api_key (Linear personal API key).")
 
-    # Fetch once and reuse for all evidence masters in the domain.
-    viewer = api_client.get_viewer(api_key) or {}
-    issues = api_client.list_issues(api_key, first=50)
-    projects = api_client.list_projects(api_key, first=50)
-
-    snapshot = {
-        "source": "linear/graphql",
-        "viewer": viewer,
-        "issues_count": len(issues),
-        "projects_count": len(projects),
-        "issues_preview": issues[:50],
-        "projects_preview": projects[:50],
-    }
-
     masters = list_evidence_masters(
         session,
         tool_id=tool_id,
@@ -78,6 +154,7 @@ def run_evidence_collection(
     for master in masters:
         started = datetime.now(timezone.utc)
         try:
+            evidence_payload = _collect_for_master(api_key, master)
             ev = upsert_evidence_full_replace(
                 session,
                 organization_id=org_id,
@@ -98,11 +175,17 @@ def run_evidence_collection(
                 user_id=user_id,
                 tool_id=tool_id,
                 tool_evidence={
-                    "linear_snapshot": snapshot,
+                    "source": "linear/graphql",
+                    "evidence_payload": evidence_payload,
                     "evidence_master_code": master["code"],
                 },
                 status="success",
-                detail={"mapped_controls": mapped, "collected_at": now_utc.isoformat()},
+                detail={
+                    "mapped_controls": mapped,
+                    "collected_at": now_utc.isoformat(),
+                    "strategy": evidence_payload["strategy"],
+                    "record_count": evidence_payload["record_count"],
+                },
                 error_message=None,
                 started_at=started,
                 completed_at=datetime.now(timezone.utc),
@@ -125,7 +208,7 @@ def run_evidence_collection(
                     tool_id=tool_id,
                     master=master,
                     user_id=user_id,
-                    tool_evidence={"linear_snapshot": snapshot},
+                    tool_evidence={"source": "linear/graphql"},
                     status="failed",
                     detail=None,
                     error_message=str(e),
