@@ -1,0 +1,24 @@
+{
+  "name": "toolintsf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niharMSQ1/toolIntSF.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/niharMSQ1/toolIntSF/issues"
+  },
+  "homepage": "https://github.com/niharMSQ1/toolIntSF#readme",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0"
+  }
+}
